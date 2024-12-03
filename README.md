@@ -24,12 +24,7 @@
 
 ## Installation
 
-1. **Adapter hinzufügen**:
-   - Über die ioBroker-Admin-Oberfläche installieren oder direkt von GitHub laden:
-     ```bash
-     iobroker add maxxisun
-     ```
-2. **Adapter konfigurieren**:
+ **Adapter konfigurieren**:
    - Den Namen der CCU (`Maxxi CCU Name`) eintragen.
    - Aktualisierungsintervall in Minuten festlegen.
 
