@@ -1,0 +1,41 @@
+{
+    "type": "panel",
+    "i18n": true,
+    "items": {
+        "_header1": {
+            "type": "header",
+            "text": "Maxxi Einstellungen",
+            "size": 3,
+            "style": {
+                "textAlign": "center",
+                "marginBottom": "20px"
+            }
+        },
+        "maxxiCcuName": {
+            "type": "text",
+            "label": "Maxxi CCU Name",
+            "newLine": true,
+            "default": "maxxi-XXXXXX-YYY",
+            "help": "Geben Sie den Namen der Maxxi CCU ein (z. B. maxxi-XXXXXX-YYY).",
+            "style": {
+                "margin": "0 auto",
+                "width": "50%",
+                "textAlign": "center"
+            }
+        },
+        "refreshInterval": {
+            "type": "slider",
+            "label": "Aktualisierungsintervall (in Minuten)",
+            "min": 1,
+            "max": 60,
+            "step": 1,
+            "default": 5,
+            "newLine": true,
+            "help": "Ziehe den Regler, um das Aktualisierungsintervall in Minuten einzustellen.",
+            "style": {
+                "margin": "0 auto",
+                "width": "50%"
+            }
+        }
+    }
+}

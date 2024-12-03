@@ -1,0 +1,62 @@
+{
+  "common": {
+    "name": "maxxi-charge",
+    "version": "1.0.42",
+    "news": {
+      "1.0.42": {
+        "en": "Release",
+        "de": "Veröffentlichung"
+      }
+    },
+    "titleLang": {
+      "en": "MaxxiCharge",
+      "de": "MaxxiCharge"
+    },
+    "desc": {
+      "en": "Adapter to fetch data from MaxxiCharge CCU",
+      "de": "Adapter zum Abrufen von Daten von MaxxiCharge CCU"
+    },
+    "authors": [
+      {
+        "name": "Christoph Böhrs",
+        "email": "git@mr-bond.de"
+      }
+    ],
+    "keywords": [
+      "Maxxisun",
+      "Maxxicharge"
+    ],
+     "licenseInformation": {        
+        "spdx": "MIT",
+        "type": "free",
+        "text": "MIT License",
+        "link": "https://opensource.org/licenses/MIT"
+    },
+    "platform": "Javascript/Node.js",
+    "mode": "daemon",
+    "icon": "maxxi-charge.png",
+    "extIcon": "https://raw.githubusercontent.com/blabond/ioBroker.maxxi-charge/main/admin/maxxi-charge.png",
+    "readme": "https://github.com/blabond/ioBroker.maxxi-charge/blob/main/README.md",
+    "materialize": false,
+    "adminUI": {
+      "config": "json"
+    },
+    "enabled": true,
+    "compact": true,
+    "type": "communication",
+    "connectionType": "cloud",
+    "dataSource": "poll",
+    "tier": 2,
+    "dependencies": [
+      {
+        "js-controller": ">=5.0.11"
+      }
+    ]
+  },
+  "native": {
+    "maxxiCcuName": "",
+    "refreshInterval": 5
+  },
+  "objects": [],
+  "instanceObjects": []
+}
