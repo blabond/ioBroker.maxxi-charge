@@ -1,6 +1,6 @@
 {
   "name": "iobroker.maxxi-charge",
-  "version": "1.2",
+  "version": "1.2.1",
   "description": "Adapter zur Integration und Steuerung von MaxxiCharge CCU-Geräten, inkl. Datenabfrage, Konfiguration und dynamischem Senden von Steuerbefehlen.",
   "author": {
     "name": "Christoph Böhrs",
@@ -14,7 +14,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/blabond/ioBroker.maxxi-charge.git"
+    "url": "https://github.com/blabond/iobroker.maxxi-charge.git"
   },
   "license": "MIT",
   "dependencies": {
