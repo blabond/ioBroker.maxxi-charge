@@ -46,8 +46,8 @@
                     "value": "local"
                 }
             ],
-            "default": "cloud",
-            "help": "Cloud-API:<br>Mehr Informationen, Abfrage alle 30sec (CCU Info) bzw. alle 5min (Settings).<br><br>Local-API:<br>Live Feed.",
+            "default": "local",
+            "help": "Cloud-API:<br>Abfrage alle 30sec (CCU Info) bzw. alle 5min (Settings).<br><br>Local-API:<br>Live Feed.",
             "style": {
                 "margin": "0 auto",
                 "width": "50%",

@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.1",
+    "version": "1.2",
     "news": {
+		"1.2": {
+        "en": "optimirungen",
+        "de": "optimirungen"
+      },
 		"1.1": {
         "en": "Local und API modus",
         "de": "Local und API modus"
@@ -56,7 +60,7 @@
   "native": {
     "maxxiCcuName": "",
 	"localapiport": "5501",
-	"apiMode": "cloud"
+	"apiMode": "local"
   },
   "objects": [],
   "instanceObjects": []
