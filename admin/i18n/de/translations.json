@@ -7,7 +7,7 @@
 	"Select the API mode": "Wählen Sie den API-Modus",
 	"Cloud API": "Cloud API",
 	"Local API": "Local API",
-	"Cloud-API:<br>Mehr Informationen, Abfrage alle 30sec (CCU Info) bzw. alle 5min (Settings).<br><br>Local-API:<br>Live Feed.": "Cloud-API:<br>Mehr Informationen, Abfrage alle 30sec (CCU Info) bzw. alle 5min (Settings).<br><br>Local-API:<br>Live Feed.",
+	"Cloud-API": "Cloud-API:<br>Abfrage alle 30sec (CCU Info) bzw. alle 5min (Settings).<br><br>Local-API:<br>Live Feed.",
 	"Maxxi API Port": "Maxxi API Port",
 	"Local-API Port": "Local-API Port",
 	"Define the port for the API to listen on.": "Definieren Sie den Port, auf dem die API lauschen soll.",

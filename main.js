@@ -41,8 +41,18 @@ class MaxxiCharge extends utils.Adapter {
         this.apiMode = this.config.apiMode || "cloud";
         this.maxxiCcuName = this.config.maxxiCcuName || "";
 
-        if (!this.maxxiCcuName) {
-            this.log.warn("Kein maxxiCcuName gesetzt. Weder Cloud- noch Local-Mode wird ausgeführt.");
+        // Cloud-Modus
+        if (this.apiMode === "cloud") {
+            if (!this.maxxiCcuName) {
+                this.log.warn("Cloud-Modus ausgewählt, aber 'maxxiCcuName' ist nicht gesetzt. Der Cloud-Modus wird nicht ausgeführt.");
+                return;
+            }        
+            await this.setupCloudAPI();
+        }
+        // Local-Modus
+        else if (this.apiMode === "local") {        
+            await this.setupLocalAPI();
+        } else {        
             return;
         }
 
@@ -63,12 +73,6 @@ class MaxxiCharge extends utils.Adapter {
 
         // Intervall zum Aufräumen inaktiver CCUs
         this.cleanInterval = setInterval(() => this.cleanupActiveDevices(), 60 * 1000); // alle 60s prüfen
-
-        if (this.apiMode === "local") {
-            await this.setupLocalAPI();
-        } else {
-            await this.setupCloudAPI();
-        }
     }
 
     async setupLocalAPI() {
@@ -89,23 +93,23 @@ class MaxxiCharge extends utils.Adapter {
                 let body = '';
                 req.on('data', chunk => (body += chunk));
                 req.on('end', async () => {
-                   // this.log.info('MaxxiCharge Local API: Empfangener POST Body: ' + body);
                     try {
                         const data = JSON.parse(body);
-
                         const deviceId = data.deviceId || 'UnknownDevice';
-                        const folder = `local-${deviceId}`;
-
-                        await this.processLocalData(folder, data);
+                        const deviceFolder = `local-${deviceId}`; 
+                        
+                        // Alle Daten unter local-${deviceId}.systeminfo ablegen
+                        const basePath = `${deviceFolder}.systeminfo`;
+                        await this.processNestedData(basePath, data);
 
                         const ipAddress = this.extractClientIp(req);
-                        await this.ensureStateExists(`${folder}.systeminfo.ip_addr`, ipAddress, "string", "IP-Adresse der Quelle");
-                        await this.setStateAck(`${folder}.systeminfo.ip_addr`, ipAddress);
+                        await this.ensureStateExists(`${deviceFolder}.systeminfo.ip_addr`, ipAddress, "string", "IP-Adresse der Quelle");
+                        await this.setStateAck(`${deviceFolder}.systeminfo.ip_addr`, ipAddress);
 
-                        this.updateActiveCCU(folder);
+                        this.updateActiveCCU(deviceFolder);
 
                         if (!this.commandInitialized && data.deviceId) {
-                            await this.initializeCommandSettings(folder, ipAddress);
+                            await this.initializeCommandSettings(deviceFolder, ipAddress);
                             this.commandInitialized = true;
                         }
 
@@ -126,73 +130,6 @@ class MaxxiCharge extends utils.Adapter {
         this.server.listen(localApiPort, () => {
             this.log.info(`MaxxiCharge Local API empfang gestartet auf Port ${localApiPort}`);
         });
-    }
-
-    async processLocalData(folder, data) {
-        await this.setObjectNotExistsAsync(`${folder}.deviceId`, {
-            type: 'state',
-            common: { name: 'deviceId', type: 'string', role: 'value', read: true, write: false },
-            native: {}
-        });
-        await this.setStateAsync(`${folder}.deviceId`, data.deviceId || '', true);
-
-        await this.setObjectNotExistsAsync(`${folder}.SOC`, {
-            type: 'state',
-            common: { name: 'SOC', type: 'number', role: 'value', read: true, write: false },
-            native: {}
-        });
-        await this.setStateAsync(`${folder}.SOC`, data.SOC || 0, true);
-
-        await this.setObjectNotExistsAsync(`${folder}.wifiStrength`, {
-            type: 'state',
-            common: { name: 'wifiStrength', type: 'number', role: 'value', read: true, write: false },
-            native: {}
-        });
-        await this.setStateAsync(`${folder}.wifiStrength`, data.wifiStrength || 0, true);
-
-        await this.setObjectNotExistsAsync(`${folder}.Pccu`, {
-            type: 'state',
-            common: { name: 'Pccu', type: 'number', role: 'value', read: true, write: false },
-            native: {}
-        });
-        await this.setStateAsync(`${folder}.Pccu`, data.Pccu || 0, true);
-
-        await this.setObjectNotExistsAsync(`${folder}.Pr`, {
-            type: 'state',
-            common: { name: 'Pr', type: 'number', role: 'value', read: true, write: false },
-            native: {}
-        });
-        await this.setStateAsync(`${folder}.Pr`, data.Pr || 0, true);
-
-        await this.setObjectNotExistsAsync(`${folder}.PV_power_total`, {
-            type: 'state',
-            common: { name: 'PV_power_total', type: 'number', role: 'value', read: true, write: false },
-            native: {}
-        });
-        await this.setStateAsync(`${folder}.PV_power_total`, data.PV_power_total || 0, true);
-
-        await this.setObjectNotExistsAsync(`${folder}.firmwareVersion`, {
-            type: 'state',
-            common: { name: 'firmwareVersion', type: 'number', role: 'value', read: true, write: false },
-            native: {}
-        });
-        await this.setStateAsync(`${folder}.firmwareVersion`, data.firmwareVersion || 0, true);
-
-        await this.setObjectNotExistsAsync(`${folder}.date`, {
-            type: 'state',
-            common: { name: 'date', type: 'number', role: 'value.time', read: true, write: false },
-            native: {}
-        });
-        await this.setStateAsync(`${folder}.date`, data.date || 0, true);
-
-        if (Array.isArray(data.batteriesInfo) && data.batteriesInfo.length > 0) {
-            await this.setObjectNotExistsAsync(`${folder}.batteryCapacity`, {
-                type: 'state',
-                common: { name: 'batteryCapacity', type: 'number', role: 'value', read: true, write: false },
-                native: {}
-            });
-            await this.setStateAsync(`${folder}.batteryCapacity`, data.batteriesInfo[0].batteryCapacity || 0, true);
-        }
     }
 
     async setupCloudAPI() {
@@ -252,7 +189,6 @@ class MaxxiCharge extends utils.Adapter {
             basePath = `${folder}.${baseFolder}`;
 
             await this.processNestedData(basePath, data);
-
             this.updateActiveCCU(folder);
 
         } catch (err) {
@@ -299,43 +235,68 @@ class MaxxiCharge extends utils.Adapter {
         }
     }
 
-	async initializeCommandSettings(deviceFolder, ipAddress) {
-		const namespace = `${deviceFolder}.sendcommand`;
+    async initializeCommandSettings(deviceFolder, ipAddress) {
+        const namespace = `${deviceFolder}.sendcommand`;
 
-		for (const dp of this.commandDatapoints) {
-			const fullPath = `${namespace}.${dp.id}`;
+        for (const dp of this.commandDatapoints) {
+            const fullPath = `${namespace}.${dp.id}`;
 
-			// 1. Datenpunkt ohne min/max erstellen
-			await this.setObjectNotExistsAsync(fullPath, {
-				type: 'state',
-				common: {
-					name: dp.description,
-					type: dp.type,
-					role: 'value',
-					read: true,
-					write: true
-				},
-				native: {}
-			});
+            // Prüfen, ob Datenpunkt bereits existiert
+            const obj = await this.getObjectAsync(fullPath);
+            if (!obj) {
+                // Datenpunkt existiert nicht, also neu anlegen ohne min/max
+                await this.setObjectNotExistsAsync(fullPath, {
+                    type: 'state',
+                    common: {
+                        name: dp.description,
+                        type: dp.type,
+                        role: 'value',
+                        read: true,
+                        write: true
+                    },
+                    native: {}
+                });
 
-			// 2. Initialwert 0 setzen
-			await this.setStateAsync(fullPath, { val: 0, ack: true });
+                // State auf default setzen (noch ohne min/max)
+                await this.setStateAsync(fullPath, { val: dp.default, ack: true });
 
-			// 3. min/max hinzufügen
-			await this.extendObjectAsync(fullPath, {
-				common: {
-					min: dp.min,
-					max: dp.max,
-					states: dp.states || undefined,
-					def: dp.default // Kann bei Bedarf weggelassen werden
-				}
-			});
+                // Nun min/max hinzufügen
+                await this.extendObjectAsync(fullPath, {
+                    common: {
+                        min: dp.min,
+                        max: dp.max,
+                        states: dp.states || undefined
+                    }
+                });
 
-			// Abonnieren von Änderungen des Datenpunkts
-			this.subscribeStates(fullPath);		
-		}
-	}
+                // Änderungen abonnieren
+                this.subscribeStates(fullPath);
+            } else {
+                // Datenpunkt existiert bereits
+                // Sicherstellen, dass min/max gesetzt ist (falls nicht schon geschehen)
+                const currentObj = await this.getObjectAsync(fullPath);
+                const common = currentObj.common || {};
+                let needUpdate = false;
 
+                if (common.min !== dp.min || common.max !== dp.max || JSON.stringify(common.states || {}) !== JSON.stringify(dp.states || {})) {
+                    needUpdate = true;
+                }
+
+                if (needUpdate) {
+                    await this.extendObjectAsync(fullPath, {
+                        common: {
+                            min: dp.min,
+                            max: dp.max,
+                            states: dp.states || undefined
+                        }
+                    });
+                }
+
+                // Falls noch nicht abonniert, erneut abonnieren (schadet nicht)
+                this.subscribeStates(fullPath);
+            }
+        }
+    }
 
     updateActiveCCU(folder) {
         const now = Date.now();
@@ -372,13 +333,8 @@ class MaxxiCharge extends utils.Adapter {
     async onStateChange(id, state) {
         if (!state || state.ack) return;
 
-        //this.log.debug(`Zustandsänderung erkannt: ${id} -> ${state.val}`);
-
         const parts = id.split(".");
-        // parts[0] = adapterName (z.B. maxxi-charge)
-        // parts[1] = instanz (z.B. 0)
-        // parts[2] = cloud-DeviceID oder local-DeviceID
-        const deviceId = parts[2];
+        const deviceId = parts[2]; // z.B. cloud-DeviceID oder local-DeviceID
         const datapointId = parts[parts.length - 1];
 
         const datapoint = this.commandDatapoints.find((dp) => dp.id === datapointId);
@@ -387,6 +343,7 @@ class MaxxiCharge extends utils.Adapter {
             return;
         }
 
+        // Hier werden ggf. Warnungen ausgegeben, wenn user außerhalb der Grenzen schreibt
         if (datapoint.min !== undefined && state.val < datapoint.min) {
             this.log.warn(`Wert für ${datapointId} zu klein. Minimum: ${datapoint.min}`);
             await this.setStateAsync(id, { val: datapoint.min, ack: true });
