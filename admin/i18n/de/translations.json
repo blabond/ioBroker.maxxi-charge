@@ -1,5 +1,15 @@
 {
 	"maxxi-charge adapter settings": "Adaptereinstellungen für maxxi-charge",
-	"maxxiCcuName": "Maxxi CCU Name",
-	"refreshInterval": "Aktualisierungsintervall"
+	"Maxxi CCU Config": "Maxxi CCU Konfiguration",
+	"Maxxi CCU Name": "Maxxi CCU Name",
+	"Geben Sie den Namen der Maxxi CCU ein (z. B. maxxi-XXXXXX-YYY).": "Geben Sie den Namen der Maxxi CCU ein (z. B. maxxi-XXXXXX-YYY).",
+	"API Mode": "API Modus",
+	"Select the API mode": "Wählen Sie den API-Modus",
+	"Cloud API": "Cloud API",
+	"Local API": "Local API",
+	"Cloud-API:<br>Mehr Informationen, Abfrage alle 30sec (CCU Info) bzw. alle 5min (Settings).<br><br>Local-API:<br>Live Feed.": "Cloud-API:<br>Mehr Informationen, Abfrage alle 30sec (CCU Info) bzw. alle 5min (Settings).<br><br>Local-API:<br>Live Feed.",
+	"Maxxi API Port": "Maxxi API Port",
+	"Local-API Port": "Local-API Port",
+	"Define the port for the API to listen on.": "Definieren Sie den Port, auf dem die API lauschen soll.",
+	"For using the Local-API service, enter the following as the Api-Route: 'http://<IP>:<PORT>'": "Für die Nutzung des Local-API Dienstes folgendes beim Api-Route eingeben: 'http://<IP>:<PORT>'"
 }

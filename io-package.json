@@ -1,8 +1,12 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.0.42",
+    "version": "1.1",
     "news": {
+		"1.1": {
+        "en": "Local und API modus",
+        "de": "Local und API modus"
+      },
       "1.0.42": {
         "en": "Release",
         "de": "Veröffentlichung"
@@ -23,15 +27,11 @@
       }
     ],
     "keywords": [
-      "Maxxisun",
-      "Maxxicharge"
+      "maxxisun",
+      "maxxicharge",
+	  "iobroker"
     ],
-     "licenseInformation": {        
-        "spdx": "MIT",
-        "type": "free",
-        "text": "MIT License",
-        "link": "https://opensource.org/licenses/MIT"
-    },
+    "license": "MIT",
     "platform": "Javascript/Node.js",
     "mode": "daemon",
     "icon": "maxxi-charge.png",
@@ -55,7 +55,8 @@
   },
   "native": {
     "maxxiCcuName": "",
-    "refreshInterval": 5
+	"localapiport": "5501",
+	"apiMode": "cloud"
   },
   "objects": [],
   "instanceObjects": []
