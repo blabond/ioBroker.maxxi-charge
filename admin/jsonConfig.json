@@ -4,7 +4,7 @@
     "items": {
         "_header1": {
             "type": "header",
-            "text": "Maxxi Einstellungen",
+            "text": "Maxxi CCU Config",
             "size": 3,
             "style": {
                 "textAlign": "center",
@@ -23,18 +23,66 @@
                 "textAlign": "center"
             }
         },
-        "refreshInterval": {
-            "type": "slider",
-            "label": "Aktualisierungsintervall (in Minuten)",
-            "min": 1,
-            "max": 60,
-            "step": 1,
-            "default": 5,
-            "newLine": true,
-            "help": "Ziehe den Regler, um das Aktualisierungsintervall in Minuten einzustellen.",
+        "_header1_5": {
+            "type": "header",
+            "text": "API Modus",
+            "size": 3,
+            "style": {
+                "textAlign": "center",
+                "marginTop": "40px",  // Abstand von zwei Zeilen
+                "marginBottom": "20px"
+            }
+        },
+        "apiMode": {
+            "type": "select",
+            "label": "Wähle den API Modus",
+            "options": [
+                {
+                    "label": "Cloud API",
+                    "value": "cloud"
+                },
+                {
+                    "label": "Local API",
+                    "value": "local"
+                }
+            ],
+            "default": "cloud",
+            "help": "Cloud-API:<br>Mehr Informationen, Abfrage alle 30sec (CCU Info) bzw. alle 5min (Settings).<br><br>Local-API:<br>Live Feed.",
             "style": {
                 "margin": "0 auto",
-                "width": "50%"
+                "width": "50%",
+                "textAlign": "center"
+            }
+        },
+        "_header2": {
+            "type": "header",
+            "text": "Maxxi API Port",
+            "size": 3,
+            "style": {
+                "textAlign": "center",
+                "marginTop": "40px",  // Abstand von zwei Zeilen
+                "marginBottom": "20px"
+            }
+        },
+        "localapiport": {
+            "type": "text",
+            "label": "Local-API Port",
+            "newLine": true,
+            "default": "5501",
+            "help": "Definieren Sie den Port, auf dem die API lauschen soll.",
+            "style": {
+                "margin": "0 auto",
+                "width": "50%",
+                "textAlign": "center"
+            }
+        },
+        "_localApiHint": {
+            "type": "staticText",
+            "text": "Für die Nutzung des Local-API Dienstes folgendes beim Api-Route eingeben: 'http://<IP>:<PORT>'",
+            "style": {
+                "margin": "20px 0",
+                "width": "80%",
+                "textAlign": "center"
             }
         }
     }
