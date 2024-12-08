@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.2.18",
+    "version": "1.2.19",
 	"news": {
-	  "1.2.18": {
+	  "1.2.19": {
 		"en": "Git / npm Release (IoBroker integration)",
 		"de": "Git / npm Release (IoBroker-Integration)",
 		"ru": "Релиз Git / npm (Интеграция IoBroker)",

@@ -13,11 +13,13 @@
         },
         "maxxiCcuName": {
             "type": "text",
-			"size": "md",
             "label": "Maxxi CCU Name",
             "newLine": true,
             "default": "maxxi-XXXXXX-YYY",
             "help": "Geben Sie den Namen der Maxxi CCU ein (z. B. maxxi-XXXXXX-YYY).",
+            "layout": {
+                "size": "md"
+            },
             "style": {
                 "margin": "0 auto",
                 "width": "50%",
@@ -36,7 +38,6 @@
         },
         "apiMode": {
             "type": "select",
-			"size": "md",
             "label": "Wähle den API Modus",
             "options": [
                 {
@@ -50,6 +51,9 @@
             ],
             "default": "local",
             "help": "Cloud-API:<br>Abfrage alle 30sec (CCU Info) bzw. alle 5min (Settings).<br><br>Local-API:<br>Live Feed.",
+            "layout": {
+                "size": "md"
+            },
             "style": {
                 "margin": "0 auto",
                 "width": "50%",
@@ -68,11 +72,13 @@
         },
         "localapiport": {
             "type": "text",
-			"size": "md",
             "label": "Local-API Port",
             "newLine": true,
             "default": "5501",
             "help": "Definieren Sie den Port, auf dem die API lauschen soll.",
+            "layout": {
+                "size": "md"
+            },
             "style": {
                 "margin": "0 auto",
                 "width": "50%",
@@ -81,8 +87,10 @@
         },
         "_localApiHint": {
             "type": "staticText",
-			"size": "md",
             "text": "Für die Nutzung des Local-API Dienstes folgendes beim Api-Route eingeben: 'http://<IP>:<PORT>'",
+            "layout": {
+                "size": "md"
+            },
             "style": {
                 "margin": "20px 0",
                 "width": "80%",
