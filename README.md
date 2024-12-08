@@ -27,7 +27,7 @@
 1. **Adapter konfigurieren**:
    - Den Namen der CCU (`Maxxi CCU Name`) eintragen.
    - API Modus auswählen 
-   - Bei auswahl Local-API in der CCU unter Api-Route eintragen: http://<IP>:<PORT> eingeben
+   - Bei auswahl Local-API in der CCU unter Api-Route eintragen: http://"IP":"PORT" eingeben
 
 ## Konfigurationsmöglichkeiten
 
