@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.2.16",
+    "version": "1.2.18",
 	"news": {
-	  "1.2.16": {
+	  "1.2.18": {
 		"en": "Git / npm Release (IoBroker integration)",
 		"de": "Git / npm Release (IoBroker-Integration)",
 		"ru": "Релиз Git / npm (Интеграция IoBroker)",
@@ -15,32 +15,6 @@
 		"pl": "Wydanie Git / npm (Integracja IoBroker)",
 		"uk": "Реліз Git / npm (Інтеграція IoBroker)",
 		"zh-cn": "Git / npm 发布（IoBroker 集成）"
-	  },
-	  "1.2": {
-		"en": "Optimizations",
-		"de": "Optimierungen",
-		"ru": "Оптимизации",
-		"pt": "Otimizações",
-		"nl": "Optimalisaties",
-		"fr": "Optimisations",
-		"it": "Ottimizzazioni",
-		"es": "Optimización",
-		"pl": "Optymalizacje",
-		"uk": "Оптимізації",
-		"zh-cn": "优化"
-	  },
-	  "1.1": {
-		"en": "Local and API mode",
-		"de": "Lokaler und API-Modus",
-		"ru": "Локальный и API-режим",
-		"pt": "Modo Local e API",
-		"nl": "Lokale en API-modus",
-		"fr": "Mode local et API",
-		"it": "Modalità locale e API",
-		"es": "Modo Local y API",
-		"pl": "Tryb lokalny i API",
-		"uk": "Локальний та API-режим",
-		"zh-cn": "本地和 API 模式"
 	  },
 	  "1.0.42": {
 		"en": "Release",
@@ -114,7 +88,7 @@
     "tier": 2,
     "dependencies": [
       {
-        "js-controller": ">=5.0.11"
+        "js-controller": ">=5.0.19"
       }
     ]
   },
