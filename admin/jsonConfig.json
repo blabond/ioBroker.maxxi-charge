@@ -4,11 +4,10 @@
     "items": {
         "_header1": {
             "type": "header",
-            "text": "Maxxi CCU Config",
+            "text": "Maxxi CCU Konfiguration",
             "size": 3,
             "style": {
-                "textAlign": "center",
-                "marginBottom": "20px"
+                "textAlign": "center"
             }
         },
         "maxxiCcuName": {
@@ -17,9 +16,11 @@
             "newLine": true,
             "default": "maxxi-XXXXXX-YYY",
             "help": "Geben Sie den Namen der Maxxi CCU ein (z. B. maxxi-XXXXXX-YYY).",
-            "layout": {
-                "size": "md"
-            },
+            "xl": 4,
+            "lg": 4,
+            "md": 6,
+            "sm": 12,
+            "xs": 12,
             "style": {
                 "margin": "0 auto",
                 "width": "50%",
@@ -31,9 +32,7 @@
             "text": "API Modus",
             "size": 3,
             "style": {
-                "textAlign": "center",
-                "marginTop": "40px",
-                "marginBottom": "20px"
+                "textAlign": "center"
             }
         },
         "apiMode": {
@@ -51,9 +50,11 @@
             ],
             "default": "local",
             "help": "Cloud-API:<br>Abfrage alle 30sec (CCU Info) bzw. alle 5min (Settings).<br><br>Local-API:<br>Live Feed.",
-            "layout": {
-                "size": "md"
-            },
+            "xl": 4,
+            "lg": 4,
+            "md": 6,
+            "sm": 12,
+            "xs": 12,
             "style": {
                 "margin": "0 auto",
                 "width": "50%",
@@ -65,9 +66,7 @@
             "text": "Maxxi API Port",
             "size": 3,
             "style": {
-                "textAlign": "center",
-                "marginTop": "40px",
-                "marginBottom": "20px"
+                "textAlign": "center"
             }
         },
         "localapiport": {
@@ -76,9 +75,11 @@
             "newLine": true,
             "default": "5501",
             "help": "Definieren Sie den Port, auf dem die API lauschen soll.",
-            "layout": {
-                "size": "md"
-            },
+            "xl": 4,
+            "lg": 4,
+            "md": 6,
+            "sm": 12,
+            "xs": 12,
             "style": {
                 "margin": "0 auto",
                 "width": "50%",
@@ -88,9 +89,11 @@
         "_localApiHint": {
             "type": "staticText",
             "text": "Für die Nutzung des Local-API Dienstes folgendes beim Api-Route eingeben: 'http://<IP>:<PORT>'",
-            "layout": {
-                "size": "md"
-            },
+            "xl": 6,
+            "lg": 6,
+            "md": 8,
+            "sm": 12,
+            "xs": 12,
             "style": {
                 "margin": "20px 0",
                 "width": "80%",

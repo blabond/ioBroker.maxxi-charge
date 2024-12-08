@@ -58,7 +58,7 @@ Der Adapter erstellt dynamisch Datenpunkte basierend auf den von der CCU zurück
 
 ## Changelog
 
-### 1.2.18 (2025-12-08)
+### 1.2.191 (2025-12-08)
 
 * Veröffentlichung
 
