@@ -1,128 +1,128 @@
 {
-    "common": {
-        "name": "maxxi-charge",
-        "version": "1.2.13",
-        "news": {
-            "1.2.13": {
-                "en": "Git / npm Release (IoBroker integration)",
-                "de": "Git / npm Release (IoBroker-Integration)",
-                "ru": "Релиз Git / npm (Интеграция IoBroker)",
-                "pt": "Lançamento Git / npm (Integração IoBroker)",
-                "nl": "Git / npm Release (IoBroker-integratie)",
-                "fr": "Publication Git / npm (Intégration IoBroker)",
-                "it": "Rilascio Git / npm (Integrazione IoBroker)",
-                "es": "Lanzamiento Git / npm (Integración IoBroker)",
-                "pl": "Wydanie Git / npm (Integracja IoBroker)",
-                "uk": "Реліз Git / npm (Інтеграція IoBroker)",
-                "zh-cn": "Git / npm 发布（IoBroker 集成）"
-            },
-            "1.2": {
-                "en": "Optimizations",
-                "de": "Optimierungen",
-                "ru": "Оптимизации",
-                "pt": "Otimizações",
-                "nl": "Optimalisaties",
-                "fr": "Optimisations",
-                "it": "Ottimizzazioni",
-                "es": "Optimización",
-                "pl": "Optymalizacje",
-                "uk": "Оптимізації",
-                "zh-cn": "优化"
-            },
-            "1.1": {
-                "en": "Local and API mode",
-                "de": "Lokaler und API-Modus",
-                "ru": "Локальный и API-режим",
-                "pt": "Modo Local e API",
-                "nl": "Lokale en API-modus",
-                "fr": "Mode local et API",
-                "it": "Modalità locale e API",
-                "es": "Modo Local y API",
-                "pl": "Tryb lokalny i API",
-                "uk": "Локальний та API-режим",
-                "zh-cn": "本地和 API 模式"
-            },
-            "1.0.42": {
-                "en": "Release",
-                "de": "Veröffentlichung",
-                "ru": "Релиз",
-                "pt": "Lançamento",
-                "nl": "Uitgave",
-                "fr": "Publication",
-                "it": "Rilascio",
-                "es": "Lanzamiento",
-                "pl": "Wydanie",
-                "uk": "Реліз",
-                "zh-cn": "发布"
-            }
-        },
-        "titleLang": {
-            "en": "MaxxiCharge",
-            "de": "MaxxiCharge",
-            "ru": "МаксиЧардж",
-            "pt": "MaxxiCharge",
-            "nl": "MaxxiCharge",
-            "fr": "MaxxiCharge",
-            "it": "MaxxiCharge",
-            "es": "MaxxiCharge",
-            "pl": "MaxxiCharge",
-            "uk": "МаксіЧардж",
-            "zh-cn": "MaxxiCharge"
-        },
-        "desc": {
-            "en": "Adapter to fetch data from MaxxiCharge CCU",
-            "de": "Adapter zum Abrufen von Daten von MaxxiCharge CCU",
-            "ru": "Адаптер для получения данных с MaxxiCharge CCU",
-            "pt": "Adaptador para buscar dados do MaxxiCharge CCU",
-            "nl": "Adapter om gegevens van MaxxiCharge CCU op te halen",
-            "fr": "Adaptateur pour récupérer les données de MaxxiCharge CCU",
-            "it": "Adattatore per recuperare dati da MaxxiCharge CCU",
-            "es": "Adaptador para obtener datos de MaxxiCharge CCU",
-            "pl": "Adapter do pobierania danych z MaxxiCharge CCU",
-            "uk": "Адаптер для отримання даних з MaxxiCharge CCU",
-            "zh-cn": "用于从 MaxxiCharge CCU 获取数据的适配器"
-        },
-        "authors": [
-            {
-                "name": "Christoph Böhrs",
-                "email": "git@mr-bond.de"
-            }
-        ],
-        "keywords": [
-            "maxxisun",
-            "maxxicharge"
-        ],
-        "licenseInformation": {
-            "type": "free",
-            "link": "https://github.com/blabond/ioBroker.maxxi-charge/blob/master/LICENSE",
-            "license": "MIT"
-        },
-        "platform": "Javascript/Node.js",
-        "mode": "daemon",
-        "icon": "maxxi-charge.png",
-        "extIcon": "https://raw.githubusercontent.com/blabond/ioBroker.maxxi-charge/main/admin/maxxi-charge.png",
-        "readme": "https://github.com/blabond/ioBroker.maxxi-charge/blob/main/README.md",
-        "materialize": false,
-        "adminUI": {
-            "config": "json"
-        },
-        "enabled": true,
-        "compact": true,
-        "type": "communication",
-        "connectionType": "cloud",
-        "dataSource": "poll",
-        "tier": 2,
-        "dependencies": [
-            {
-                "js-controller": ">=5.0.11"
-            }
-        ]
+  "common": {
+    "name": "maxxi-charge",
+    "version": "1.2.14",
+	"news": {
+	  "1.2.14": {
+		"en": "Git / npm Release (IoBroker integration)",
+		"de": "Git / npm Release (IoBroker-Integration)",
+		"ru": "Релиз Git / npm (Интеграция IoBroker)",
+		"pt": "Lançamento Git / npm (Integração IoBroker)",
+		"nl": "Git / npm Release (IoBroker-integratie)",
+		"fr": "Publication Git / npm (Intégration IoBroker)",
+		"it": "Rilascio Git / npm (Integrazione IoBroker)",
+		"es": "Lanzamiento Git / npm (Integración IoBroker)",
+		"pl": "Wydanie Git / npm (Integracja IoBroker)",
+		"uk": "Реліз Git / npm (Інтеграція IoBroker)",
+		"zh-cn": "Git / npm 发布（IoBroker 集成）"
+	  },
+	  "1.2": {
+		"en": "Optimizations",
+		"de": "Optimierungen",
+		"ru": "Оптимизации",
+		"pt": "Otimizações",
+		"nl": "Optimalisaties",
+		"fr": "Optimisations",
+		"it": "Ottimizzazioni",
+		"es": "Optimización",
+		"pl": "Optymalizacje",
+		"uk": "Оптимізації",
+		"zh-cn": "优化"
+	  },
+	  "1.1": {
+		"en": "Local and API mode",
+		"de": "Lokaler und API-Modus",
+		"ru": "Локальный и API-режим",
+		"pt": "Modo Local e API",
+		"nl": "Lokale en API-modus",
+		"fr": "Mode local et API",
+		"it": "Modalità locale e API",
+		"es": "Modo Local y API",
+		"pl": "Tryb lokalny i API",
+		"uk": "Локальний та API-режим",
+		"zh-cn": "本地和 API 模式"
+	  },
+	  "1.0.42": {
+		"en": "Release",
+		"de": "Veröffentlichung",
+		"ru": "Релиз",
+		"pt": "Lançamento",
+		"nl": "Uitgave",
+		"fr": "Publication",
+		"it": "Rilascio",
+		"es": "Lanzamiento",
+		"pl": "Wydanie",
+		"uk": "Реліз",
+		"zh-cn": "发布"
+	  }
+	},
+	"titleLang": {
+	  "en": "MaxxiCharge",
+	  "de": "MaxxiCharge",
+	  "ru": "МаксиЧардж",
+	  "pt": "MaxxiCharge",
+	  "nl": "MaxxiCharge",
+	  "fr": "MaxxiCharge",
+	  "it": "MaxxiCharge",
+	  "es": "MaxxiCharge",
+	  "pl": "MaxxiCharge",
+	  "uk": "МаксіЧардж",
+	  "zh-cn": "MaxxiCharge"
+	},
+	"desc": {
+	  "en": "Adapter to fetch data from MaxxiCharge CCU",
+	  "de": "Adapter zum Abrufen von Daten von MaxxiCharge CCU",
+	  "ru": "Адаптер для получения данных с MaxxiCharge CCU",
+	  "pt": "Adaptador para buscar dados do MaxxiCharge CCU",
+	  "nl": "Adapter om gegevens van MaxxiCharge CCU op te halen",
+	  "fr": "Adaptateur pour récupérer les données de MaxxiCharge CCU",
+	  "it": "Adattatore per recuperare dati da MaxxiCharge CCU",
+	  "es": "Adaptador para obtener datos de MaxxiCharge CCU",
+	  "pl": "Adapter do pobierania danych z MaxxiCharge CCU",
+	  "uk": "Адаптер для отримання даних з MaxxiCharge CCU",
+	  "zh-cn": "用于从 MaxxiCharge CCU 获取数据的适配器"
+	},
+    "authors": [
+      {
+        "name": "Christoph Böhrs",
+        "email": "git@mr-bond.de"
+      }
+    ],
+    "keywords": [
+      "maxxisun",
+      "maxxicharge"
+    ],
+	"licenseInformation": {
+      "type": "free",
+      "link": "https://github.com/blabond/ioBroker.maxxi-charge/blob/master/LICENSE",
+      "license": "MIT"
     },
-    "native": {
-        "maxxiCcuName": "",
-        "localapiport": "5501",
-        "apiMode": "local"
+    "platform": "Javascript/Node.js",
+    "mode": "daemon",
+    "icon": "maxxi-charge.png",
+    "extIcon": "https://raw.githubusercontent.com/blabond/ioBroker.maxxi-charge/main/admin/maxxi-charge.png",
+    "readme": "https://github.com/blabond/ioBroker.maxxi-charge/blob/main/README.md",
+    "materialize": false,
+    "adminUI": {
+      "config": "json"
     },
-    "objects": [],
-    "instanceObjects": []
+    "enabled": true,
+    "compact": true,
+    "type": "communication",
+    "connectionType": "cloud",
+    "dataSource": "poll",
+    "tier": 2,
+    "dependencies": [
+      {
+        "js-controller": ">=5.0.11"
+      }
+    ]
+  },
+  "native": {
+    "maxxiCcuName": "",
+	"localapiport": "5501",
+	"apiMode": "local"
+  },
+  "objects": [],
+  "instanceObjects": []
 }
