@@ -13,6 +13,7 @@
         },
         "maxxiCcuName": {
             "type": "text",
+			"size": "md",
             "label": "Maxxi CCU Name",
             "newLine": true,
             "default": "maxxi-XXXXXX-YYY",
@@ -35,6 +36,7 @@
         },
         "apiMode": {
             "type": "select",
+			"size": "md",
             "label": "Wähle den API Modus",
             "options": [
                 {
@@ -66,6 +68,7 @@
         },
         "localapiport": {
             "type": "text",
+			"size": "md",
             "label": "Local-API Port",
             "newLine": true,
             "default": "5501",
@@ -78,6 +81,7 @@
         },
         "_localApiHint": {
             "type": "staticText",
+			"size": "md",
             "text": "Für die Nutzung des Local-API Dienstes folgendes beim Api-Route eingeben: 'http://<IP>:<PORT>'",
             "style": {
                 "margin": "20px 0",
