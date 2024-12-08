@@ -29,7 +29,7 @@
             "size": 3,
             "style": {
                 "textAlign": "center",
-                "marginTop": "40px",  // Abstand von zwei Zeilen
+                "marginTop": "40px",
                 "marginBottom": "20px"
             }
         },
@@ -60,7 +60,7 @@
             "size": 3,
             "style": {
                 "textAlign": "center",
-                "marginTop": "40px",  // Abstand von zwei Zeilen
+                "marginTop": "40px",
                 "marginBottom": "20px"
             }
         },
