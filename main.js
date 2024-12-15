@@ -1,8 +1,11 @@
 'use strict';
 
 const utils = require('@iobroker/adapter-core');
-const http = require('http');
 const axios = require('axios');
+
+const localApi = require('./localApi');
+const cloudApi = require('./cloudApi');
+const EcoMode = require('./ecoMode');
 
 class MaxxiCharge extends utils.Adapter {
     constructor(options) {
@@ -22,162 +25,83 @@ class MaxxiCharge extends utils.Adapter {
         this.apiMode = null;
         this.maxxiCcuName = null;
 
-        // Aktive Devices: { "cloud-DeviceID": timestamp, "local-DeviceID": timestamp }
         this.activeDevices = {};
 
-        // Sendcommand-Datenpunkte
         this.commandDatapoints = [
-            { id: "maxOutputPower", description: "Maximale CCU Watt-Leistung", type: "number", min: 200, max: 1800, default: 0 },
-            { id: "offlinePower", description: "Fallback-Stromabgabe", type: "number", min: 100, max: 600, default: 0 },
-            { id: "baseLoad", description: "Stromzähler-Korrektur", type: "number", min: -300, max: 300, default: 0 },
-            { id: "threshold", description: "Reaktionstoleranz", type: "number", min: 10, max: 150, default: 0 },
-            { id: "minSOC", description: "Minimale Entladung", type: "number", min: 2, max: 90, default: 0 },
-            { id: "maxSOC", description: "Maximale Akkuladung", type: "number", min: 30, max: 100, default: 0 },
-            { id: "dcAlgorithm", description: "Steuerungsverhalten der CCU", type: "number", states: { 1: "Basic (0.38)", 2: "Forced (0.40+)" }, default: 0 },
+            { id: "maxOutputPower", description: "Mikro-Wechselrichter maximale Leistung (Watt)", type: "number", min: 300, max: 1800, default: 0 },
+            { id: "offlinePower", description: "Offline-Ausgangsleistung (Watt)", type: "number", min: 50, max: 600, default: 0 },
+            { id: "baseLoad", description: "Ausgabe korrigieren (Watt)", type: "number", min: -100, max: 100, default: 0 },
+            { id: "threshold", description: "Reaktionstoleranz (Watt)", type: "number", min: 5, max: 50, default: 0 },
+            { id: "minSOC", description: "Minimale Entladung der Batterie", type: "number", min: 2, max: 95, default: 0 },
+            { id: "maxSOC", description: "Maximale Entladung der Batterie", type: "number", min: 20, max: 100, default: 0 },
+            { id: "dcAlgorithm", description: "Steuerungsverhalten der CCU (Algorithmus)", type: "number", states: { 1: "Basic (0.38)", 2: "Forced (0.40+)" }, default: 0 },
         ];
     }
 
-    async onReady() {
-        this.apiMode = this.config.apiMode || "cloud";
-        this.maxxiCcuName = this.config.maxxiCcuName || "";
+   async onReady() {
+		this.apiMode = this.config.apiMode || "cloud";
+		this.maxxiCcuName = this.config.maxxiCcuName || "";
 
-        // Cloud-Modus
-        if (this.apiMode === "cloud") {
-            if (!this.maxxiCcuName) {
-                this.log.warn("Cloud-Modus ausgewählt, aber 'maxxiCcuName' ist nicht gesetzt. Der Cloud-Modus wird nicht ausgeführt.");
-                return;
-            }        
-            await this.setupCloudAPI();
-        }
-        // Local-Modus
-        else if (this.apiMode === "local") {        
-            await this.setupLocalAPI();
-        } else {        
-            return;
-        }
+		if (this.apiMode === "cloud") {
+			if (!this.maxxiCcuName) {
+				this.log.warn("Cloud-Modus ausgewählt, aber 'maxxiCcuName' ist nicht gesetzt. Der Cloud-Modus wird nicht ausgeführt.");
+			} else {
+				await cloudApi.setupCloudAPI(this);
+			}
+		} else if (this.apiMode === "local") {
+			await localApi.setupLocalAPI(this);
+		}
 
-        // Info-Ordner vorbereiten
-        await this.setObjectNotExistsAsync("info.aktivCCU", {
-            type: "state",
-            common: { name: "Aktive CCUs", type: "string", role: "value", read: true, write: false },
-            native: {}
-        });
-        await this.setObjectNotExistsAsync("info.connection", {
-            type: "state",
-            common: { name: "Verbindung aktiv", type: "boolean", role: "indicator.connected", read: true, write: false },
-            native: {}
-        });
+		await this.setObjectNotExistsAsync("info.aktivCCU", {
+			type: "state",
+			common: { name: "Aktive CCUs", type: "string", role: "value", read: true, write: false },
+			native: {}
+		});
+		await this.setObjectNotExistsAsync("info.connection", {
+			type: "state",
+			common: { name: "Verbindung aktiv", type: "boolean", role: "indicator.connected", read: true, write: false },
+			native: {}
+		});
 
-        await this.setStateAsync("info.aktivCCU", { val: "", ack: true });
-        await this.setStateAsync("info.connection", { val: false, ack: true });
+		await this.setStateAsync("info.aktivCCU", { val: "", ack: true });
+		await this.setStateAsync("info.connection", { val: false, ack: true });
 
-        // Intervall zum Aufräumen inaktiver CCUs
-        this.cleanInterval = setInterval(() => this.cleanupActiveDevices(), 60 * 1000); // alle 60s prüfen
-    }
+		this.cleanInterval = setInterval(() => this.cleanupActiveDevices(), 60 * 1000);
 
-    async setupLocalAPI() {
-        const localApiPort = this.config.localApiPort || 5501;
+		// IP-Adresse des Hosts ermitteln
+		const hostObject = await this.getForeignObjectAsync(`system.host.${this.host}`);
+		let ipAddress = "127.0.0.1"; // Fallback, falls keine IP gefunden wird
 
-        this.server = http.createServer((req, res) => {
-            res.setHeader('Access-Control-Allow-Origin', '*');
-            res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-            res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+		if (hostObject && hostObject.native && hostObject.native.hardware) {
+			const networkInterfaces = hostObject.native.hardware.networkInterfaces;
+			for (const ifaceName in networkInterfaces) {
+				const iface = networkInterfaces[ifaceName];
+				for (const address of iface) {
+					if (!address.internal && address.family === 'IPv4') {
+						ipAddress = address.address; 
+						break;
+					}
+				}
+				if (ipAddress !== "127.0.0.1") break;
+			}
+		}
 
-            if (req.method === 'OPTIONS') {
-                res.writeHead(200);
-                res.end();
-                return;
-            }
+		await this.setObjectNotExistsAsync("info.hostIp", {
+			type: "state",
+			common: { name: "Host-IP-Adresse", type: "string", role: "info.ip", read: true, write: false },
+			native: {}
+		});
+		await this.setStateAsync("info.hostIp", { val: ipAddress, ack: true });
 
-            if (req.method === 'POST') {
-                let body = '';
-                req.on('data', chunk => (body += chunk));
-                req.on('end', async () => {
-                    try {
-                        const data = JSON.parse(body);
-                        const deviceId = data.deviceId || 'UnknownDevice';
-                        const deviceFolder = `local-${deviceId}`; 
-                        
-                        // Alle Daten unter local-${deviceId}.systeminfo ablegen
-                        const basePath = `${deviceFolder}.systeminfo`;
-                        await this.processNestedData(basePath, data);
+		// this.log.info(`Ermittelte IP-Adresse des Hosts: ${ipAddress}`);
 
-                        const ipAddress = this.extractClientIp(req);
-                        await this.ensureStateExists(`${deviceFolder}.systeminfo.ip_addr`, ipAddress, "string", "IP-Adresse der Quelle");
-                        await this.setStateAck(`${deviceFolder}.systeminfo.ip_addr`, ipAddress);
+		// EcoMode initialisieren
+		this.ecoMode = new EcoMode(this);
+		await this.ecoMode.init();
 
-                        this.updateActiveCCU(deviceFolder);
+	}
 
-                        if (!this.commandInitialized && data.deviceId) {
-                            await this.initializeCommandSettings(deviceFolder, ipAddress);
-                            this.commandInitialized = true;
-                        }
 
-                        res.writeHead(200, { 'Content-Type': 'application/json' });
-                        res.end(JSON.stringify({ status: 'ok' }));
-                    } catch (err) {
-                        this.log.error('MaxxiCharge Local API: Fehler beim Parsen des JSON: ' + err);
-                        res.writeHead(400, { 'Content-Type': 'application/json' });
-                        res.end(JSON.stringify({ error: 'invalid JSON' }));
-                    }
-                });
-            } else {
-                res.writeHead(404, { 'Content-Type': 'text/plain' });
-                res.end('Not found');
-            }
-        });
-
-        this.server.listen(localApiPort, () => {
-            this.log.info(`MaxxiCharge Local API empfang gestartet auf Port ${localApiPort}`);
-        });
-    }
-
-    async setupCloudAPI() {
-        if (!this.maxxiCcuName) return;
-
-        const infoIntervalMs = 5 * 60 * 1000; // 5min
-        const ccuIntervalMs = 30 * 1000;      // 30sec
-
-        this.fetchInfoData();
-        this.infoInterval = setInterval(() => this.fetchInfoData(), infoIntervalMs);
-
-        this.fetchCcuData();
-        this.ccuInterval = setInterval(() => this.fetchCcuData(), ccuIntervalMs);
-    }
-
-    async fetchInfoData() {
-        if (!this.maxxiCcuName) return;
-
-        const infoUrl = `http://194.164.194.162:3301/?info=${encodeURIComponent(this.maxxiCcuName)}`;
-        try {
-            const infoResponse = await axios.get(infoUrl);
-            await this.processData(infoResponse.data, "settings", true);
-        } catch (error) {
-            this.log.error(`Fehler beim Abrufen der Setting-Daten: ${error.message}`);
-        }
-    }
-
-    async fetchCcuData() {
-        if (!this.maxxiCcuName) return;
-
-        const ccuUrl = `http://194.164.194.162:3301/?ccu=${encodeURIComponent(this.maxxiCcuName)}`;
-        try {
-            const ccuResponse = await axios.get(ccuUrl);
-            await this.processData(ccuResponse.data, "systeminfo", true);
-
-            if (ccuResponse.data && ccuResponse.data.deviceId && ccuResponse.data.ip_addr) {
-                const deviceFolder = `cloud-${ccuResponse.data.deviceId}`;
-                this.updateActiveCCU(deviceFolder);
-
-                if (!this.commandInitialized) {
-                    await this.initializeCommandSettings(deviceFolder, ccuResponse.data.ip_addr);
-                    this.commandInitialized = true;
-                }
-            }
-        } catch (error) {
-            this.log.error(`Fehler beim Abrufen der CCU-Daten: ${error.message}`);
-        }
-    }
 
     async processData(data, baseFolder, isCloud = false) {
         let basePath;
@@ -241,10 +165,8 @@ class MaxxiCharge extends utils.Adapter {
         for (const dp of this.commandDatapoints) {
             const fullPath = `${namespace}.${dp.id}`;
 
-            // Prüfen, ob Datenpunkt bereits existiert
             const obj = await this.getObjectAsync(fullPath);
             if (!obj) {
-                // Datenpunkt existiert nicht, also neu anlegen ohne min/max
                 await this.setObjectNotExistsAsync(fullPath, {
                     type: 'state',
                     common: {
@@ -257,10 +179,8 @@ class MaxxiCharge extends utils.Adapter {
                     native: {}
                 });
 
-                // State auf default setzen (noch ohne min/max)
                 await this.setStateAsync(fullPath, { val: dp.default, ack: true });
 
-                // Nun min/max hinzufügen
                 await this.extendObjectAsync(fullPath, {
                     common: {
                         min: dp.min,
@@ -269,11 +189,8 @@ class MaxxiCharge extends utils.Adapter {
                     }
                 });
 
-                // Änderungen abonnieren
                 this.subscribeStates(fullPath);
             } else {
-                // Datenpunkt existiert bereits
-                // Sicherstellen, dass min/max gesetzt ist (falls nicht schon geschehen)
                 const currentObj = await this.getObjectAsync(fullPath);
                 const common = currentObj.common || {};
                 let needUpdate = false;
@@ -292,7 +209,6 @@ class MaxxiCharge extends utils.Adapter {
                     });
                 }
 
-                // Falls noch nicht abonniert, erneut abonnieren (schadet nicht)
                 this.subscribeStates(fullPath);
             }
         }
@@ -331,10 +247,14 @@ class MaxxiCharge extends utils.Adapter {
     }
 
     async onStateChange(id, state) {
+		if (this.ecoMode && typeof this.ecoMode.onStateChange === 'function') {
+			await this.ecoMode.onStateChange(id, state);
+		}
+	
         if (!state || state.ack) return;
 
         const parts = id.split(".");
-        const deviceId = parts[2]; // z.B. cloud-DeviceID oder local-DeviceID
+        const deviceId = parts[2]; 
         const datapointId = parts[parts.length - 1];
 
         const datapoint = this.commandDatapoints.find((dp) => dp.id === datapointId);
@@ -343,7 +263,6 @@ class MaxxiCharge extends utils.Adapter {
             return;
         }
 
-        // Hier werden ggf. Warnungen ausgegeben, wenn user außerhalb der Grenzen schreibt
         if (datapoint.min !== undefined && state.val < datapoint.min) {
             this.log.warn(`Wert für ${datapointId} zu klein. Minimum: ${datapoint.min}`);
             await this.setStateAsync(id, { val: datapoint.min, ack: true });
@@ -382,7 +301,7 @@ class MaxxiCharge extends utils.Adapter {
 
             if (this.server) {
                 this.server.close(() => {
-                    this.log.info("MaxxiCharge Local API wurde gestoppt");
+                 //   this.log.info("MaxxiCharge Local API wurde gestoppt");
                     callback();
                 });
             } else {
@@ -419,6 +338,35 @@ class MaxxiCharge extends utils.Adapter {
         }
         return ip;
     }
+	
+	async onUnload(callback) {
+		try {
+			// 1. EcoMode aufräumen
+			if (this.ecoMode && typeof this.ecoMode.cleanup === 'function') {
+				await this.ecoMode.cleanup();
+			}
+
+			// 2. Local API aufräumen
+			if (this.localApi && typeof this.localApi.cleanup === 'function') {
+				await this.localApi.cleanup();
+			}
+
+			// 3. Cloud API aufräumen
+			if (this.cloudApi && typeof this.cloudApi.cleanup === 'function') {
+				await this.cloudApi.cleanup();
+			}
+
+			// 4. Allgemeine Abos abmelden (falls gesetzt)
+			this.unsubscribeStates('info.connection');
+
+			this.log.info('Adapter wurde sauber beendet.');
+			callback();
+		} catch (err) {
+			this.log.error(`Fehler beim Beenden des Adapters: ${err.message}`);
+			callback();
+		}
+	}
+
 }
 
 if (require.main !== module) {

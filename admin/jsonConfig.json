@@ -2,103 +2,109 @@
     "type": "panel",
     "i18n": true,
     "items": {
-        "_header1": {
+        "_header1_5": {
             "type": "header",
-            "text": "Maxxi CCU Konfiguration",
+            "text": "API Modus",
             "size": 3,
-            "style": {
-                "textAlign": "center"
-            }
+            "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
+            "style": { "textAlign": "center" }
+        },
+        "apiMode": {
+            "type": "select",
+            "label": "Wähle den API Modus",
+            "options": [
+                { "label": "Cloud API", "value": "cloud" },
+                { "label": "Local API", "value": "local" }
+            ],
+            "default": "local",            
+            "xl": 6, "lg": 6, "md": 6, "sm": 12, "xs": 12,
+            "style": { "margin": "0 auto", "width": "50%", "textAlign": "center" }
+        },
+        "_headerCloud": {
+            "type": "header",
+            "text": "Cloud Konfiguration",
+            "size": 3,
+            "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
+            "style": { "textAlign": "center", "marginTop": "30px" }
         },
         "maxxiCcuName": {
             "type": "text",
             "label": "Maxxi CCU Name",
             "newLine": true,
             "default": "maxxi-XXXXXX-YYY",
-            "help": "Geben Sie den Namen der Maxxi CCU ein (z. B. maxxi-XXXXXX-YYY).",
-            "xl": 4,
-            "lg": 4,
-            "md": 6,
-            "sm": 12,
-            "xs": 12,
-            "style": {
-                "margin": "0 auto",
-                "width": "50%",
-                "textAlign": "center"
-            }
+            "help": "Gib den Namen der Maxxi CCU ein (z. B. maxxi-XXXXXX-YYY).",
+            "xl": 6, "lg": 6, "md": 6, "sm": 12, "xs": 12,
+            "style": { "margin": "0 auto", "width": "50%", "textAlign": "center" }
         },
-        "_header1_5": {
+        "ccuInterval": {
+            "type": "slider",
+            "label": "CCU Abfrageintervall (Sekunden)",
+            "default": 30,
+            "min": 10,
+            "max": 60,
+            "step": 5,
+            "help": "Intervall für die Abfrage der CCU-Daten in Sekunden (10-60).",
+            "xl": 6, "lg": 6, "md": 6, "sm": 12, "xs": 12,
+            "style": { "margin": "0 auto", "textAlign": "center" }
+        },
+        "_headerLocal": {
             "type": "header",
-            "text": "API Modus",
+            "text": "Local Konfiguration",
             "size": 3,
-            "style": {
-                "textAlign": "center"
-            }
-        },
-        "apiMode": {
-            "type": "select",
-            "label": "Wähle den API Modus",
-            "options": [
-                {
-                    "label": "Cloud API",
-                    "value": "cloud"
-                },
-                {
-                    "label": "Local API",
-                    "value": "local"
-                }
-            ],
-            "default": "local",
-            "help": "Cloud-API:<br>Abfrage alle 30sec (CCU Info) bzw. alle 5min (Settings).<br><br>Local-API:<br>Live Feed.",
-            "xl": 4,
-            "lg": 4,
-            "md": 6,
-            "sm": 12,
-            "xs": 12,
-            "style": {
-                "margin": "0 auto",
-                "width": "50%",
-                "textAlign": "center"
-            }
-        },
-        "_header2": {
-            "type": "header",
-            "text": "Maxxi API Port",
-            "size": 3,
-            "style": {
-                "textAlign": "center"
-            }
-        },
-        "localapiport": {
-            "type": "text",
-            "label": "Local-API Port",
-            "newLine": true,
-            "default": "5501",
-            "help": "Definieren Sie den Port, auf dem die API lauschen soll.",
-            "xl": 4,
-            "lg": 4,
-            "md": 6,
-            "sm": 12,
-            "xs": 12,
-            "style": {
-                "margin": "0 auto",
-                "width": "50%",
-                "textAlign": "center"
-            }
+            "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
+            "style": { "textAlign": "center", "marginTop": "30px" }
         },
         "_localApiHint": {
             "type": "staticText",
-            "text": "Für die Nutzung des Local-API Dienstes folgendes beim Api-Route eingeben: 'http://<IP>:<PORT>'",
-            "xl": 6,
-            "lg": 6,
-            "md": 8,
-            "sm": 12,
-            "xs": 12,
-            "style": {
-                "margin": "20px 0",
-                "width": "80%",
-                "textAlign": "center"
-            }
+            "text": "Auf der MaxxiCharge Config-Seite unter 'Api-Route' folgendes eintragen:<br><br>http://${data.ioIP}:${data.localapiport}",
+            "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
+            "style": { "margin": "20px auto", "width": "30%", "textAlign": "center" }
+        },
+        "localapiport": {
+            "type": "number",
+            "label": "Port",
+            "newLine": true,
+            "default": 5501,
+            "help": "Definiere den Port (1-9999) für die Local-API.",
+            "min": 1,
+            "max": 9999,
+            "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
+            "style": { "margin": "0 auto", "width": "30%", "textAlign": "center" }
+        },
+        "_headerEco": {
+            "type": "header",
+            "text": "Sommer / Winter Betrieb",
+            "size": 3,
+            "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
+            "style": { "textAlign": "center", "marginTop": "30px" }
+        },
+        "regelAktiv": {
+            "type": "checkbox",
+            "label": "Sommer/Winter Regelung aktivieren",
+            "default": false,
+            "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12
+        },
+        "dateFrom": {
+            "type": "text",
+            "label": "Winter Datum AB (Format: DD.MM)",
+            "default": "20.11",
+            "help": "TT.MM z. B. 20.11 für 20. November",
+            "xl": 4, "lg": 4, "md": 6, "sm": 12, "xs": 12,
+            "style": { "margin": "0 auto", "textAlign": "center" }
+        },
+        "dateTo": {
+            "type": "text",
+            "label": "Winter Datum BIS (Format: DD.MM)",
+            "default": "07.02",
+            "help": "TT.MM z. B. 07.02 für 7. Februar",
+            "xl": 4, "lg": 4, "md": 6, "sm": 12, "xs": 12,
+            "style": { "margin": "0 auto", "textAlign": "center" }
+        },
+        "ecoHint": {
+            "type": "staticText",
+            "text": "Winterbetrieb: Mindestladung auf 70%, bei SOC ≥55% auf 40%.<br>Sommerbetrieb: Mindestladung 10%, Maximalladung 97%.",
+            "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
+            "style": { "margin": "20px auto", "width": "50%", "textAlign": "center", "whiteSpace": "pre-line" }
         }
     }
 }
