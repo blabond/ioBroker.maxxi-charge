@@ -1,6 +1,6 @@
 # IoBroker.Maxxi-Charge
 
-**ioBroker.MaxxiSun** ist ein Adapter für das ioBroker-System, der die Integration und Steuerung von MaxxiCharge CCU-Geräten ermöglicht. Der Adapter erlaubt das Lesen von Gerätedaten, die Anpassung von Konfigurationen und das Senden von Steuerbefehlen.
+**ioBroker.MaxxiCharge** ist ein Adapter für das ioBroker-System, der die Integration und Steuerung von MaxxiCharge CCU-Geräten ermöglicht. Der Adapter erlaubt das Lesen von Gerätedaten, die Anpassung von Konfigurationen und das Senden von Steuerbefehlen.
 
 ## Funktionen
 
@@ -9,8 +9,11 @@
   - Automatische Erstellung dynamischer Datenpunkte für Gerätedaten.
 - **Konfiguration**:
   - Anpassung von Parametern wie maximaler Ausgangsleistung, Schwellenwerten oder Ladeverhalten.
+  - **Sommer/Winter-Betrieb**: Dynamische Anpassung der Ladeparameter basierend auf der Jahreszeit.
 - **Steuerbefehle**:
   - Dynamische Datenpunkte (`<deviceId>.sendcommand`) zum Senden von Befehlen an die CCU.
+- **Flexibles Abfrageintervall (Cloud-Modus)**:
+  - Der Nutzer kann das Abfrageintervall der CCU-Daten zwischen 10 und 60 Sekunden anpassen.
 - **Fehlerhandling**:
   - Dokumentation von Fehlern und Bereitstellung von Fallback-Mechanismen.
 
@@ -26,15 +29,29 @@
 
 1. **Adapter konfigurieren**:
    - Den Namen der CCU (`Maxxi CCU Name`) eintragen.
-   - API Modus auswählen 
-   - Bei auswahl Local-API in der CCU unter Api-Route eintragen: http://"IP":"PORT" eingeben
+   - API Modus auswählen (Cloud oder Local).
+   - Bei Auswahl Local-API in der CCU unter `Api-Route` folgendes eintragen: `http://"IP":"PORT"`.
 
 ## Konfigurationsmöglichkeiten
 
-| Einstellung              | Beschreibung                                     |
-|--------------------------|-------------------------------------------------|
-| **Maxxi CCU Name**       | Name oder IP-Adresse der Maxxi CCU.             |
-| **Aktualisierungsintervall** | Zeit in Minuten zwischen den Datenabfragen.   |
+| Einstellung                 | Beschreibung                                             |
+|-----------------------------|---------------------------------------------------------|
+| **Maxxi CCU Name**          | Name oder IP-Adresse der Maxxi CCU.                     |
+| **CCU Abfrageintervall**    | Intervall (10-60 Sekunden) für die Abfrage der CCU-Daten im Cloud-Modus. |
+| **Sommer/Winter-Betrieb**   | Automatische Anpassung der Ladeparameter basierend auf definierten Winter-Daten. |
+| **Port für Local-API**      | Definiert den Port, auf dem die Local-API lauscht.       |
+
+## Sommer / Winter-Betrieb
+
+Der Sommer/Winter-Betrieb bietet eine dynamische Anpassung der Ladeparameter:
+
+- **Wintermodus**: 
+  - Mindestladung wird morgens um 8 Uhr auf 70% gesetzt.
+  - Falls der SOC (State of Charge) ≥ 55% beträgt, wird die Mindestladung auf 40% reduziert.
+- **Sommermodus**:
+  - Mindestladung wird auf 10% gesetzt.
+  - Maximale Ladung wird auf 97% begrenzt.
+- Die Aktivierung erfolgt durch eine Checkbox in den Adapter-Einstellungen, die Zeiträume werden durch Winter-Start- und -Enddatum festgelegt.
 
 ## Datenpunkte
 
@@ -54,13 +71,18 @@ Der Adapter erstellt dynamisch Datenpunkte basierend auf den von der CCU zurück
 
 ## Fehler
 
-- Fehler beim Verarbeiten der Daten: deviceId nicht vorhanden ->> Restart Adapter nachdem CCU info eingegeben wurde.
+- Fehler beim Verarbeiten der Daten: deviceId nicht vorhanden ->> Restart Adapter, nachdem CCU-Info eingegeben wurde.
 
 ## Changelog
 
-### 1.2.191 (2025-12-08)
+### 1.3.0 (2024-12-15)
+- **Sommer/Winter-Betrieb** hinzugefügt:
+  - Dynamische Anpassung der Ladeparameter basierend auf Jahreszeiten.
+  - Konfigurierbar mit Start- und Enddatum.
+- **Cloud-API Abfrageintervall**: Intervall für CCU-Abfragen im Cloud-Modus ist nun über einen Schieberegler zwischen 10 und 60 Sekunden einstellbar.
 
-* Veröffentlichung
+### 1.2.191 (2024-12-08)
+- Veröffentlichung
 
 ## License
 MIT License
@@ -84,5 +106,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-

@@ -1,6 +1,6 @@
 {
   "name": "iobroker.maxxi-charge",
-  "version": "1.2.191",
+  "version": "1.3.0",
   "description": "Adapter zur Integration und Steuerung von MaxxiCharge CCU-Geräten, inkl. Datenabfrage, Konfiguration und dynamischem Senden von Steuerbefehlen.",
   "author": {
     "name": "Christoph Böhrs",
@@ -31,6 +31,9 @@
 	  "admin",
 	  "lib",
 	  "main.js",
+	  "localApi.js",
+	  "cloudApi.js",
+	  "ecoMode.js",
 	  "io-package.json"
   ],
   "scripts": {
