@@ -6,12 +6,11 @@
 [![Downloads](https://img.shields.io/npm/dm/iobroker.maxxi-charge.svg)](https://www.npmjs.com/package/iobroker.maxxi-charge)
 ![Number of Installations](https://iobroker.live/badges/maxxi-charge-installed.svg)
 
-![GitHub](https://img.shields.io/github/license/eifel-tech/iobroker.maxxi-charge?style=flat-square)
-![GitHub repo size](https://img.shields.io/github/repo-size/eifel-tech/iobroker.maxxi-charge?logo=github&style=flat-square)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/eifel-tech/iobroker.maxxi-charge?logo=github&style=flat-square)
-![GitHub last commit](https://img.shields.io/github/last-commit/eifel-tech/iobroker.maxxi-charge?logo=github&style=flat-square)
-![GitHub issues](https://img.shields.io/github/issues/eifel-tech/iobroker.maxxi-charge?logo=github&style=flat-square)
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/eifel-tech/iobroker.maxxi-charge/test-and-release.yml?branch=master&logo=github&style=flat-square)
+![GitHub](https://img.shields.io/github/license/blabond/iobroker.maxxi-charge?style=flat-square)
+![GitHub repo size](https://img.shields.io/github/repo-size/blabond/iobroker.maxxi-charge?logo=github&style=flat-square)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/blabond/iobroker.maxxi-charge?logo=github&style=flat-square)
+![GitHub last commit](https://img.shields.io/github/last-commit/blabond/iobroker.maxxi-charge?logo=github&style=flat-square)
+![GitHub issues](https://img.shields.io/github/issues/blabond/iobroker.maxxi-charge?logo=github&style=flat-square)
 
 ## Documentation
 
