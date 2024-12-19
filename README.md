@@ -1,79 +1,28 @@
-# IoBroker.Maxxi-Charge
+![Logo](admin/ms_logo_black_green.webp)
 
-**ioBroker.MaxxiCharge** ist ein Adapter für das ioBroker-System, der die Integration und Steuerung von MaxxiCharge CCU-Geräten ermöglicht. Der Adapter erlaubt das Lesen von Gerätedaten, die Anpassung von Konfigurationen und das Senden von Steuerbefehlen.
+# ioBroker.Maxxi-Charge
 
-## Funktionen
+[![NPM version](https://img.shields.io/npm/v/iobroker.maxxi-charge.svg)](https://www.npmjs.com/package/iobroker.maxxi-charge)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.maxxi-charge.svg)](https://www.npmjs.com/package/iobroker.maxxi-charge)
+![Number of Installations](https://iobroker.live/badges/maxxi-charge-installed.svg)
 
-- **Datenabfrage**: 
-  - Liest Informationen wie IP-Adresse, Status oder Leistung der CCU.
-  - Automatische Erstellung dynamischer Datenpunkte für Gerätedaten.
-- **Konfiguration**:
-  - Anpassung von Parametern wie maximaler Ausgangsleistung, Schwellenwerten oder Ladeverhalten.
-  - **Sommer/Winter-Betrieb**: Dynamische Anpassung der Ladeparameter basierend auf der Jahreszeit.
-- **Steuerbefehle**:
-  - Dynamische Datenpunkte (`<deviceId>.sendcommand`) zum Senden von Befehlen an die CCU.
-- **Flexibles Abfrageintervall (Cloud-Modus)**:
-  - Der Nutzer kann das Abfrageintervall der CCU-Daten zwischen 10 und 60 Sekunden anpassen.
-- **Fehlerhandling**:
-  - Dokumentation von Fehlern und Bereitstellung von Fallback-Mechanismen.
+![GitHub](https://img.shields.io/github/license/eifel-tech/iobroker.maxxi-charge?style=flat-square)
+![GitHub repo size](https://img.shields.io/github/repo-size/eifel-tech/iobroker.maxxi-charge?logo=github&style=flat-square)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/eifel-tech/iobroker.maxxi-charge?logo=github&style=flat-square)
+![GitHub last commit](https://img.shields.io/github/last-commit/eifel-tech/iobroker.maxxi-charge?logo=github&style=flat-square)
+![GitHub issues](https://img.shields.io/github/issues/eifel-tech/iobroker.maxxi-charge?logo=github&style=flat-square)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/eifel-tech/iobroker.maxxi-charge/test-and-release.yml?branch=master&logo=github&style=flat-square)
 
-## Anforderungen
+## Documentation
 
-| Komponente                  | Beschreibung                                              |
-|-----------------------------|----------------------------------------------------------|
-| **MaxxiCharge CCU**         | Unterstütztes Gerät mit Netzwerkverbindung.              |
-| **ioBroker**                | Installierte ioBroker-Instanz.                           |
-| **Node.js**                 | Aktuelle Version von Node.js (siehe ioBroker-Anforderungen). |
+[🇺🇸 Documentation](./docs/en/README.md)
 
-## Installation
-
-1. **Adapter konfigurieren**:
-   - Den Namen der CCU (`Maxxi CCU Name`) eintragen.
-   - API Modus auswählen (Cloud oder Local).
-   - Bei Auswahl Local-API in der CCU unter `Api-Route` folgendes eintragen: `http://"IP":"PORT"`.
-
-## Konfigurationsmöglichkeiten
-
-| Einstellung                 | Beschreibung                                             |
-|-----------------------------|---------------------------------------------------------|
-| **Maxxi CCU Name**          | Name oder IP-Adresse der Maxxi CCU.                     |
-| **CCU Abfrageintervall**    | Intervall (10-60 Sekunden) für die Abfrage der CCU-Daten im Cloud-Modus. |
-| **Sommer/Winter-Betrieb**   | Automatische Anpassung der Ladeparameter basierend auf definierten Winter-Daten. |
-| **Port für Local-API**      | Definiert den Port, auf dem die Local-API lauscht.       |
-
-## Sommer / Winter-Betrieb
-
-Der Sommer/Winter-Betrieb bietet eine dynamische Anpassung der Ladeparameter:
-
-- **Wintermodus**: 
-  - Mindestladung wird morgens um 8 Uhr auf 70% gesetzt.
-  - Falls der SOC (State of Charge) ≥ 55% beträgt, wird die Mindestladung auf 40% reduziert.
-- **Sommermodus**:
-  - Mindestladung wird auf 10% gesetzt.
-  - Maximale Ladung wird auf 97% begrenzt.
-- Die Aktivierung erfolgt durch eine Checkbox in den Adapter-Einstellungen, die Zeiträume werden durch Winter-Start- und -Enddatum festgelegt.
-
-## Datenpunkte
-
-Der Adapter erstellt dynamisch Datenpunkte basierend auf den von der CCU zurückgegebenen Informationen:
-
-### Beispiele für Datenpunkte:
-
-| Datenpunkt                      | Beschreibung                                |
-|---------------------------------|--------------------------------------------|
-| `<deviceId>.systeminfo.ip_addr` | IP-Adresse der CCU.                        |
-| `<deviceId>.settings.*`         | Gerätespezifische Einstellungen.           |
-| `<deviceId>.sendcommand.*`      | Steuerbefehle für die CCU.                 |
-
-## Hinweise
-
-- Änderungen an Datenpunkten im Bereich `<deviceId>.sendcommand` werden automatisch erkannt und an die CCU gesendet.
-
-## Fehler
-
-- Fehler beim Verarbeiten der Daten: deviceId nicht vorhanden ->> Restart Adapter, nachdem CCU-Info eingegeben wurde.
+[🇩🇪 Dokumentation](./docs/de/README.md)
 
 ## Changelog
+
+### 1.3.1 (2024-12-19)
+- Anpassungen für ioBroker Veröffentlichung
 
 ### 1.3.0 (2024-12-15)
 - **Sommer/Winter-Betrieb** hinzugefügt:
