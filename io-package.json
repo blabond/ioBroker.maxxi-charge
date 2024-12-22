@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.3.0",
+    "version": "1.3.1",
     "news": {
+		"1.3.1": {
+		  "en": "ioBroker internal adjustments for compatibility",
+		  "de": "ioBroker interne Anpassung für Kompatibilität",
+		  "ru": "Внесены внутренние изменения для совместимости с ioBroker",
+		  "pt": "Ajustes internos do ioBroker para compatibilidade",
+		  "nl": "Interne ioBroker-aanpassingen voor compatibiliteit",
+		  "fr": "Ajustements internes ioBroker pour compatibilité",
+		  "it": "Adeguamenti interni di ioBroker per compatibilità",
+		  "es": "Ajustes internos de ioBroker para compatibilidad",
+		  "pl": "Wewnętrzne dostosowania ioBroker dla zgodności",
+		  "uk": "Внесено внутрішні налаштування ioBroker для сумісності",
+		  "zh-cn": "ioBroker 的内部调整以实现兼容性"
+		},
       "1.3.0": {
         "en": "Added summer/winter mode configuration",
         "de": "Sommer/Winter-Option hinzugefügt",
@@ -77,8 +90,7 @@
     ],
     "keywords": [
       "maxxisun",
-      "maxxicharge",
-      "ioBroker"
+      "maxxicharge"
     ],
     "licenseInformation": {
       "type": "free",
@@ -104,16 +116,21 @@
       {
         "js-controller": ">=5.0.19"
       }
-    ]
+    ],
+	"globalDependencies": [
+          {
+              "admin": ">=6.1714"
+          }
+      ]
   },
   "native": {
-    "maxxiCcuName": "",
-	"ccuInterval": "30",
-    "localapiport": "5501",
-    "apiMode": "local",
-	"regelAktiv": "0",
-    "dateFrom": "",
-    "dateTo": ""
+    "maxxiccuname": "",
+	"ccuinterval": "30",
+    "port": "5501",
+    "apimode": "local",
+	"enableseasonmode": false,
+    "winterfrom": "20.11",
+    "winterto": "07.02"
   },
   "objects": [],
   "instanceObjects": []

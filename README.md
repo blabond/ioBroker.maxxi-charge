@@ -20,17 +20,17 @@
 
 ## Changelog
 
-### 1.3.1 (2024-12-19)
-- Anpassungen für ioBroker Veröffentlichung
+### 1.3.1 (2024-12-22)
+- Adjustments for ioBroker release
 
 ### 1.3.0 (2024-12-15)
-- **Sommer/Winter-Betrieb** hinzugefügt:
-  - Dynamische Anpassung der Ladeparameter basierend auf Jahreszeiten.
-  - Konfigurierbar mit Start- und Enddatum.
-- **Cloud-API Abfrageintervall**: Intervall für CCU-Abfragen im Cloud-Modus ist nun über einen Schieberegler zwischen 10 und 60 Sekunden einstellbar.
+- **Summer/Winter mode** added:
+  - Dynamic adjustment of charging parameters based on seasons.
+  - Configurable with start and end dates.
+- **Cloud API query interval**: Interval for CCU queries in cloud mode is now configurable via a slider between 10 and 60 seconds.
 
 ### 1.2.191 (2024-12-08)
-- Veröffentlichung
+- Release
 
 ## License
 MIT License
