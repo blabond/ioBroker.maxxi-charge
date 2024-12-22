@@ -1,11 +1,19 @@
 'use strict';
+
 const http = require('http');
+const { name2id, processNestedData, validateInterval } = require('./utils');
 
-module.exports = {
-    setupLocalAPI(adapter) {
-        const localApiPort = adapter.config.localApiPort || 5501;
+class LocalApi {
+    constructor(adapter) {
+        this.adapter = adapter;
+        this.server = null;
+        this.stateCache = new Set(); // Cache für bestehende States
+    }
 
-        adapter.server = http.createServer((req, res) => {
+    async init() {
+        const localApiport = this.adapter.config.port || 5501;
+
+        this.server = http.createServer((req, res) => {
             res.setHeader('Access-Control-Allow-Origin', '*');
             res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
             res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
@@ -21,28 +29,34 @@ module.exports = {
                 req.on('data', chunk => (body += chunk));
                 req.on('end', async () => {
                     try {
-                        const data = JSON.parse(body);
-                        const deviceId = data.deviceId || 'UnknownDevice';
-                        const deviceFolder = `local-${deviceId}`;
-
-                        const basePath = `${deviceFolder}.systeminfo`;
-                        await adapter.processNestedData(basePath, data);
-
-                        const ipAddress = adapter.extractClientIp(req);
-                        await adapter.ensureStateExists(`${deviceFolder}.systeminfo.ip_addr`, ipAddress, "string", "IP-Adresse der Quelle");
-                        await adapter.setStateAck(`${deviceFolder}.systeminfo.ip_addr`, ipAddress);
-
-                        adapter.updateActiveCCU(deviceFolder);
-
-                        if (!adapter.commandInitialized && data.deviceId) {
-                            await adapter.initializeCommandSettings(deviceFolder, ipAddress);
-                            adapter.commandInitialized = true;
+                        const data = JSON.parse(body);                        
+                        const rawDeviceId = data.deviceId || 'UnknownDevice'; // Original erhalten
+						const deviceId = name2id(rawDeviceId).toLowerCase(); // Kleinbuchstaben erzwingen
+						
+                        if (!deviceId) {
+                            this.adapter.log.warn('Invalid deviceId received.');
+                            res.writeHead(400, { 'Content-Type': 'application/json' });
+                            res.end(JSON.stringify({ error: 'Invalid deviceId' }));
+                            return;
                         }
+
+                        const deviceFolder = name2id(deviceId);
+
+                        // Verarbeite die empfangenen Daten mit processNestedData
+                        const basePath = `${deviceFolder}`;
+
+                        await processNestedData(this.adapter, basePath, response.data, this.stateCache);
+
+                        // Initialisiere `sendCommand`-Datenpunkte
+                        await this.adapter.commands.initializeCommandSettings(deviceFolder);
+
+                        // Setze die Verbindung als aktiv
+                        await this.adapter.updateActiveCCU(deviceFolder);
 
                         res.writeHead(200, { 'Content-Type': 'application/json' });
                         res.end(JSON.stringify({ status: 'ok' }));
                     } catch (err) {
-                        adapter.log.error('MaxxiCharge Local API: Fehler beim Parsen des JSON: ' + err);
+                        this.adapter.log.error(`MaxxiCharge Local API: Error parsing JSON: ${err.message}`);
                         res.writeHead(400, { 'Content-Type': 'application/json' });
                         res.end(JSON.stringify({ error: 'invalid JSON' }));
                     }
@@ -53,8 +67,12 @@ module.exports = {
             }
         });
 
-        adapter.server.listen(localApiPort, () => {
-            adapter.log.info(`MaxxiCharge Local API empfang gestartet auf Port ${localApiPort}`);
+        this.server.listen(localApiport, () => {
+            this.adapter.log.debug(`MaxxiCharge Local API started listening on port ${localApiport}`);
         });
     }
-};
+
+    cleanup() {}
+}
+
+module.exports = LocalApi;

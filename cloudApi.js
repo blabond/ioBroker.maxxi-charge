@@ -1,53 +1,73 @@
 'use strict';
 const axios = require('axios');
+const { name2id, processNestedData, validateInterval } = require('./utils');
 
-async function fetchInfoData(adapter) {
-    if (!adapter.maxxiCcuName) return;
-    const infoUrl = `http://194.164.194.162:3301/?info=${encodeURIComponent(adapter.maxxiCcuName)}`;
-    try {
-        const infoResponse = await axios.get(infoUrl);
-        await adapter.processData(infoResponse.data, "settings", true);
-    } catch (error) {
-        adapter.log.error(`Fehler beim Abrufen der Setting-Daten: ${error.message}`);
+class CloudApi {
+    constructor(adapter) {
+        this.adapter = adapter;
+        this.maxxiccuname = this.adapter.config.maxxiccuname || ''; // Direkt aus der Konfiguration
+        this.ccuintervalMs = (this.adapter.config.ccuinterval || 30) * 1000;
+        this.stateCache = new Set(); // Cache für bestehende States
+        this.commandInitialized = false;
     }
-}
 
-async function fetchCcuData(adapter) {
-    if (!adapter.maxxiCcuName) return;
-
-    const ccuUrl = `http://194.164.194.162:3301/?ccu=${encodeURIComponent(adapter.maxxiCcuName)}`;
-    try {
-        const ccuResponse = await axios.get(ccuUrl);
-        await adapter.processData(ccuResponse.data, "systeminfo", true);
-
-        if (ccuResponse.data && ccuResponse.data.deviceId && ccuResponse.data.ip_addr) {
-            const deviceFolder = `cloud-${ccuResponse.data.deviceId}`;
-            adapter.updateActiveCCU(deviceFolder);
-
-            if (!adapter.commandInitialized) {
-                await adapter.initializeCommandSettings(deviceFolder, ccuResponse.data.ip_addr);
-                adapter.commandInitialized = true;
-            }
+    async init() {
+        if (!this.maxxiccuname) {
+            this.adapter.log.warn('No CCU name configured for Cloud API.');
+            return;
         }
-    } catch (error) {
-        adapter.log.error(`Fehler beim Abrufen der CCU-Daten: ${error.message}`);
+
+        this.startFetchingData();
     }
+
+    async fetchInfoData() {
+        const infoUrl = `http://maxxicharge.mr-bond.de:3301/?info=${encodeURIComponent(this.maxxiccuname)}`;
+        try {
+            const response = await axios.get(infoUrl, { timeout: 5000 }); // Timeout von 5 Sekunden
+            const deviceId = name2id(response.data.deviceId);
+            const basePath = `${deviceId}.settings`;
+
+            await processNestedData(this.adapter, basePath, response.data, this.stateCache);
+
+        } catch (error) {
+            this.adapter.log.error(`Error fetching Settings data: ${error.message}`);
+        }
+    }
+
+    async fetchCcuData() {
+        const ccuUrl = `http://maxxicharge.mr-bond.de:3301/?ccu=${encodeURIComponent(this.maxxiccuname)}`;
+        try {
+            const response = await axios.get(ccuUrl, { timeout: 5000 }); // Timeout von 5 Sekunden
+            const rawDeviceId = response.data.deviceId; // Original erhalten
+            const deviceId = name2id(rawDeviceId).toLowerCase();
+            const basePath = `${deviceId}`;
+
+            await processNestedData(this.adapter, basePath, response.data, this.stateCache);
+
+            if (!this.commandInitialized) {
+                await this.adapter.commands.initializeCommandSettings(deviceId);
+                this.commandInitialized = true;
+            }
+
+            await this.adapter.updateActiveCCU(deviceId);
+        } catch (error) {
+            this.adapter.log.error(`Error fetching CCU data: ${error.message}`);
+        }
+    }
+
+
+    startFetchingData() {
+        this.fetchInfoData();
+        this.fetchCcuData();
+
+        const infoInterval = validateInterval(5 * 60 * 1000, 180000, 3600000);
+        const ccuInterval = validateInterval(this.ccuintervalMs, 5000, 3600000);
+
+        this.adapter.setInterval(() => this.fetchInfoData(), infoInterval);
+        this.adapter.setInterval(() => this.fetchCcuData(), ccuInterval);
+    }
+
+    cleanup() {}
 }
 
-function setupCloudAPI(adapter) {
-    if (!adapter.maxxiCcuName) return;
-
-    const infoIntervalMs = 5 * 60 * 1000; // 5min
-    const ccuIntervalMs = (adapter.config.ccuInterval || 30) * 1000; // Default 30 Sekunden
-
-    // Hier direkt fetchInfoData und fetchCcuData aufrufen
-    fetchInfoData(adapter);
-    adapter.infoInterval = setInterval(() => fetchInfoData(adapter), infoIntervalMs);
-
-    fetchCcuData(adapter);
-    adapter.ccuInterval = setInterval(() => fetchCcuData(adapter), ccuIntervalMs);
-}
-
-module.exports = {
-    setupCloudAPI
-};
+module.exports = CloudApi;
