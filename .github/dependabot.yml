@@ -1,0 +1,7 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/" # Der Pfad, in dem sich die package.json befindet
+    schedule:
+      interval: "daily" # Überprüft täglich auf Updates
+    open-pull-requests-limit: 10 # Maximale Anzahl offener PRs
