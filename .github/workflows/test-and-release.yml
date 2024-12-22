@@ -86,7 +86,7 @@ jobs:
           # Then uncomment and customize the following block:
           sentry: true
           sentry-token: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          sentry-project: "iobroker-fritzbox"
-          sentry-version-prefix: "iobroker.fritzbox"
+          sentry-project: "iobroker-maxxi-charge"
+          sentry-version-prefix: "iobroker.maxxi-charge"
           # If your sentry project is linked to a GitHub repository, you can enable the following option
           # sentry-github-integration: true
