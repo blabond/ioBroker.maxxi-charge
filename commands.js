@@ -124,7 +124,10 @@ class Commands {
         try {
             const url = `http://${ipState.val}/config`;
             const payload = `${datapointId}=${state.val}`;
-            await axios.post(url, payload, { headers: { "Content-Type": "application/x-www-form-urlencoded" } });
+            await axios.post(url, payload, {
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                timeout: 5000 // Timeout in Millisekunden, hier 5 Sekunden
+            });
             this.adapter.log.info(`Command ${datapointId} successfully sent to device ${deviceId}: ${state.val}`);
         } catch (error) {
             this.adapter.log.error(`Error sending command ${datapointId} to device ${deviceId}: ${error.message}`);
