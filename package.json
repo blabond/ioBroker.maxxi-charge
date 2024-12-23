@@ -9,7 +9,8 @@
   "homepage": "https://github.com/blabond/ioBroker.maxxi-charge",
   "keywords": [
     "maxxisun",
-    "maxxicharge"
+    "maxxicharge",
+    "ioBroker"
   ],
   "repository": {
     "type": "git",
