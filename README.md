@@ -11,7 +11,8 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/blabond/iobroker.maxxi-charge?logo=github&style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/blabond/iobroker.maxxi-charge?logo=github&style=flat-square)
 ![GitHub issues](https://img.shields.io/github/issues/blabond/iobroker.maxxi-charge?logo=github&style=flat-square)
-![Test and Release](https://github.com/iobroker-community-adapters/ioBroker.maxxi-charge/workflows/Test%20and%20Release/badge.svg)
+![Test and Release](https://github.com/blabond/ioBroker.maxxi-charge/actions/workflows/test-and-release.yml/badge.svg)
+
 
 ## Documentation
 
