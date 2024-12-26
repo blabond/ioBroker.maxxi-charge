@@ -89,7 +89,7 @@ class EcoMode {
     }
 
     async handleSOCChange(id, state) {
-        if (!state || typeof state.val !== 'number' || this.minSocSetToday) return;
+        if (!state || !state.ack || typeof state.val !== 'number' || this.minSocSetToday) return;
 
         const parts = id.split('.');
         const deviceId = parts.length > 2 ? parts[2] : null;
