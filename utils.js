@@ -9,21 +9,19 @@ function name2id(pName) {
 }
 
 async function ensureStateExists(adapter, stateCache, statePath, obj) {
-    // Prüfe, ob der Ordner bereits existiert
     const parentPath = statePath.substring(0, statePath.lastIndexOf('.'));
     if (parentPath && !stateCache.has(parentPath)) {
         const parentObj = await adapter.getObjectAsync(parentPath);
         if (!parentObj) {
-            await adapter.setObjectAsync(parentPath, {
+            await adapter.setObject(parentPath, {
                 type: 'channel',
-                common: { name: 'Auto-Created Folder' },
+                common: { name: '' },
                 native: {},
             });
         }
         stateCache.add(parentPath);
     }
 
-    // Prüfe, ob der State bereits existiert
     if (!stateCache.has(statePath)) {
         const existingObj = await adapter.getObjectAsync(statePath);
         if (!existingObj) {
@@ -33,6 +31,20 @@ async function ensureStateExists(adapter, stateCache, statePath, obj) {
     }
 }
 
+async function getActiveDeviceId(adapter) {
+    const aktivState = await adapter.getStateAsync('info.aktivCCU');
+    if (!aktivState || !aktivState.val) {
+        adapter.log.warn('getActiveDeviceId: No active CCU found in info.aktivCCU.');
+        return null;
+    }
+
+    const deviceId = aktivState.val.split(',')[0].trim();  // Nur den ersten Teil des Strings
+    if (!deviceId || deviceId === "null") {
+        adapter.log.warn(`getActiveDeviceId: Invalid deviceId found: ${deviceId}`);
+        return null;
+    }
+    return deviceId;
+}
 
 function getDateValue(date) {
     return date?.month * 100 + date?.day;
@@ -53,7 +65,7 @@ async function processNestedData(adapter, basePath, data, stateCache) {
         } else if (typeof value === 'object' && value !== null) {
             await processNestedData(adapter, stateId, value, stateCache);
         } else {
-            const role = determineRole(key); // Bestimme die Rolle basierend auf dem Schlüssel
+            const role = determineRole(key);
             await ensureStateExists(adapter, stateCache, stateId, {
                 type: 'state',
                 common: {
@@ -82,7 +94,7 @@ async function applySocValue(adapter, deviceId, value, type) {
 
 function validateInterval(value, min = 1000, max = 3600000) {
     if (typeof value !== 'number' || isNaN(value)) {
-        return min; // Standardwert, wenn der übergebene Wert ungültig ist
+        return min;
     }
     if (value < min) {
         return min;
@@ -93,4 +105,12 @@ function validateInterval(value, min = 1000, max = 3600000) {
     return value;
 }
 
-module.exports = { name2id, ensureStateExists, processNestedData, getDateValue, applySocValue, validateInterval};
+module.exports = {
+    name2id,
+    ensureStateExists,
+    getActiveDeviceId,
+    processNestedData,
+    getDateValue,
+    applySocValue,
+    validateInterval,
+};

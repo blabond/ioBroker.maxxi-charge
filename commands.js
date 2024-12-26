@@ -48,43 +48,43 @@ class Commands {
                 description: { en: "Maximum battery discharge", de: "Maximale Batterieentladung" },
                 type: "number",
                 min: 20,
-                max: 100                
+                max: 100
             },
             {
                 id: "dcAlgorithm",
                 description: { en: "CCU control behavior (algorithm)", de: "Steuerungsverhalten der CCU (Algorithmus)" },
                 type: "number",
-                states: { 1: { en: "Basic (0.38)", de: "Basis (0.38)" }, 2: { en: "Forced (0.40+)", de: "Erzwungen (0.40+)" } }                
+                states: { 1: { en: "Basic (0.38)", de: "Basis (0.38)" }, 2: { en: "Forced (0.40+)", de: "Erzwungen (0.40+)" } }
             }
         ];
     }
 
-	async initializeCommandSettings(deviceId) {
-		const namespace = `${name2id(deviceId)}.sendcommand`;
+    async initializeCommandSettings(deviceId) {
+        const namespace = `${name2id(deviceId)}.sendcommand`;
 
-		for (const dp of this.commandDatapoints) {
-			const fullPath = `${namespace}.${dp.id}`;
+        for (const dp of this.commandDatapoints) {
+            const fullPath = `${namespace}.${dp.id}`;
 
-			// Datenpunkt initialisieren (falls nicht existiert)
-			await ensureStateExists(this.adapter, this.stateCache, fullPath, {
-				type: 'state',
-				common: {
-					name: dp.description,
-					type: dp.type,
-					role: 'value',
-					read: true,
-					write: true,
-					min: dp.min,
-					max: dp.max,
-					states: dp.states || undefined,
-				},
-				native: {},
-			});
+            // Datenpunkt initialisieren (falls nicht existiert)
+            await ensureStateExists(this.adapter, this.stateCache, fullPath, {
+                type: 'state',
+                common: {
+                    name: dp.description,
+                    type: dp.type,
+                    role: 'value',
+                    read: true,
+                    write: true,
+                    min: dp.min,
+                    max: dp.max,
+                    states: dp.states || undefined,
+                },
+                native: {},
+            });
 
-			// Datenpunkt-Abonnieren
-			this.adapter.subscribeStates(fullPath);
-		}
-	}
+            // Datenpunkt-Abonnieren
+            this.adapter.subscribeStates(fullPath);
+        }
+    }
 
 
 

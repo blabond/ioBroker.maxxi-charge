@@ -29,10 +29,10 @@ class LocalApi {
                 req.on('data', chunk => (body += chunk));
                 req.on('end', async () => {
                     try {
-                        const data = JSON.parse(body);                        
+                        const data = JSON.parse(body);
                         const rawDeviceId = data.deviceId || 'UnknownDevice'; // Original erhalten
 						const deviceId = name2id(rawDeviceId).toLowerCase(); // Kleinbuchstaben erzwingen
-						
+
                         if (!deviceId) {
                             this.adapter.log.warn('Invalid deviceId received.');
                             res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -45,7 +45,8 @@ class LocalApi {
                         // Verarbeite die empfangenen Daten mit processNestedData
                         const basePath = `${deviceFolder}`;
 
-                        await processNestedData(this.adapter, basePath, response.data, this.stateCache);
+                        await processNestedData(this.adapter, basePath, data, this.stateCache);
+
 
                         // Initialisiere `sendCommand`-Datenpunkte
                         await this.adapter.commands.initializeCommandSettings(deviceFolder);

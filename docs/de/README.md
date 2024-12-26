@@ -13,7 +13,7 @@
 - **Steuerbefehle**:
   - Dynamische Datenpunkte (`<deviceId>.sendcommand`) zum Senden von Befehlen an die CCU.
 - **Flexibles Abfrageintervall (Cloud-Modus)**:
-  - Der Nutzer kann das Abfrageintervall der CCU-Daten zwischen 10 und 60 Sekunden anpassen.
+  - Der Nutzer kann das Abfrageintervall der CCU-Daten zwischen 10 und 90 Sekunden anpassen.
 - **Fehlerhandling**:
   - Dokumentation von Fehlern und Bereitstellung von Fallback-Mechanismen.
 
@@ -34,19 +34,19 @@
 
 ## Konfigurationsmöglichkeiten
 
-| Einstellung                 | Beschreibung                                             |
-|-----------------------------|---------------------------------------------------------|
-| **Maxxi CCU Name**          | Name oder IP-Adresse der Maxxi CCU.                     |
-| **CCU Abfrageintervall**    | Intervall (10-60 Sekunden) für die Abfrage der CCU-Daten im Cloud-Modus. |
+| Einstellung                 | Beschreibung                                                                     |
+|-----------------------------|----------------------------------------------------------------------------------|
+| **Maxxi CCU Name**          | Name oder IP-Adresse der Maxxi CCU.                                              |
+| **CCU Abfrageintervall**    | Intervall (10-90 Sekunden) für die Abfrage der CCU-Daten im Cloud-Modus.         |
 | **Sommer/Winter-Betrieb**   | Automatische Anpassung der Ladeparameter basierend auf definierten Winter-Daten. |
-| **Port für Local-API**      | Definiert den Port, auf dem die Local-API lauscht.       |
+| **Port für Local-API**      | Definiert den Port, auf dem die Local-API lauscht.                               |
 
 ## Sommer / Winter-Betrieb
 
 Der Sommer/Winter-Betrieb bietet eine dynamische Anpassung der Ladeparameter:
 
 - **Wintermodus**: 
-  - Mindestladung wird morgens um 8 Uhr auf 70% gesetzt.
+  - Mindestladung wird morgens um 8 Uhr auf 60% gesetzt.
   - Falls der SOC (State of Charge) ≥ 55% beträgt, wird die Mindestladung auf 40% reduziert.
 - **Sommermodus**:
   - Mindestladung wird auf 10% gesetzt.
@@ -59,11 +59,11 @@ Der Adapter erstellt dynamisch Datenpunkte basierend auf den von der CCU zurück
 
 ### Beispiele für Datenpunkte:
 
-| Datenpunkt                      | Beschreibung                                |
-|---------------------------------|--------------------------------------------|
-| `<deviceId>.systeminfo.ip_addr` | IP-Adresse der CCU.                        |
-| `<deviceId>.settings.*`         | Gerätespezifische Einstellungen.           |
-| `<deviceId>.sendcommand.*`      | Steuerbefehle für die CCU.                 |
+| Datenpunkt                 | Beschreibung                     |
+|----------------------------|----------------------------------|
+| `<deviceId>.SOC`           | Batterie Ladezustand.            |
+| `<deviceId>.settings.*`    | Gerätespezifische Einstellungen. |
+| `<deviceId>.sendcommand.*` | Steuerbefehle für die CCU.       |
 
 ## Hinweise
 

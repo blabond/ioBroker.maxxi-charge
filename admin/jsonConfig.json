@@ -108,7 +108,7 @@
         },
         "ecoHint": {
             "type": "staticText",
-            "text": "Winter mode: Minimum charge set to 70%, if SOC ≥55% it drops to 40%.<br>Summer mode: Minimum charge 10%, maximum charge 97%.",
+            "text": "Winter mode: Minimum charge set to 60%, if SOC ≥55% it drops to 40%.<br>Summer mode: Minimum charge 10%, maximum charge 97%.",
             "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
             "style": { "margin": "20px auto", "width": "50%", "textAlign": "center", "whiteSpace": "pre-line" }
         }
