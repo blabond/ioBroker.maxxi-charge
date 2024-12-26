@@ -102,7 +102,7 @@ class EcoMode {
         if (state.val >= 55) {
             await applySocValue(this.adapter, deviceId, 40, 'minSOC');
             this.minSocSetToday = true;
-            this.cleanup();
+            this.stop_job();
         }
     }
 
@@ -142,6 +142,13 @@ class EcoMode {
         this.minSocSetToday = false;
 
         // Entfernen von geplanten Jobs
+        const jobs = schedule.scheduledJobs;
+        for (const jobName in jobs) {
+            jobs[jobName].cancel();
+        }
+    }
+
+    stop_job() {
         const jobs = schedule.scheduledJobs;
         for (const jobName in jobs) {
             jobs[jobName].cancel();
