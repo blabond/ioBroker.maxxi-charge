@@ -13,7 +13,7 @@
 - **Control Commands**:
   - Dynamic datapoints (`<deviceId>.sendcommand`) for sending commands to the CCU.
 - **Flexible Query Interval (Cloud Mode)**:
-  - Users can adjust the CCU data query interval between 10 and 60 seconds.
+  - Users can adjust the CCU data query interval between 10 and 90 seconds.
 - **Error Handling**:
   - Documents errors and provides fallback mechanisms.
 
@@ -34,19 +34,19 @@
 
 ## Configuration Options
 
-| Setting                   | Description                                             |
-|---------------------------|---------------------------------------------------------|
-| **Maxxi CCU Name**        | Name or IP address of the Maxxi CCU.                    |
-| **CCU Query Interval**    | Interval (10-60 seconds) for querying CCU data in Cloud Mode. |
+| Setting                   | Description                                                              |
+|---------------------------|--------------------------------------------------------------------------|
+| **Maxxi CCU Name**        | Name or IP address of the Maxxi CCU.                                     |
+| **CCU Query Interval**    | Interval (10-90 seconds) for querying CCU data in Cloud Mode.            |
 | **Summer/Winter Mode**    | Automatically adjusts charging parameters based on defined winter dates. |
-| **Port for Local-API**    | Defines the port on which the Local-API listens.         |
+| **Port for Local-API**    | Defines the port on which the Local-API listens.                         |
 
 ## Summer / Winter Mode
 
 The Summer/Winter Mode dynamically adjusts the charging parameters:
 
 - **Winter Mode**:
-  - Minimum charge is set to 70% every day at 8:00 AM.
+  - Minimum charge is set to 60% every day at 8:00 AM.
   - If the SOC (State of Charge) ≥ 55%, the minimum charge is reduced to 40%.
 - **Summer Mode**:
   - Minimum charge is set to 10%.
@@ -59,11 +59,11 @@ The adapter dynamically creates datapoints based on the information returned by 
 
 ### Examples of Datapoints:
 
-| Datapoint                       | Description                                      |
-|---------------------------------|--------------------------------------------------|
-| `<deviceId>.systeminfo.ip_addr` | IP address of the CCU.                           |
-| `<deviceId>.settings.*`         | Device-specific settings.                        |
-| `<deviceId>.sendcommand.*`      | Control commands for the CCU.                    |
+| Datapoint                  | Description                   |
+|----------------------------|-------------------------------|
+| `<deviceId>.SOC`           | Battery Charge Level.         |
+| `<deviceId>.settings.*`    | Device-specific settings.     |
+| `<deviceId>.sendcommand.*` | Control commands for the CCU. |
 
 ## Notes
 

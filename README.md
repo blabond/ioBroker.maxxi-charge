@@ -22,8 +22,9 @@
 
 ## Changelog
 
-### 1.3.1 (2024-12-22)
+### 1.3.2 (2024-12-26)
 - Adjustments for ioBroker release
+- Code restructuring
 
 ### 1.3.0 (2024-12-15)
 - **Summer/Winter mode** added:
