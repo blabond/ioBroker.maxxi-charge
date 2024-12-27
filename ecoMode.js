@@ -34,22 +34,20 @@ class EcoMode {
 
         let attempts = 0;
 
+        // Täglicher CronJob um 8 Uhr
+        schedule.scheduleJob('0 8 * * *', async () => {
+            await this.evaluateSeason();
+        });
+
         const waitForDevice = async () => {
             const deviceId = await getActiveDeviceId(this.adapter);
 
             if (deviceId) {
-                this.adapter.log.debug(`EcoMode: Active device found: ${deviceId}. Starting evaluation.`);
+                this.adapter.log.debug(`EcoMode: Active device found: ${deviceId}. Starting immediate evaluation.`);
                 clearInterval(this.deviceCheckInterval); // Stoppe die Überprüfung
-
-                // Starte die erste Überprüfung sofort
-                await this.evaluateSeason();
-
-                // CronJob für die tägliche Überprüfung um 8 Uhr
-                schedule.scheduleJob('0 8 * * *', async () => {
-                    await this.evaluateSeason();
-                });
-
+                await this.evaluateSeason(); // Sofortige Überprüfung
             } else if (attempts >= maxAttempts) {
+                this.adapter.log.warn('EcoMode: No active device found after maximum attempts. Monitoring will still continue with daily checks.');
                 clearInterval(this.deviceCheckInterval); // Stoppe die Überprüfung
             } else {
                 attempts++;
@@ -60,8 +58,6 @@ class EcoMode {
         // Intervall starten, um auf ein aktives Gerät zu warten
         this.deviceCheckInterval = setInterval(waitForDevice, checkInterval);
     }
-
-
 
     async evaluateSeason() {
         const today = { day: new Date().getDate(), month: new Date().getMonth() + 1 };
@@ -74,17 +70,19 @@ class EcoMode {
         }
 
         if (this.isExactWinterTo(today)) {
-            this.adapter.log.debug('EcoMode: Today is the winterTo date. Applying summer mode.');
+            this.adapter.log.debug('EcoMode: Today is the Winter end date. Applying summer mode.');
             await this.applySummerOnce(deviceId);
-            this.cleanup();
+            this.stop_job();
             return;
         }
 
         if (this.isInWinterRange(today)) {
-            this.adapter.log.debug('EcoMode: Winter range active. Setting minSOC to 60');
+            this.adapter.log.debug('EcoMode: Winter range active. Setting minSOC to 60.');
             await applySocValue(this.adapter, deviceId, 60, 'minSOC');
+            this.minSocSetToday = false;
         } else {
-            this.cleanup();
+            this.adapter.log.debug('EcoMode: Outside of winter range. No action required.');
+            this.stop_job();
         }
     }
 
@@ -101,7 +99,6 @@ class EcoMode {
 
         if (state.val >= 55) {
             await applySocValue(this.adapter, deviceId, 40, 'minSOC');
-            this.minSocSetToday = true;
             this.stop_job();
         }
     }
@@ -122,9 +119,9 @@ class EcoMode {
         const nowVal = getDateValue(dateObj);
 
         if (fromVal < toVal) {
-            return nowVal >= fromVal && nowVal < toVal;
+            return nowVal >= fromVal && nowVal < toVal; // toVal ist exklusiv
         } else {
-            return nowVal >= fromVal || nowVal < toVal;
+            return (nowVal >= fromVal || nowVal < toVal) && nowVal !== toVal; // toVal explizit ausgeschlossen
         }
     }
 
@@ -149,6 +146,7 @@ class EcoMode {
     }
 
     stop_job() {
+        this.minSocSetToday = true;
         const jobs = schedule.scheduledJobs;
         for (const jobName in jobs) {
             jobs[jobName].cancel();
