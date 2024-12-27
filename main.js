@@ -139,8 +139,6 @@ class MaxxiCharge extends utils.Adapter {
 					const socState = `${this.namespace}.${deviceId}.SOC`;
 					this.unsubscribeStates(socState);
 					this.log.debug(`Unsubscribed from dynamic state: ${socState}`);
-				} else {
-					this.log.warn('No active device found in info.aktivCCU to unsubscribe.');
 				}
 			}
 		}

@@ -22,7 +22,7 @@
 
 ## Changelog
 
-### 1.3.2 (2024-12-26)
+### 1.3.3 (2024-12-27)
 - Adjustments for ioBroker release
 - Code restructuring
 

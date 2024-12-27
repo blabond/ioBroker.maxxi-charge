@@ -34,7 +34,6 @@ async function ensureStateExists(adapter, stateCache, statePath, obj) {
 async function getActiveDeviceId(adapter) {
     const aktivState = await adapter.getStateAsync('info.aktivCCU');
     if (!aktivState || !aktivState.val) {
-        adapter.log.warn('getActiveDeviceId: No active CCU found in info.aktivCCU.');
         return null;
     }
 

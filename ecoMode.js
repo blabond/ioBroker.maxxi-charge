@@ -34,22 +34,20 @@ class EcoMode {
 
         let attempts = 0;
 
+        // Täglicher CronJob um 8 Uhr
+        schedule.scheduleJob('0 8 * * *', async () => {
+            await this.evaluateSeason();
+        });
+
         const waitForDevice = async () => {
             const deviceId = await getActiveDeviceId(this.adapter);
 
             if (deviceId) {
-                this.adapter.log.debug(`EcoMode: Active device found: ${deviceId}. Starting evaluation.`);
+                this.adapter.log.debug(`EcoMode: Active device found: ${deviceId}. Starting immediate evaluation.`);
                 clearInterval(this.deviceCheckInterval); // Stoppe die Überprüfung
-
-                // Starte die erste Überprüfung sofort
-                await this.evaluateSeason();
-
-                // CronJob für die tägliche Überprüfung um 8 Uhr
-                schedule.scheduleJob('0 8 * * *', async () => {
-                    await this.evaluateSeason();
-                });
-
+                await this.evaluateSeason(); // Sofortige Überprüfung
             } else if (attempts >= maxAttempts) {
+                this.adapter.log.warn('EcoMode: No active device found after maximum attempts. Monitoring will still continue with daily checks.');
                 clearInterval(this.deviceCheckInterval); // Stoppe die Überprüfung
             } else {
                 attempts++;
@@ -60,7 +58,6 @@ class EcoMode {
         // Intervall starten, um auf ein aktives Gerät zu warten
         this.deviceCheckInterval = setInterval(waitForDevice, checkInterval);
     }
-
 
 
     async evaluateSeason() {
@@ -74,7 +71,7 @@ class EcoMode {
         }
 
         if (this.isExactWinterTo(today)) {
-            this.adapter.log.debug('EcoMode: Today is the winterTo date. Applying summer mode.');
+            this.adapter.log.debug('EcoMode: Today is the Winter end date. Applying summer mode.');
             await this.applySummerOnce(deviceId);
             this.cleanup();
             return;
