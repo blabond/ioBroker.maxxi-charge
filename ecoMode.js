@@ -72,7 +72,7 @@ class EcoMode {
         if (this.isExactWinterTo(today)) {
             this.adapter.log.debug('EcoMode: Today is the Winter end date. Applying summer mode.');
             await this.applySummerOnce(deviceId);
-            this.stop_job();
+            this.minSocSetToday = true;
             return;
         }
 
@@ -82,7 +82,7 @@ class EcoMode {
             this.minSocSetToday = false;
         } else {
             this.adapter.log.debug('EcoMode: Outside of winter range. No action required.');
-            this.stop_job();
+            this.minSocSetToday = true;
         }
     }
 
@@ -99,7 +99,7 @@ class EcoMode {
 
         if (state.val >= 55) {
             await applySocValue(this.adapter, deviceId, 40, 'minSOC');
-            this.stop_job();
+            this.minSocSetToday = true;
         }
     }
 
@@ -139,14 +139,6 @@ class EcoMode {
         this.minSocSetToday = false;
 
         // Entfernen von geplanten Jobs
-        const jobs = schedule.scheduledJobs;
-        for (const jobName in jobs) {
-            jobs[jobName].cancel();
-        }
-    }
-
-    stop_job() {
-        this.minSocSetToday = true;
         const jobs = schedule.scheduledJobs;
         for (const jobName in jobs) {
             jobs[jobName].cancel();
