@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.3.12",
+    "version": "1.3.13",
     "news": {
+      "1.3.13": {
+        "en": "Replaced deprecated methods, improved Promise handling, and integrated IP directly into the configuration view.",
+        "de": "Veraltete Methoden ersetzt, Fehlerbehandlung für Promises verbessert und IP direkt in die Konfigurationsansicht integriert.",
+        "ru": "Заменены устаревшие методы, улучшена обработка Promises и добавлена прямая интеграция IP в конфигурацию.",
+        "pt": "Métodos obsoletos substituídos, tratamento de Promise melhorado e IP integrado diretamente na visualização de configuração.",
+        "nl": "Vervangen van verouderde methoden, verbeterde Promise-afhandeling en IP direct in de configuratieweergave geïntegreerd.",
+        "fr": "Remplacement des méthodes obsolètes, amélioration de la gestion des Promesses et intégration directe de l'IP dans la vue de configuration.",
+        "it": "Sostituiti metodi obsoleti, migliorata la gestione delle Promesse e IP integrato direttamente nella vista di configurazione.",
+        "es": "Métodos obsoletos reemplazados, mejora en el manejo de Promises e integración directa de IP en la vista de configuración.",
+        "pl": "Zastąpiono przestarzałe metody, poprawiono obsługę Promises i zintegrowano IP bezpośrednio z widokiem konfiguracji.",
+        "uk": "Заміна застарілих методів, поліпшення обробки Promises та інтеграція IP безпосередньо в налаштування.",
+        "zh-cn": "替换了过时的方法，改进了 Promise 处理，并将 IP 直接集成到配置视图中。"
+      },
 		"1.3.12": {
 		  "en": "ioBroker internal adjustments for compatibility",
 		  "de": "ioBroker interne Anpassung für Kompatibilität",

@@ -1,7 +1,7 @@
 'use strict';
 
 const utils = require('@iobroker/adapter-core');
-const { ensureStateExists, validateInterval, getActiveDeviceId } = require('./utils'); // utils importieren
+const { ensureStateExists, validateInterval, getActiveDeviceId, prepareJsonConfig} = require('./utils'); // utils importieren
 const Commands = require('./commands');
 const LocalApi = require('./localApi');
 const CloudApi = require('./cloudApi');
@@ -35,7 +35,7 @@ class MaxxiCharge extends utils.Adapter {
 
 			// IP-Adresse des Hosts ermitteln
 			const hostObject = await this.getForeignObjectAsync(`system.host.${this.host}`);
-			let ipAddress = "ioBroker IP"; // Fallback
+			let ipAddress = "127.0.0.1"; // Fallback
 
 			if (hostObject?.native?.hardware?.networkInterfaces) {
 				const networkInterfaces = hostObject.native.hardware.networkInterfaces;
@@ -48,23 +48,10 @@ class MaxxiCharge extends utils.Adapter {
 							break;
 						}
 					}
-					if (ipAddress !== "ioBroker IP") break;
+					if (ipAddress !== "127.0.0.1") break;
 				}
+				await prepareJsonConfig(ipAddress);
 			}
-
-			await ensureStateExists(this, this.stateCache, `${this.namespace}.info.localip`, {
-				type: 'state',
-				common: {
-					name: 'Local IP Address',
-					type: 'string',
-					role: 'info.ip',
-					read: true,
-					write: false,
-				},
-				native: {},
-			});
-
-			await this.setState(`${this.namespace}.info.localip`, { val: ipAddress, ack: true });
 
 			// Setze info.connection und info.aktivCCU auf Standardwerte
 			await this.setObjectNotExistsAsync('info.connection', {
@@ -115,6 +102,7 @@ class MaxxiCharge extends utils.Adapter {
 				this.ecoMode = new EcoMode(this);
 				await this.ecoMode.init();
 			}
+
 		} catch (error) {
 			this.log.error(`Fatal error during initialization: ${error.message}`);
 		}
@@ -150,8 +138,7 @@ class MaxxiCharge extends utils.Adapter {
 	}
 
 	async updateActiveCCU(deviceId) {
-		const now = Date.now();
-		this.activeDevices[deviceId] = now;
+		this.activeDevices[deviceId] = Date.now();
 
 		const keys = Object.keys(this.activeDevices);
 		const csv = keys.join(',');

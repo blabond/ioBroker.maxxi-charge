@@ -54,7 +54,7 @@ class Commands {
                 id: "dcAlgorithm",
                 description: { en: "CCU control behavior (algorithm)", de: "Steuerungsverhalten der CCU (Algorithmus)" },
                 type: "number",
-                states: { 1: { en: "Basic (0.38)", de: "Basis (0.38)" }, 2: { en: "Forced (0.40+)", de: "Erzwungen (0.40+)" } }
+                states: { "1": "Basic (0.38)", "2": "Forced (0.40+)" }
             }
         ];
     }

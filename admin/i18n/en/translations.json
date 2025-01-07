@@ -12,7 +12,7 @@
 	"Local Configuration": "Local Configuration",
 	"Port": "Port",
 	"Define the port for the Local-API.": "Define the port for the API to listen on.",
-	"On the MaxxiCharge config page under 'Api-Route', enter the following:<br><br>http://${data.localip}:${data.port}": "On the MaxxiCharge config page under 'Api-Route', enter the following:<br><br>http://${data.localip}:${data.port}",
+	"On the MaxxiCharge config page under 'Api-Route', enter the following:": "On the MaxxiCharge config page under 'Api-Route', enter the following:",
 	"Summer / Winter Mode": "Summer / Winter Mode",
 	"Enable summer/winter mode": "Enable summer/winter mode",
 	"Winter start date (Format: DD.MM)": "Winter start date (Format: DD.MM)",
