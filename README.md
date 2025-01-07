@@ -22,6 +22,11 @@
 
 ## Changelog
 
+### 1.3.13 (2025-01-07)
+- Fixed: Issue with the dcAlgorithm datapoint where the UI could crash due to an incorrect states definition
+- Removed the info.localip datapoint. The local IP address is now directly included in the jsonConfig.
+- Adjusted code to use modern methods, replacing deprecated ones like setObjectAsync.
+
 ### 1.3.12 (2024-12-27)
 - Adjustments for ioBroker release
 - Code restructuring

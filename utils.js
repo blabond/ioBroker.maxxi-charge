@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs/promises');
 const { determineRole } = require('./roles');
 
 const FORBIDDEN_CHARS = /[^a-zA-Z0-9_-]/g;
@@ -25,7 +26,7 @@ async function ensureStateExists(adapter, stateCache, statePath, obj) {
     if (!stateCache.has(statePath)) {
         const existingObj = await adapter.getObjectAsync(statePath);
         if (!existingObj) {
-            await adapter.setObjectAsync(statePath, obj);
+            await adapter.setObject(statePath, obj);
         }
         stateCache.add(statePath);
     }
@@ -104,6 +105,24 @@ function validateInterval(value, min = 1000, max = 3600000) {
     return value;
 }
 
+async function prepareJsonConfig(ipAddress) {
+    try {
+        // Lade die ursprüngliche Konfigurationsdatei
+        const templatePath = './admin/jsonConfig_org.json';
+        const rawTemplate = await fs.readFile(templatePath, 'utf-8');
+        const configTemplate = JSON.parse(rawTemplate);
+
+        // Ersetze den Platzhalter `{ioBrokerIP}` durch die aktuelle IP-Adresse
+        const updatedConfig = JSON.stringify(configTemplate).replace(/{ioBrokerIP}/g, ipAddress);
+
+        // Schreibe die aktualisierte Datei zurück (oder speichere sie an einem anderen Ort)
+        const outputPath = './admin/jsonConfig.json';
+        await fs.writeFile(outputPath, updatedConfig);
+    } catch (error) {
+        console.debug(`JSON-Config: ${error.message}`);
+    }
+}
+
 module.exports = {
     name2id,
     ensureStateExists,
@@ -112,4 +131,5 @@ module.exports = {
     getDateValue,
     applySocValue,
     validateInterval,
+    prepareJsonConfig,
 };

@@ -57,8 +57,8 @@ class CloudApi {
 
 
     startFetchingData() {
-        this.fetchInfoData();
-        this.fetchCcuData();
+        void this.fetchInfoData();
+        void this.fetchCcuData();
 
         const infoInterval = validateInterval(5 * 60 * 1000, 180000, 3600000);
         const ccuInterval = validateInterval(this.ccuintervalMs, 5000, 3600000);
