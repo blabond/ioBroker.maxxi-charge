@@ -97,7 +97,7 @@ class EcoMode {
             return;
         }
 
-        if (state.val >= 55) {
+        if (this.adapter.config.enableseasonmode && state.val >= 55) {
             await applySocValue(this.adapter, deviceId, 40, 'minSOC');
             this.minSocSetToday = true;
         }
