@@ -22,7 +22,7 @@
 
 ## Changelog
 
-### 1.4.0 (2025-01-12)
+### 1.4.1 (2025-01-12)
 
 - ### Please delete the `.sendcommand` folder and restart the adapter when updating from a previous version to this one.
 - New: Added support for battery calibration (Expert Settings)
