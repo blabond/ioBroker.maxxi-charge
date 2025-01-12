@@ -80,6 +80,7 @@ class EcoMode {
         if (this.isInWinterRange(today)) {
             this.adapter.log.debug('EcoMode: Winter range active. Setting minSOC to 60.');
             await applySocValue(this.adapter, deviceId, 60, 'minSOC');
+            await applySocValue(this.adapter, deviceId, feedInMode, 'maxSOC');
             this.minSocSetToday = false;
         } else {
             if (this.adapter.config.batterycalibration === true) {
