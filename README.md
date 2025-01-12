@@ -22,6 +22,12 @@
 
 ## Changelog
 
+### 1.4.0 (2025-01-12)
+
+- ### Please delete the `.sendcommand` folder and restart the adapter when updating from a previous version to this one.
+- New: Added support for battery calibration (Expert Settings)
+- Improved: Redesigned adapter settings for a better user experience
+
 ### 1.3.13 (2025-01-07)
 - Fixed: Issue with the dcAlgorithm datapoint where the UI could crash due to an incorrect states definition
 - Removed the info.localip datapoint. The local IP address is now directly included in the jsonConfig.

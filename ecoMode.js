@@ -61,6 +61,7 @@ class EcoMode {
 
     async evaluateSeason() {
         const today = { day: new Date().getDate(), month: new Date().getMonth() + 1 };
+        const feedInMode = this.adapter.config.feedInMode;
 
         // Überprüfen, ob ein aktives Gerät existiert
         const deviceId = await getActiveDeviceId(this.adapter);
@@ -81,7 +82,14 @@ class EcoMode {
             await applySocValue(this.adapter, deviceId, 60, 'minSOC');
             this.minSocSetToday = false;
         } else {
-            this.adapter.log.debug('EcoMode: Outside of winter range. No action required.');
+            if (this.adapter.config.batterycalibration === true) {
+                this.adapter.log.debug('EcoMode: Battery Calibration aktiv. No action required.');
+            } else {
+                this.adapter.log.debug('EcoMode: Summer range active.');
+                await applySocValue(this.adapter, deviceId, 10, 'minSOC');
+                await applySocValue(this.adapter, deviceId, feedInMode, 'maxSOC');
+            }
+
             this.minSocSetToday = true;
         }
     }
@@ -97,20 +105,28 @@ class EcoMode {
             return;
         }
 
-        if (this.adapter.config.enableseasonmode && state.val >= 55) {
+        // Abfrage, ob Winter- oder Sommermodus definiert wurde
+        const today = { day: new Date().getDate(), month: new Date().getMonth() + 1 };
+        if (!this.isInWinterRange(today) && !this.isExactWinterTo(today)) {
+            return;
+        }
+
+        if (this.adapter.config.enableseasonmode && state.val >= 55 && !this.adapter.config.batterycalibration) {
             await applySocValue(this.adapter, deviceId, 40, 'minSOC');
             this.minSocSetToday = true;
         }
     }
 
+
     async applySummerOnce(deviceId) {
+        const feedInMode = this.adapter.config.feedInMode;
         if (!deviceId) {
             this.adapter.log.warn('EcoMode: No active deviceId found for summer mode application.');
             return;
         }
 
         await applySocValue(this.adapter, deviceId, 10, 'minSOC');
-        await applySocValue(this.adapter, deviceId, 97, 'maxSOC');
+        await applySocValue(this.adapter, deviceId, feedInMode, 'maxSOC');
     }
 
     isInWinterRange(dateObj) {

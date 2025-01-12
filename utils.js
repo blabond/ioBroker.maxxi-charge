@@ -123,6 +123,40 @@ async function prepareJsonConfig(ipAddress) {
     }
 }
 
+async function changeSettingAkku(adapter, batteryCalibration, calibrationProgress) {
+    try {
+        const adapterConfigPath = `system.adapter.${adapter.namespace}`;
+
+        // Lade die Adapterkonfiguration
+        const obj = await adapter.getForeignObjectAsync(adapterConfigPath);
+
+        if (!obj) {
+            adapter.log.error(`Adapter configuration not found for: ${adapterConfigPath}`);
+            return;
+        }
+
+        // Ändere die gewünschten Werte
+        if (typeof batteryCalibration === "boolean") {
+            obj.native.batterycalibration = batteryCalibration;
+        }
+
+        if (calibrationProgress === "down" || calibrationProgress === "up") {
+            obj.native.calibrationProgress = calibrationProgress;
+        }
+
+        // Schreibe die Änderungen zurück
+        await adapter.setForeignObject(adapterConfigPath, obj);
+
+        adapter.log.info(`Successfully updated batterycalibration to ${batteryCalibration} and calibrationProgress to ${calibrationProgress}.`);
+    } catch (error) {
+        adapter.log.error(`Error in changeSettingAkku: ${error.message}`);
+    }
+}
+
+
+
+
+
 module.exports = {
     name2id,
     ensureStateExists,
@@ -132,4 +166,5 @@ module.exports = {
     applySocValue,
     validateInterval,
     prepareJsonConfig,
+    changeSettingAkku,
 };

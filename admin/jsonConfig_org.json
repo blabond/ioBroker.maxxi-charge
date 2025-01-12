@@ -1,126 +1,218 @@
 {
-    "type": "panel",
     "i18n": true,
+    "type": "tabs",
     "items": {
-        "_header1_5": {
-            "type": "header",
-            "text": "API Mode",
-            "size": 3,
-            "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
-            "style": { "textAlign": "center" }
+        "general": {
+            "type": "panel",
+            "label": "Maxxi-Charge Config",
+            "items": {
+                "_header1_5": {
+                    "type": "header",
+                    "text": "API Mode",
+                    "size": 3,
+                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
+                    "style": { "textAlign": "center" }
+                },
+                "apimode": {
+                    "type": "select",
+                    "label": "Select the API mode",
+                    "options": [
+                        { "label": "Cloud API", "value": "cloud" },
+                        { "label": "Local API", "value": "local" }
+                    ],
+                    "default": "local",
+                    "xl": 6, "lg": 6, "md": 6, "sm": 12, "xs": 12,
+                    "style": { "margin": "0 auto", "width": "50%", "textAlign": "center" }
+                },
+                "_headerCloud": {
+                    "type": "header",
+                    "text": "Cloud Configuration",
+                    "size": 3,
+                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
+                    "style": { "textAlign": "center", "marginTop": "30px" }
+                },
+                "maxxiccuname": {
+                    "type": "text",
+                    "label": "Maxxi CCU Name",
+                    "newLine": true,
+                    "default": "",
+                    "help": "Enter the name of the Maxxi CCU (e.g., maxxi-XXXXXX-YYY).",
+                    "xl": 6, "lg": 6, "md": 6, "sm": 12, "xs": 12,
+                    "style": { "margin": "0 auto", "width": "50%", "textAlign": "center" }
+                },
+                "ccuinterval": {
+                    "type": "slider",
+                    "label": "CCU Query Interval (Seconds)",
+                    "default": 30,
+                    "min": 5,
+                    "max": 90,
+                    "step": 5,
+                    "help": "Set the interval for CCU queries in seconds (5-90).",
+                    "xl": 6, "lg": 6, "md": 6, "sm": 12, "xs": 12,
+                    "style": { "margin": "0 auto", "textAlign": "center" }
+                },
+                "_headerLocal": {
+                    "type": "header",
+                    "text": "Local Configuration",
+                    "size": 3,
+                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
+                    "style": { "textAlign": "center", "marginTop": "30px" }
+                },
+                "_localApiHintIntro": {
+                    "type": "staticText",
+                    "text": "On the MaxxiCharge config page under 'Api-Route', enter the following:",
+                    "newLine": true,
+                    "xl": 12,
+                    "lg": 12,
+                    "md": 12,
+                    "sm": 12,
+                    "xs": 12,
+                    "style": { "margin": "10px auto", "textAlign": "center" }
+                },
+                "_localApiHintDetails": {
+                    "type": "staticText",
+                    "text": "http://{ioBrokerIP}:${data.port}",
+                    "newLine": true,
+                    "xl": 12,
+                    "lg": 12,
+                    "md": 12,
+                    "sm": 12,
+                    "xs": 12,
+                    "style": { "margin": "5px auto", "textAlign": "center", "fontWeight": "bold" }
+                },
+                "port": {
+                    "type": "number",
+                    "label": "Port",
+                    "newLine": true,
+                    "default": 5501,
+                    "help": "Define the port for the Local-API.",
+                    "min": 1,
+                    "max": 9999,
+                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
+                    "style": { "margin": "0 auto", "width": "30%", "textAlign": "center" }
+                }
+            }
         },
-        "apimode": {
-            "type": "select",
-            "label": "Select the API mode",
-            "options": [
-                { "label": "Cloud API", "value": "cloud" },
-                { "label": "Local API", "value": "local" }
-            ],
-            "default": "local",
-            "xl": 6, "lg": 6, "md": 6, "sm": 12, "xs": 12,
-            "style": { "margin": "0 auto", "width": "50%", "textAlign": "center" }
-        },
-        "_headerCloud": {
-            "type": "header",
-            "text": "Cloud Configuration",
-            "size": 3,
-            "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
-            "style": { "textAlign": "center", "marginTop": "30px" }
-        },
-        "maxxiccuname": {
-            "type": "text",
-            "label": "Maxxi CCU Name",
-            "newLine": true,
-            "default": "",
-            "help": "Enter the name of the Maxxi CCU (e.g., maxxi-XXXXXX-YYY).",
-            "xl": 6, "lg": 6, "md": 6, "sm": 12, "xs": 12,
-            "style": { "margin": "0 auto", "width": "50%", "textAlign": "center" }
-        },
-        "ccuinterval": {
-            "type": "slider",
-            "label": "CCU Query Interval (Seconds)",
-            "default": 30,
-            "min": 5,
-            "max": 90,
-            "step": 5,
-            "help": "Set the interval for CCU queries in seconds (5-90).",
-            "xl": 6, "lg": 6, "md": 6, "sm": 12, "xs": 12,
-            "style": { "margin": "0 auto", "textAlign": "center" }
-        },
-        "_headerLocal": {
-            "type": "header",
-            "text": "Local Configuration",
-            "size": 3,
-            "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
-            "style": { "textAlign": "center", "marginTop": "30px" }
-        },
-        "_localApiHintIntro": {
-            "type": "staticText",
-            "text": "On the MaxxiCharge config page under 'Api-Route', enter the following:",
-            "newLine": true,
-            "xl": 12,
-            "lg": 12,
-            "md": 12,
-            "sm": 12,
-            "xs": 12,
-            "style": { "margin": "10px auto", "textAlign": "center" }
-        },
-        "_localApiHintDetails": {
-            "type": "staticText",
-            "text": "http://{ioBrokerIP}:${data.port}",
-            "newLine": true,
-            "xl": 12,
-            "lg": 12,
-            "md": 12,
-            "sm": 12,
-            "xs": 12,
-            "style": { "margin": "5px auto", "textAlign": "center", "fontWeight": "bold" }
-        },
-        "port": {
-            "type": "number",
-            "label": "Port",
-            "newLine": true,
-            "default": 5501,
-            "help": "Define the port for the Local-API.",
-            "min": 1,
-            "max": 9999,
-            "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
-            "style": { "margin": "0 auto", "width": "30%", "textAlign": "center" }
-        },
-        "_headerEco": {
-            "type": "header",
-            "text": "Summer / Winter Mode",
-            "size": 3,
-            "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
-            "style": { "textAlign": "center", "marginTop": "30px" }
-        },
-        "enableseasonmode": {
-            "type": "checkbox",
-            "label": "Enable summer/winter mode",
-            "default": false,
-            "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12
-        },
-        "winterfrom": {
-            "type": "text",
-            "label": "Winter start date (Format: DD.MM)",
-            "default": "20.11",
-            "help": "Enter a date in the format DD.MM (e.g., 20.11 for 20th November)",
-            "xl": 4, "lg": 4, "md": 6, "sm": 12, "xs": 12,
-            "style": { "margin": "0 auto", "textAlign": "center" }
-        },
-        "winterto": {
-            "type": "text",
-            "label": "Winter end date (Format: DD.MM)",
-            "default": "07.02",
-            "help": "Enter a date in the format DD.MM (e.g., 07.02 for 7th February)",
-            "xl": 4, "lg": 4, "md": 6, "sm": 12, "xs": 12,
-            "style": { "margin": "0 auto", "textAlign": "center" }
-        },
-        "ecoHint": {
-            "type": "staticText",
-            "text": "Winter mode: Minimum charge set to 60%, if SOC ≥55% it drops to 40%.<br>Summer mode: Minimum charge 10%, maximum charge 97%.",
-            "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
-            "style": { "margin": "20px auto", "width": "50%", "textAlign": "center", "whiteSpace": "pre-line" }
+        "expert": {
+            "type": "panel",
+            "label": "Expert Settings",
+            "items": {
+                "_headerFeedIn": {
+                    "type": "header",
+                    "text": "Zero Feed-In / Feed-In Mode",
+                    "size": 3,
+                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
+                    "style": { "textAlign": "center", "marginTop": "30px" }
+                },
+                "feedInMode": {
+                    "type": "select",
+                    "label": "Select feed-in mode",
+                    "options": [
+                        { "label": "97% - Feed-In enabled", "value": 97 },
+                        { "label": "100% - Feed-In disabled", "value": 100 }
+                    ],
+                    "default": "enabled",
+                    "xl": 12,
+                    "lg": 12,
+                    "md": 12,
+                    "sm": 12,
+                    "xs": 12,
+                    "help": "At 97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.",
+                    "style": { "margin": "10px auto", "width": "30%", "textAlign": "center" }
+                },
+                "_headerEco": {
+                    "type": "header",
+                    "text": "Summer / Winter Mode",
+                    "size": 3,
+                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
+                    "style": { "textAlign": "center", "marginTop": "30px" }
+                },
+                "enableseasonmode": {
+                    "type": "checkbox",
+                    "label": "Enable summer/winter mode",
+                    "default": false,
+                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
+                    "style": { "margin": "10px auto", "width": "30%", "textAlign": "center" }
+                },
+                "winterfrom": {
+                    "type": "text",
+                    "label": "Winter start date (Format: DD.MM)",
+                    "default": "20.11",
+                    "help": "Enter a date in the format DD.MM (e.g., 20.11 for 20th November)",
+                    "xl": 4,
+                    "lg": 4,
+                    "md": 6,
+                    "sm": 12,
+                    "xs": 12,
+                    "style": { "margin": "0 auto", "textAlign": "center" }
+                },
+                "winterto": {
+                    "type": "text",
+                    "label": "Winter end date (Format: DD.MM)",
+                    "default": "07.02",
+                    "help": "Enter a date in the format DD.MM (e.g., 07.02 for 7th February)",
+                    "xl": 4,
+                    "lg": 4,
+                    "md": 6,
+                    "sm": 12,
+                    "xs": 12,
+                    "style": { "margin": "0 auto", "textAlign": "center" }
+                },
+                "ecoHint": {
+                    "type": "staticText",
+                    "text": "Winter mode: Minimum charge set to 60%, if SOC ≥55% it drops to 40%.<br>Summer mode: Minimum charge 10%, maximum charge 97%.",
+                    "xl": 12,
+                    "lg": 12,
+                    "md": 12,
+                    "sm": 12,
+                    "xs": 12,
+                    "style": { "margin": "20px auto", "width": "50%", "textAlign": "center", "whiteSpace": "pre-line" }
+                },
+                "_headerCalibration": {
+                    "type": "header",
+                    "text": "Battery Calibration",
+                    "size": 3,
+                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
+                    "style": { "textAlign": "center", "marginTop": "30px" }
+                },
+                "batterycalibration": {
+                    "type": "checkbox",
+                    "label": "Start battery calibration process",
+                    "default": false,
+                    "xl": 12,
+                    "lg": 12,
+                    "md": 12,
+                    "sm": 12,
+                    "xs": 12,
+                    "style": { "margin": "10px auto", "width": "30%", "textAlign": "center" }
+                },
+                "calibrationProgress": {
+                    "type": "select",
+                    "label": "Calibration progress direction",
+                    "options": [
+                        { "label": "0% - unloaded", "value": "down"  },
+                        { "label": "100% - load", "value": "up" }
+                    ],
+                    "default": 1,
+                    "xl": 12,
+                    "lg": 12,
+                    "md": 12,
+                    "sm": 12,
+                    "xs": 12,
+                    "help": "Select the direction for the calibration process.",
+                    "style": { "margin": "10px auto", "width": "30%", "textAlign": "center" }
+                },
+                "_batteryCalibrationInfo": {
+                    "type": "staticText",
+                    "text": "Starts the battery calibration process. First, the battery switches to normal operation and waits until the charge drops below <1%. Then the battery's minSOC is set to 99%. Once this value is reached, the adapter resumes normal operation.",
+                    "xl": 12,
+                    "lg": 12,
+                    "md": 12,
+                    "sm": 12,
+                    "xs": 12,
+                    "style": { "margin": "10px auto", "textAlign": "center", "fontSize": "12px" }
+                }
+            }
         }
     }
 }
