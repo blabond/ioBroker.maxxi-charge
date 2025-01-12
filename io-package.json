@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.3.13",
+    "version": "1.4.1",
     "news": {
+      "1.4.1": {
+        "en": "Added battery calibration (expert settings) and redesigned the configuration interface for a better user experience.",
+        "de": "Batteriekalibrierung hinzugefügt und die Konfigurationsoberfläche für eine bessere Benutzererfahrung überarbeitet.",
+        "ru": "Добавлена калибровка батареи (экспертные настройки) и переработан интерфейс конфигурации для улучшения пользовательского опыта.",
+        "pt": "Adicionado calibração da bateria (configurações de especialista) e redesenho da interface de configuração para uma melhor experiência do usuário.",
+        "nl": "Batterijkalibratie toegevoegd (expertinstellingen) en het configuratievenster herontworpen voor een betere gebruikerservaring.",
+        "fr": "Ajout de la calibration de la batterie (paramètres experts) et refonte de l'interface de configuration pour une meilleure expérience utilisateur.",
+        "it": "Aggiunta la calibrazione della batteria (impostazioni esperte) e ridisegnata l'interfaccia di configurazione per una migliore esperienza utente.",
+        "es": "Se añadió la calibración de la batería (configuración avanzada) y se rediseñó la interfaz de configuración para una mejor experiencia de usuario.",
+        "pl": "Dodano kalibrację baterii (ustawienia eksperckie) i przeprojektowano interfejs konfiguracji dla lepszej użyteczności.",
+        "uk": "Додано калібрування батареї (експертні налаштування) та перероблено інтерфейс конфігурації для кращого досвіду користувача.",
+        "zh-cn": "新增电池校准（专家设置）并重新设计配置界面，以提高用户体验。"
+      },
       "1.3.13": {
         "en": "Replaced deprecated methods, improved Promise handling, and integrated IP directly into the configuration view.",
         "de": "Veraltete Methoden ersetzt, Fehlerbehandlung für Promises verbessert und IP direkt in die Konfigurationsansicht integriert.",
@@ -143,7 +156,10 @@
     "apimode": "local",
 	"enableseasonmode": false,
     "winterfrom": "20.11",
-    "winterto": "07.02"
+    "winterto": "07.02",
+    "batterycalibration": false,
+    "calibrationProgress": "down",
+    "feedInMode": 97
   },
   "objects": [],
   "instanceObjects": []

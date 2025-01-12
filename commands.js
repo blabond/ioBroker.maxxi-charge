@@ -40,8 +40,8 @@ class Commands {
                 id: "minSOC",
                 description: { en: "Minimum battery discharge", de: "Minimale Batterieentladung" },
                 type: "number",
-                min: 2,
-                max: 95
+                min: 0,
+                max: 99
             },
             {
                 id: "maxSOC",

@@ -25,5 +25,18 @@
 	"enableSeasonMode": "Enable summer/winter mode",
 	"dateFrom": "Winter start date (Format: DD.MM)",
 	"dateTo": "Winter end date (Format: DD.MM)",
-	"ecoHint": "Hint for summer/winter mode"
+	"ecoHint": "Hint for summer/winter mode",
+	"Expert Settings": "Expert Settings",
+	"Battery Calibration": "Battery Calibration",
+	"Start battery calibration process": "Start battery calibration process",
+	"0% - unloaded": "0% - unloaded",
+	"100% - load": "100% - load",
+	"Starts the battery calibration process. First, the battery switches to normal operation and waits until the charge drops below <1%. Then the battery's minSOC is set to 99%. Once this value is reached, the adapter resumes normal operation.": "Starts the battery calibration process. First, the battery switches to normal operation and waits until the charge drops below <2%. Then the battery's minSOC is set to 99%. Once this value is reached, the adapter resumes normal operation.",
+	"Calibration progress direction": "Calibration progress direction",
+	"Select the direction for the calibration process.": "Select the direction for the calibration process.",
+	"Zero Feed-In / Feed-In Mode": "Zero Feed-In / Feed-In Mode",
+	"Select feed-in mode": "Select feed-in mode",
+	"97% - Feed-In enabled": "97% - Feed-In enabled",
+	"100% - Feed-In disabled": "100% - Feed-In disabled",
+	"At 97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.": "At 97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid."
 }
