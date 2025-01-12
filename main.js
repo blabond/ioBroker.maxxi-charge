@@ -1,12 +1,12 @@
 'use strict';
 
 const utils = require('@iobroker/adapter-core');
-const { ensureStateExists, validateInterval, getActiveDeviceId, prepareJsonConfig} = require('./utils'); // utils importieren
-const Commands = require('./commands');
-const LocalApi = require('./localApi');
-const CloudApi = require('./cloudApi');
-const EcoMode = require('./ecoMode');
-const BatteryCalibration = require('./batterycalibration');
+const { ensureStateExists, validateInterval, getActiveDeviceId, prepareJsonConfig} = require('./lib/utils'); // utils importieren
+const Commands = require('./lib/commands');
+const LocalApi = require('./lib/localApi');
+const CloudApi = require('./lib/cloudApi');
+const EcoMode = require('./lib/ecoMode');
+const batteryMode = require('./lib/batteryMode');
 
 class MaxxiCharge extends utils.Adapter {
 	constructor(options) {
@@ -24,7 +24,7 @@ class MaxxiCharge extends utils.Adapter {
 		this.localApi = new LocalApi(this); // Initialisiere LocalApi
 		this.cloudApi = null; // Platzhalter für CloudApi, wird in onReady initialisiert
 		this.ecoMode = new EcoMode(this); // Initialisiere EcoMode
-		this.batteryCalibration = new BatteryCalibration(this);
+		this.batteryMode = new batteryMode(this);
 
 		this.maxxiccuname = ''; // Platzhalter, wird in onReady gesetzt
 		this.stateCache = new Set(); // Cache für vorhandene States
@@ -105,7 +105,7 @@ class MaxxiCharge extends utils.Adapter {
 			}
 
 			if (this.config.batterycalibration) {
-				await this.batteryCalibration.init();
+				await this.batteryMode.init();
 			}
 
 		} catch (error) {
@@ -122,7 +122,7 @@ class MaxxiCharge extends utils.Adapter {
 		} else {
 			if (id.endsWith('.SOC')) {
 				await this.ecoMode.handleSOCChange(id, state);
-				await this.batteryCalibration.handleCalibrationSOCChange(id, state);
+				await this.batteryMode.handleCalibrationSOCChange(id, state);
 			}
 
 			if (id === `${this.namespace}.info.connection` && !state.val) {
