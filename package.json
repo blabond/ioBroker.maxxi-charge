@@ -39,6 +39,7 @@
     "ecoMode.js",
     "utils.js",
     "commands.js",
+    "batteryMode.js",
     "roles.js",
     "io-package.json"
   ],

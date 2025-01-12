@@ -128,7 +128,7 @@ class Commands {
                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
                 timeout: 15000 // Timeout in Millisekunden, hier 15 Sekunden
             });
-            this.adapter.log.info(`Command ${datapointId} successfully sent to device ${deviceId}: ${state.val}`);
+            this.adapter.log.debug(`Command ${datapointId} successfully sent to device ${deviceId}: ${state.val}`);
         } catch (error) {
             this.adapter.log.error(`Error sending command ${datapointId} to device ${deviceId}: ${error.message}`);
         }
