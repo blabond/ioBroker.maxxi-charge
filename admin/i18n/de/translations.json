@@ -25,5 +25,18 @@
 	"enableSeasonMode": "Sommer/Winter Regelung aktivieren",
 	"dateFrom": "Winter Datum AB (Format: DD.MM)",
 	"dateTo": "Winter Datum BIS (Format: DD.MM)",
-	"ecoHint": "Hinweis für Sommer/Winter-Betrieb"
+	"ecoHint": "Hinweis für Sommer/Winter-Betrieb",
+	"Expert Settings": "Experteneinstellungen",
+	"Battery Calibration": "Batteriekalibrierung",
+	"Start battery calibration process": "Batteriekalibrierung starten",
+	"0% - unloaded": "0% - entladen",
+	"100% - load": "100% - laden",
+	"Starts the battery calibration process. First, the battery switches to normal operation and waits until the charge drops below <1%. Then the battery's minSOC is set to 99%. Once this value is reached, the adapter resumes normal operation.": "Startet den Batterie-Kalibrierungsvorgang.<br>Zuerst wechselt die Batterie in den Normalbetrieb und wartet, bis die Ladung unter <1% fällt.<br>Dann wird der minSOC der Batterie auf 99% gesetzt.<br>Sobald dieser Wert erreicht ist, nimmt der Adapter den normalen Betrieb wieder auf.",
+	"Calibration progress direction": "Progress Richtung",
+	"Select the direction for the calibration process.": "Wähle die Richtung für den Kalibrierungsprozess.",
+	"Zero Feed-In / Feed-In Mode": "Nulleinspeisung / Einspeisung",
+	"Select feed-in mode": "Wählen Sie den Einspeise-Modus",
+	"97% - Feed-In enabled": "97% - Einspeisung aktiv",
+	"100% - Feed-In disabled": "100% - Einspeisung deaktiviert",
+	"At 97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.": "Bei 97% wird überschüssige Energie ins Netz eingespeist, wenn der Akku diesen SOC überschreitet. Bei 100% wird keine Energie eingespeist."
 }
