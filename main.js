@@ -167,11 +167,18 @@ class MaxxiCharge extends utils.Adapter {
 
     async onUnload(callback) {
         try {
-            // Setze die States auf Standardwerte
-            await this.setState('info.connection', { val: false, ack: true });
-            await this.setState('info.aktivCCU', { val: '', ack: true });
+            // Prüfen, ob das Objekt vor dem Setzen existiert
+            const connectionObj = await this.getObjectAsync('info.connection');
+            if (connectionObj) {
+                await this.setState('info.connection', { val: false, ack: true });
+            }
 
-            // Aufräumen aller Komponenten
+            const aktivCcuObj = await this.getObjectAsync('info.aktivCCU');
+            if (aktivCcuObj) {
+                await this.setState('info.aktivCCU', { val: '', ack: true });
+            }
+
+            // Andere Bereinigungen
             if (this.commands) {
                 this.commands.cleanup();
             }
@@ -188,16 +195,9 @@ class MaxxiCharge extends utils.Adapter {
                 this.cloudApi.cleanup();
             }
 
-            // Bereinige vorhandene Timer und Intervalle
+            // Timer/Intervalle entfernen
             if (this.cleanupInterval) {
                 this.clearInterval(this.cleanupInterval);
-            }
-
-            // Bereinige dynamische States, falls noch abonniert
-            const activeDevices = Object.keys(this.activeDevices || {});
-            for (const deviceId of activeDevices) {
-                const socState = `${this.namespace}.${deviceId}.SOC`;
-                this.unsubscribeStates(socState);
             }
 
             callback();
