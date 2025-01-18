@@ -9,6 +9,10 @@ class CloudApi {
         this.ccuintervalMs = (this.adapter.config.ccuinterval || 30) * 1000;
         this.stateCache = new Set(); // Cache für bestehende States
         this.commandInitialized = false;
+
+        // Intervalle definieren
+        this.infoInterval = null;
+        this.ccuInterval = null;
     }
 
     async init() {
@@ -28,7 +32,6 @@ class CloudApi {
             const basePath = `${deviceId}.settings`;
 
             await processNestedData(this.adapter, basePath, response.data, this.stateCache);
-
         } catch (error) {
             this.adapter.log.error(`Error fetching Settings data: ${error.message}`);
         }
@@ -55,7 +58,6 @@ class CloudApi {
         }
     }
 
-
     startFetchingData() {
         void this.fetchInfoData();
         void this.fetchCcuData();
@@ -67,7 +69,15 @@ class CloudApi {
         this.adapter.setInterval(() => this.fetchCcuData(), ccuInterval);
     }
 
-    cleanup() {}
+    cleanup() {
+        if (this.infoInterval) {
+            clearInterval(this.infoInterval);
+        }
+
+        if (this.ccuInterval) {
+            clearInterval(this.ccuInterval);
+        }
+    }
 }
 
 module.exports = CloudApi;

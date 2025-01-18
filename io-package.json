@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.4.1",
+    "version": "1.4.2",
     "news": {
+      "1.4.2": {
+        "en": "Fixes for stable release on ioBroker adapter.",
+        "de": "Fixes für die Stable-Veröffentlichung des ioBroker-Adapters.",
+        "ru": "Исправления для стабильного выпуска адаптера ioBroker.",
+        "pt": "Correções para lançamento estável no adaptador ioBroker.",
+        "nl": "Fixes voor stabiele release van de ioBroker-adapter.",
+        "fr": "Correctifs pour la version stable de l'adaptateur ioBroker.",
+        "it": "Correzioni per il rilascio stabile dell'adattatore ioBroker.",
+        "es": "Correcciones para la versión estable del adaptador ioBroker.",
+        "pl": "Poprawki do stabilnego wydania adaptera ioBroker.",
+        "uk": "Виправлення для стабільного випуску адаптера ioBroker.",
+        "zh-cn": "ioBroker 适配器稳定版本的修复。"
+      },
       "1.4.1": {
         "en": "Added battery calibration (expert settings) and redesigned the configuration interface for a better user experience.",
         "de": "Batteriekalibrierung hinzugefügt und die Konfigurationsoberfläche für eine bessere Benutzererfahrung überarbeitet.",
@@ -145,7 +158,7 @@
     ],
 	"globalDependencies": [
           {
-              "admin": ">=6.1714"
+              "admin": ">=6.1.714"
           }
       ]
   },

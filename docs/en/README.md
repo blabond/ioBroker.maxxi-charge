@@ -41,7 +41,7 @@
 | Setting                   | Description                                                              |
 |---------------------------|--------------------------------------------------------------------------|
 | **Maxxi CCU Name**        | Name or IP address of the Maxxi CCU.                                     |
-| **CCU Query Interval**    | Interval (5-90 seconds) for querying CCU data in Cloud Mode.             |
+| **CCU Query Interval**    | Interval (10-90 seconds) for querying CCU data in Cloud Mode.             |
 | **Summer/Winter Mode**    | Automatically adjusts charging parameters based on defined winter dates. |
 | **Port for Local-API**    | Defines the port on which the Local-API listens.                         |
 | **Feed-in Control**       | Configures whether excess energy is fed into the grid.                   |

@@ -41,7 +41,7 @@
 | Einstellung                  | Beschreibung                                                                     |
 |------------------------------|----------------------------------------------------------------------------------|
 | **Maxxi CCU Name**           | Name oder IP-Adresse der Maxxi CCU.                                              |
-| **CCU Abfrageintervall**     | Intervall (5-90 Sekunden) für die Abfrage der CCU-Daten im Cloud-Modus.         |
+| **CCU Abfrageintervall**     | Intervall (10-90 Sekunden) für die Abfrage der CCU-Daten im Cloud-Modus.         |
 | **Sommer/Winter-Betrieb**    | Automatische Anpassung der Ladeparameter basierend auf definierten Winter-Daten. |
 | **Port für Local-API**       | Definiert den Port, auf dem die Local-API lauscht.                               |
 | **Einspeisungssteuerung**    | Konfiguration zur Aktivierung oder Deaktivierung der Einspeisung.                |

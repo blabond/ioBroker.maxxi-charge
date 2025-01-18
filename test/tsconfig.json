@@ -4,6 +4,10 @@
         "noImplicitAny": false
     },
     "include": [
-        "./**/*.js"
+        "eslint.config.mjs",
+        "prettier.config.mjs",
+        "./*.js",
+        "./**/*.js",
+        "./**/*.ts"
     ]
 }

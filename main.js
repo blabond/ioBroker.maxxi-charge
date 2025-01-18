@@ -1,7 +1,7 @@
 'use strict';
 
 const utils = require('@iobroker/adapter-core');
-const { ensureStateExists, validateInterval, getActiveDeviceId, prepareJsonConfig} = require('./utils'); // utils importieren
+const { validateInterval, getActiveDeviceId } = require('./utils'); // utils importieren
 const Commands = require('./commands');
 const LocalApi = require('./localApi');
 const CloudApi = require('./cloudApi');
@@ -9,210 +9,207 @@ const EcoMode = require('./ecoMode');
 const BatteryMode = require('./batteryMode');
 
 class MaxxiCharge extends utils.Adapter {
-	constructor(options) {
-		super({
-			...options,
-			name: 'maxxi-charge',
-		});
+    constructor(options) {
+        super({
+            ...options,
+            name: 'maxxi-charge',
+        });
 
-		this.on('ready', this.onReady.bind(this));
-		this.on('unload', this.onUnload.bind(this));
-		this.on('stateChange', this.onStateChange.bind(this));
+        this.on('ready', this.onReady.bind(this));
+        this.on('unload', this.onUnload.bind(this));
+        this.on('stateChange', this.onStateChange.bind(this));
 
-		this.activeDevices = {}; // Speichert aktive CCUs
-		this.commands = new Commands(this); // Initialisiere Commands
-		this.localApi = new LocalApi(this); // Initialisiere LocalApi
-		this.cloudApi = null; // Platzhalter für CloudApi, wird in onReady initialisiert
-		this.ecoMode = new EcoMode(this); // Initialisiere EcoMode
-		this.batteryMode = new BatteryMode(this);
+        this.activeDevices = {}; // Speichert aktive CCUs
+        this.commands = new Commands(this); // Initialisiere Commands
+        this.localApi = new LocalApi(this); // Initialisiere LocalApi
+        this.cloudApi = null; // Platzhalter für CloudApi, wird in onReady initialisiert
+        this.ecoMode = new EcoMode(this); // Initialisiere EcoMode
+        this.batteryMode = new BatteryMode(this);
 
-		this.maxxiccuname = ''; // Platzhalter, wird in onReady gesetzt
-		this.stateCache = new Set(); // Cache für vorhandene States
-	}
+        this.maxxiccuname = ''; // Platzhalter, wird in onReady gesetzt
+        this.stateCache = new Set(); // Cache für vorhandene States
+    }
 
-	async onReady() {
-		try {
-			this.subscribeStates('info.connection');
+    async onReady() {
+        try {
+            this.subscribeStates('info.connection');
 
+            // Setze info.connection und info.aktivCCU auf Standardwerte
+            await this.setObjectNotExistsAsync('info.connection', {
+                type: 'state',
+                common: {
+                    name: {
+                        en: 'Connection active',
+                        de: 'Verbindung aktiv',
+                    },
+                    type: 'boolean',
+                    role: 'indicator.connected',
+                    read: true,
+                    write: false,
+                },
+                native: {},
+            });
 
-			// IP-Adresse des Hosts ermitteln
-			const hostObject = await this.getForeignObjectAsync(`system.host.${this.host}`);
-			let ipAddress = "127.0.0.1"; // Fallback
+            await this.setObjectNotExistsAsync('info.aktivCCU', {
+                type: 'state',
+                common: {
+                    name: {
+                        en: 'Active CCUs',
+                        de: 'Aktive CCUs',
+                    },
+                    type: 'string',
+                    role: 'value',
+                    read: true,
+                    write: false,
+                },
+                native: {},
+            });
 
-			if (hostObject?.native?.hardware?.networkInterfaces) {
-				const networkInterfaces = hostObject.native.hardware.networkInterfaces;
+            // Initialisiere APIs basierend auf dem Modus
+            this.cloudApi = new CloudApi(this);
 
-				for (const ifaceName in networkInterfaces) {
-					const iface = networkInterfaces[ifaceName];
-					for (const address of iface) {
-						if (!address.internal && address.family === 'IPv4') {
-							ipAddress = address.address;
-							break;
-						}
-					}
-					if (ipAddress !== "127.0.0.1") break;
-				}
-				await prepareJsonConfig(ipAddress);
-			}
+            if (this.config.apimode === 'local') {
+                await this.localApi.init();
+            } else if (this.config.apimode === 'cloud') {
+                await this.cloudApi.init();
+            }
 
-			// Setze info.connection und info.aktivCCU auf Standardwerte
-			await this.setObjectNotExistsAsync('info.connection', {
-				type: 'state',
-				common: {
-					name: {
-						en: 'Connection active',
-						de: 'Verbindung aktiv',
-					},
-					type: 'boolean',
-					role: 'indicator.connected',
-					read: true,
-					write: false,
-				},
-				native: {},
-			});
+            // Cleanup-Intervall
+            this.cleanupInterval = this.setInterval(() => this.cleanupActiveDevices(), validateInterval(30 * 1000));
 
-			await this.setObjectNotExistsAsync('info.aktivCCU', {
-				type: 'state',
-				common: {
-					name: {
-						en: 'Active CCUs',
-						de: 'Aktive CCUs',
-					},
-					type: 'string',
-					role: 'value',
-					read: true,
-					write: false,
-				},
-				native: {},
-			});
+            // EcoMode initialisieren, falls aktiviert
+            if (this.config.enableseasonmode && this.config.batterycalibration === false) {
+                await this.ecoMode.init();
+            }
 
+            if (this.config.batterycalibration) {
+                await this.batteryMode.init();
+            }
+        } catch (error) {
+            this.log.error(`Fatal error during initialization: ${error.message}`);
+        }
+    }
 
-			// Initialisiere APIs basierend auf dem Modus
-			this.cloudApi = new CloudApi(this);
+    async onStateChange(id, state) {
+        // this.log.debug(`State changed: ${id}, Value: ${state.val}, Ack: ${state.ack}`);
 
-			if (this.config.apimode === 'local') {
-				await this.localApi.init();
-			} else if (this.config.apimode === 'cloud') {
-				await this.cloudApi.init();
-			}
+        if (!state.ack) {
+            await this.commands.handleCommandChange(id, state);
+        } else {
+            if (id.endsWith('.SOC')) {
+                await this.ecoMode.handleSOCChange(id, state);
+                await this.batteryMode.handleCalibrationSOCChange(id, state);
+            }
 
-			// Cleanup-Intervall
-			this.cleanupInterval = this.setInterval(() => this.cleanupActiveDevices(), validateInterval( 30 * 1000));
+            if (id === `${this.namespace}.info.connection` && !state.val) {
+                this.ecoMode.cleanup();
 
-			// EcoMode initialisieren, falls aktiviert
-			if (this.config.enableseasonmode && this.config.batterycalibration === false) {
-				await this.ecoMode.init();
-			}
+                const deviceId = await getActiveDeviceId(this);
+                if (deviceId) {
+                    const socState = `${this.namespace}.${deviceId}.SOC`;
+                    this.unsubscribeStates(socState);
+                    this.log.debug(`Unsubscribed from dynamic state: ${socState}`);
+                }
+            }
+        }
+    }
 
-			if (this.config.batterycalibration) {
-				await this.batteryMode.init();
-			}
+    async subscribeDynamicStates(deviceId) {
+        const socState = `${this.namespace}.${deviceId}.SOC`;
+        this.subscribeStates(socState);
+    }
 
-		} catch (error) {
-			this.log.error(`Fatal error during initialization: ${error.message}`);
-		}
-	}
+    async updateActiveCCU(deviceId) {
+        this.activeDevices[deviceId] = Date.now();
 
+        const keys = Object.keys(this.activeDevices);
+        const csv = keys.join(',');
 
-	async onStateChange(id, state) {
-		// this.log.debug(`State changed: ${id}, Value: ${state.val}, Ack: ${state.ack}`);
+        // Zwischenspeicher für den letzten Zustand von `info.connection`
+        if (!this.lastConnectionState) {
+            this.lastConnectionState = false;
+        }
 
-		if (!state.ack) {
-			await this.commands.handleCommandChange(id, state);
-		} else {
-			if (id.endsWith('.SOC')) {
-				await this.ecoMode.handleSOCChange(id, state);
-				await this.batteryMode.handleCalibrationSOCChange(id, state);
-			}
+        const isConnected = keys.length > 0;
+        if (this.lastConnectionState !== isConnected) {
+            // Zustand hat sich geändert, also aktualisieren
+            await this.setState('info.connection', { val: isConnected, ack: true });
+            this.lastConnectionState = isConnected;
 
-			if (id === `${this.namespace}.info.connection` && !state.val) {
-				this.ecoMode.cleanup();
+            if (isConnected) {
+                await this.subscribeDynamicStates(deviceId);
+                if (this.config.enableseasonmode && !this.ecoModeInitialized) {
+                    this.ecoModeInitialized = true; // Sicherstellen, dass `EcoMode` nur einmal gestartet wird
+                    await this.ecoMode.startMonitoring();
+                }
+            }
+        }
 
-				const deviceId = await getActiveDeviceId(this);
-				if (deviceId) {
-					const socState = `${this.namespace}.${deviceId}.SOC`;
-					this.unsubscribeStates(socState);
-					this.log.debug(`Unsubscribed from dynamic state: ${socState}`);
-				}
-			}
-		}
-	}
+        // `info.aktivCCU` immer aktualisieren
+        await this.setState('info.aktivCCU', { val: csv, ack: true });
+    }
 
-	async subscribeDynamicStates(deviceId) {
-		const socState = `${this.namespace}.${deviceId}.SOC`;
-		this.subscribeStates(socState);
-	}
+    async cleanupActiveDevices() {
+        const now = Date.now();
+        const fiveMinAgo = now - 90 * 1000;
 
-	async updateActiveCCU(deviceId) {
-		this.activeDevices[deviceId] = Date.now();
+        for (const deviceId in this.activeDevices) {
+            if (this.activeDevices[deviceId] < fiveMinAgo) {
+                delete this.activeDevices[deviceId];
+                this.log.info(`Device ${deviceId} marked as inactive and removed.`);
+            }
+        }
 
-		const keys = Object.keys(this.activeDevices);
-		const csv = keys.join(',');
+        const keys = Object.keys(this.activeDevices);
+        await this.setState('info.aktivCCU', { val: keys.join(','), ack: true });
+        await this.setState('info.connection', { val: keys.length > 0, ack: true });
+    }
 
-		// Zwischenspeicher für den letzten Zustand von `info.connection`
-		if (!this.lastConnectionState) {
-			this.lastConnectionState = false;
-		}
+    async onUnload(callback) {
+        try {
+            // Setze die States auf Standardwerte
+            await this.setState('info.connection', { val: false, ack: true });
+            await this.setState('info.aktivCCU', { val: '', ack: true });
 
-		const isConnected = keys.length > 0;
-		if (this.lastConnectionState !== isConnected) {
-			// Zustand hat sich geändert, also aktualisieren
-			await this.setState('info.connection', { val: isConnected, ack: true });
-			this.lastConnectionState = isConnected;
+            // Aufräumen aller Komponenten
+            if (this.commands) {
+                this.commands.cleanup();
+            }
+            if (this.ecoMode) {
+                this.ecoMode.cleanup();
+            }
+            if (this.batteryMode) {
+                this.batteryMode.cleanup();
+            }
+            if (this.localApi) {
+                this.localApi.cleanup();
+            }
+            if (this.cloudApi) {
+                this.cloudApi.cleanup();
+            }
 
-			if (isConnected) {
-				await this.subscribeDynamicStates(deviceId);
-				if (this.config.enableseasonmode && !this.ecoModeInitialized) {
-					this.ecoModeInitialized = true; // Sicherstellen, dass `EcoMode` nur einmal gestartet wird
-					await this.ecoMode.startMonitoring();
-				}
-			}
-		}
+            // Bereinige vorhandene Timer und Intervalle
+            if (this.cleanupInterval) {
+                this.clearInterval(this.cleanupInterval);
+            }
 
-		// `info.aktivCCU` immer aktualisieren
-		await this.setState('info.aktivCCU', { val: csv, ack: true });
-	}
+            // Bereinige dynamische States, falls noch abonniert
+            const activeDevices = Object.keys(this.activeDevices || {});
+            for (const deviceId of activeDevices) {
+                const socState = `${this.namespace}.${deviceId}.SOC`;
+                this.unsubscribeStates(socState);
+            }
 
-
-	async cleanupActiveDevices() {
-		const now = Date.now();
-		const fiveMinAgo = now - 90 * 1000;
-
-		for (const deviceId in this.activeDevices) {
-			if (this.activeDevices[deviceId] < fiveMinAgo) {
-				delete this.activeDevices[deviceId];
-				this.log.info(`Device ${deviceId} marked as inactive and removed.`);
-			}
-		}
-
-		const keys = Object.keys(this.activeDevices);
-		await this.setState('info.aktivCCU', { val: keys.join(','), ack: true });
-		await this.setState('info.connection', { val: keys.length > 0, ack: true });
-	}
-
-	async onUnload(callback) {
-		try {
-			await this.setState('info.connection', { val: false, ack: true });
-			await this.setState('info.aktivCCU', { val: '', ack: true });
-
-			if (this.ecoMode) this.ecoMode.cleanup();
-			if (this.localApi) this.localApi.cleanup();
-			if (this.cloudApi) this.cloudApi.cleanup();
-
-
-			// Alle Timer und Intervalle korrekt aufräumen
-			this.clearInterval(this.cleanupInterval);
-			this.log.info('MaxxiCharge adapter terminated.');
-			callback();
-		} catch (e) {
-			this.log.error(`Error during shutdown: ${e.message}`);
-			callback();
-		}
-	}
+            callback();
+        } catch (e) {
+            this.log.error(`Error during shutdown: ${e.message}`);
+            callback();
+        }
+    }
 }
 
 if (require.main !== module) {
-	module.exports = (options) => new MaxxiCharge(options);
+    module.exports = options => new MaxxiCharge(options);
 } else {
-	new MaxxiCharge();
+    new MaxxiCharge();
 }

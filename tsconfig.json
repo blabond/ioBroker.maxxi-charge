@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",                  // Zielversion von JavaScript
+    "module": "ESNext",                 // Modultyp (ES Module)
+    "moduleResolution": "node",         // Auflösung von Modulen
+    "strict": true,                     // Aktiviert strikte Typprüfungen
+    "esModuleInterop": true,            // Ermöglicht Interoperabilität mit CommonJS
+    "skipLibCheck": true,               // Überspringt die Typprüfung in Bibliotheken
+    "forceConsistentCasingInFileNames": true // Erzwingt konsistente Groß-/Kleinschreibung in Dateinamen
+  },
+  "include": [
+    "eslint.config.mjs",                // ESLint-Konfiguration
+    "prettier.config.mjs",              // Prettier-Konfiguration
+    "./*.js",                           // Alle JS-Dateien im Hauptverzeichnis
+    "./**/*.js",                        // Alle JS-Dateien in Unterverzeichnissen
+    "./**/*.ts"                         // Alle TS-Dateien in Unterverzeichnissen
+  ],
+  "exclude": [
+    "node_modules",                     // Node.js-Module ausschließen
+    "build",                            // Build-Verzeichnis ausschließen
+    "admin/build",                      // Admin-Build ausschließen
+    "dist"                              // Distribution-Verzeichnis ausschließen
+  ]
+}
