@@ -47,7 +47,7 @@ function getDateValue(date) {
 
 async function processNestedData(adapter, basePath, data, stateCache) {
     for (const key in data) {
-        if (Object.hasOwn(data, key)) {
+        if (!Object.hasOwn(data, key)) {
             continue;
         }
 
@@ -126,7 +126,7 @@ async function changeSettingAkku(adapter, batteryCalibration, calibrationProgres
         // Schreibe die Änderungen zurück
         await adapter.setForeignObject(adapterConfigPath, obj);
 
-        adapter.log.info(
+        adapter.log.debug(
             `Successfully updated batterycalibration to ${batteryCalibration} and calibrationProgress to ${calibrationProgress}.`,
         );
     } catch (error) {
