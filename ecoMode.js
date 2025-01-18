@@ -47,7 +47,9 @@ class EcoMode {
                 clearInterval(this.deviceCheckInterval); // Stoppe die Überprüfung
                 await this.evaluateSeason(); // Sofortige Überprüfung
             } else if (attempts >= maxAttempts) {
-                this.adapter.log.warn('EcoMode: No active device found after maximum attempts. Monitoring will still continue with daily checks.');
+                this.adapter.log.warn(
+                    'EcoMode: No active device found after maximum attempts. Monitoring will still continue with daily checks.',
+                );
                 clearInterval(this.deviceCheckInterval); // Stoppe die Überprüfung
             } else {
                 attempts++;
@@ -96,7 +98,9 @@ class EcoMode {
     }
 
     async handleSOCChange(id, state) {
-        if (!state || !state.ack || typeof state.val !== 'number' || this.minSocSetToday) return;
+        if (!state || !state.ack || typeof state.val !== 'number' || this.minSocSetToday) {
+            return;
+        }
 
         const parts = id.split('.');
         const deviceId = parts.length > 2 ? parts[2] : null;
@@ -118,7 +122,6 @@ class EcoMode {
         }
     }
 
-
     async applySummerOnce(deviceId) {
         const feedInMode = this.adapter.config.feedInMode;
         if (!deviceId) {
@@ -137,9 +140,8 @@ class EcoMode {
 
         if (fromVal < toVal) {
             return nowVal >= fromVal && nowVal < toVal; // toVal ist exklusiv
-        } else {
-            return (nowVal >= fromVal || nowVal < toVal) && nowVal !== toVal; // toVal explizit ausgeschlossen
         }
+        return (nowVal >= fromVal || nowVal < toVal) && nowVal !== toVal; // toVal explizit ausgeschlossen
     }
 
     isExactWinterTo(dateObj) {
@@ -147,9 +149,11 @@ class EcoMode {
     }
 
     parseDate(str) {
-        if (!str || typeof str !== 'string') return null;
+        if (!str || typeof str !== 'string') {
+            return null;
+        }
         const [d, m] = str.split('.').map(Number);
-        return (d >= 1 && d <= 31 && m >= 1 && m <= 12) ? { day: d, month: m } : null;
+        return d >= 1 && d <= 31 && m >= 1 && m <= 12 ? { day: d, month: m } : null;
     }
 
     cleanup() {
@@ -157,8 +161,17 @@ class EcoMode {
 
         // Entfernen von geplanten Jobs
         const jobs = schedule.scheduledJobs;
-        for (const jobName in jobs) {
-            jobs[jobName].cancel();
+        if (jobs && typeof jobs === 'object') {
+            for (const jobName in jobs) {
+                if (Object.prototype.hasOwnProperty.call(jobs, jobName)) {
+                    jobs[jobName].cancel();
+                }
+            }
+        }
+
+        // Entfernen des Intervalls
+        if (this.deviceCheckInterval) {
+            clearInterval(this.deviceCheckInterval);
         }
     }
 }

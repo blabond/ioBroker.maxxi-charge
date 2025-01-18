@@ -44,10 +44,10 @@
                     "type": "slider",
                     "label": "CCU Query Interval (Seconds)",
                     "default": 30,
-                    "min": 5,
+                    "min": 10,
                     "max": 90,
                     "step": 5,
-                    "help": "Set the interval for CCU queries in seconds (5-90).",
+                    "help": "Set the interval for CCU queries in seconds (10-90).",
                     "xl": 6, "lg": 6, "md": 6, "sm": 12, "xs": 12,
                     "style": { "margin": "0 auto", "textAlign": "center" }
                 },

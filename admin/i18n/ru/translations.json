@@ -8,7 +8,7 @@
 	"Maxxi CCU Name": "Maxxi CCU Name",
 	"Enter the name of the Maxxi CCU (e.g., maxxi-XXXXXX-YYY).": "Enter the name of the Maxxi CCU (e.g., maxxi-XXXXXX-YYY).",
 	"CCU Query Interval (Seconds)": "CCU Query Interval (Seconds)",
-	"Set the interval for CCU queries in seconds (5-90).": "Set the interval for CCU queries in seconds (5-90).",
+	"Set the interval for CCU queries in seconds (10-90).": "Set the interval for CCU queries in seconds (10-90).",
 	"Local Configuration": "Local Configuration",
 	"Port": "Port",
 	"Define the port for the Local-API.": "Define the port for the API to listen on.",

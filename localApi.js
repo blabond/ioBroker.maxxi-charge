@@ -1,7 +1,7 @@
 'use strict';
 
 const http = require('http');
-const { name2id, processNestedData, validateInterval } = require('./utils');
+const { name2id, processNestedData } = require('./utils');
 
 class LocalApi {
     constructor(adapter) {
@@ -16,7 +16,10 @@ class LocalApi {
         this.server = http.createServer((req, res) => {
             res.setHeader('Access-Control-Allow-Origin', '*');
             res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-            res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+            res.setHeader(
+                'Access-Control-Allow-Headers',
+                'Content-Type, Authorization, Content-Length, X-Requested-With',
+            );
 
             if (req.method === 'OPTIONS') {
                 res.writeHead(200);
@@ -31,7 +34,7 @@ class LocalApi {
                     try {
                         const data = JSON.parse(body);
                         const rawDeviceId = data.deviceId || 'UnknownDevice'; // Original erhalten
-						const deviceId = name2id(rawDeviceId).toLowerCase(); // Kleinbuchstaben erzwingen
+                        const deviceId = name2id(rawDeviceId).toLowerCase(); // Kleinbuchstaben erzwingen
 
                         if (!deviceId) {
                             this.adapter.log.warn('Invalid deviceId received.');
@@ -46,7 +49,6 @@ class LocalApi {
                         const basePath = `${deviceFolder}`;
 
                         await processNestedData(this.adapter, basePath, data, this.stateCache);
-
 
                         // Initialisiere `sendCommand`-Datenpunkte
                         await this.adapter.commands.initializeCommandSettings(deviceFolder);
@@ -73,7 +75,17 @@ class LocalApi {
         });
     }
 
-    cleanup() {}
+    cleanup() {
+        if (this.server) {
+            this.server.close(() => {});
+            this.server = null; // Server-Referenz auf null setzen, um Speicher freizugeben
+        }
+
+        // Leere den State-Cache
+        if (this.stateCache) {
+            this.stateCache.clear();
+        }
+    }
 }
 
 module.exports = LocalApi;

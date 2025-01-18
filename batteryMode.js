@@ -24,10 +24,11 @@ class BatteryMode {
                 if (deviceId) {
                     await this.handleCalibration(deviceId); // Führe die eigentliche Kalibrierung aus
                 }
-
             } else if (attempts >= maxAttempts) {
                 clearInterval(this.calibrationCheckInterval);
-                this.adapter.log.debug('Battery calibration process aborted. Connection was not established within the maximum wait time.');
+                this.adapter.log.debug(
+                    'Battery calibration process aborted. Connection was not established within the maximum wait time.',
+                );
             } else {
                 attempts++;
                 this.adapter.log.debug('Waiting for connection to become active...');
@@ -41,11 +42,11 @@ class BatteryMode {
         const calibrationProgress = this.adapter.config.calibrationProgress;
 
         try {
-            if (calibrationProgress === "down") {
+            if (calibrationProgress === 'down') {
                 this.adapter.log.debug('Battery Calibration Step 1: Setting SOC to 0%.');
                 await applySocValue(this.adapter, deviceId, 0, 'minSOC');
                 await applySocValue(this.adapter, deviceId, 100, 'maxSOC');
-            } else if (calibrationProgress === "up") {
+            } else if (calibrationProgress === 'up') {
                 this.adapter.log.debug('Battery Calibration Step 2: Setting SOC to 100%.');
                 await applySocValue(this.adapter, deviceId, 99, 'minSOC');
                 await applySocValue(this.adapter, deviceId, 100, 'maxSOC');
@@ -58,13 +59,23 @@ class BatteryMode {
     }
 
     async handleCalibrationSOCChange(id, state) {
-        if (!state.ack) return;
+        if (!state.ack) {
+            return;
+        }
         const calibrationProgress = this.adapter.config.calibrationProgress;
 
-        if (calibrationProgress === "down" && state.val <= 1) { // "down" Zustand
-            await changeSettingAkku(this.adapter, true, "up");
-        } else if (calibrationProgress === "up" && state.val >= 99) { // "up" Zustand
-            await changeSettingAkku(this.adapter, false, "down");
+        if (calibrationProgress === 'down' && state.val <= 1) {
+            // "down" Zustand
+            await changeSettingAkku(this.adapter, true, 'up');
+        } else if (calibrationProgress === 'up' && state.val >= 99) {
+            // "up" Zustand
+            await changeSettingAkku(this.adapter, false, 'down');
+        }
+    }
+
+    cleanup() {
+        if (this.calibrationCheckInterval) {
+            clearInterval(this.calibrationCheckInterval);
         }
     }
 }

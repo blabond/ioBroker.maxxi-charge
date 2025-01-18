@@ -34,8 +34,9 @@ const roleMapping = {
 
 /**
  * Bestimmt die Rolle für einen Datenpunkt basierend auf seinem Namen.
- * @param {string} key - Der Name des Datenpunkts.
- * @returns {string} - Die Rolle des Datenpunkts.
+ *
+ * @param key - Der Name des Datenpunkts.
+ * @returns - Die Rolle des Datenpunkts.
  */
 function determineRole(key) {
     key = key.toLowerCase(); // Schlüssel in Kleinbuchstaben

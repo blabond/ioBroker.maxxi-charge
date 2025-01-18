@@ -1,6 +1,5 @@
 'use strict';
 
-const fs = require('fs/promises');
 const { determineRole } = require('./roles');
 
 const FORBIDDEN_CHARS = /[^a-zA-Z0-9_-]/g;
@@ -12,22 +11,18 @@ function name2id(pName) {
 async function ensureStateExists(adapter, stateCache, statePath, obj) {
     const parentPath = statePath.substring(0, statePath.lastIndexOf('.'));
     if (parentPath && !stateCache.has(parentPath)) {
-        const parentObj = await adapter.getObjectAsync(parentPath);
-        if (!parentObj) {
-            await adapter.setObject(parentPath, {
-                type: 'channel',
-                common: { name: '' },
-                native: {},
-            });
-        }
+        // Ersetzen von getObjectAsync und setObject
+        await adapter.setObjectNotExists(parentPath, {
+            type: 'channel',
+            common: { name: '' },
+            native: {},
+        });
         stateCache.add(parentPath);
     }
 
     if (!stateCache.has(statePath)) {
-        const existingObj = await adapter.getObjectAsync(statePath);
-        if (!existingObj) {
-            await adapter.setObject(statePath, obj);
-        }
+        // Ersetzen von getObjectAsync und setObject
+        await adapter.setObjectNotExists(statePath, obj);
         stateCache.add(statePath);
     }
 }
@@ -38,8 +33,8 @@ async function getActiveDeviceId(adapter) {
         return null;
     }
 
-    const deviceId = aktivState.val.split(',')[0].trim();  // Nur den ersten Teil des Strings
-    if (!deviceId || deviceId === "null") {
+    const deviceId = aktivState.val.split(',')[0].trim(); // Nur den ersten Teil des Strings
+    if (!deviceId || deviceId === 'null') {
         adapter.log.warn(`getActiveDeviceId: Invalid deviceId found: ${deviceId}`);
         return null;
     }
@@ -52,7 +47,9 @@ function getDateValue(date) {
 
 async function processNestedData(adapter, basePath, data, stateCache) {
     for (const key in data) {
-        if (!data.hasOwnProperty(key)) continue;
+        if (Object.hasOwn(data, key)) {
+            continue;
+        }
 
         const value = data[key];
         const safeId = name2id(key);
@@ -105,24 +102,6 @@ function validateInterval(value, min = 1000, max = 3600000) {
     return value;
 }
 
-async function prepareJsonConfig(ipAddress) {
-    try {
-        // Lade die ursprüngliche Konfigurationsdatei
-        const templatePath = './admin/jsonConfig_org.json';
-        const rawTemplate = await fs.readFile(templatePath, 'utf-8');
-        const configTemplate = JSON.parse(rawTemplate);
-
-        // Ersetze den Platzhalter `{ioBrokerIP}` durch die aktuelle IP-Adresse
-        const updatedConfig = JSON.stringify(configTemplate).replace(/{ioBrokerIP}/g, ipAddress);
-
-        // Schreibe die aktualisierte Datei zurück (oder speichere sie an einem anderen Ort)
-        const outputPath = './admin/jsonConfig.json';
-        await fs.writeFile(outputPath, updatedConfig);
-    } catch (error) {
-        console.debug(`JSON-Config: ${error.message}`);
-    }
-}
-
 async function changeSettingAkku(adapter, batteryCalibration, calibrationProgress) {
     try {
         const adapterConfigPath = `system.adapter.${adapter.namespace}`;
@@ -136,26 +115,24 @@ async function changeSettingAkku(adapter, batteryCalibration, calibrationProgres
         }
 
         // Ändere die gewünschten Werte
-        if (typeof batteryCalibration === "boolean") {
+        if (typeof batteryCalibration === 'boolean') {
             obj.native.batterycalibration = batteryCalibration;
         }
 
-        if (calibrationProgress === "down" || calibrationProgress === "up") {
+        if (calibrationProgress === 'down' || calibrationProgress === 'up') {
             obj.native.calibrationProgress = calibrationProgress;
         }
 
         // Schreibe die Änderungen zurück
         await adapter.setForeignObject(adapterConfigPath, obj);
 
-        adapter.log.info(`Successfully updated batterycalibration to ${batteryCalibration} and calibrationProgress to ${calibrationProgress}.`);
+        adapter.log.info(
+            `Successfully updated batterycalibration to ${batteryCalibration} and calibrationProgress to ${calibrationProgress}.`,
+        );
     } catch (error) {
         adapter.log.error(`Error in changeSettingAkku: ${error.message}`);
     }
 }
-
-
-
-
 
 module.exports = {
     name2id,
@@ -165,6 +142,5 @@ module.exports = {
     getDateValue,
     applySocValue,
     validateInterval,
-    prepareJsonConfig,
     changeSettingAkku,
 };

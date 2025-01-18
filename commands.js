@@ -9,53 +9,59 @@ class Commands {
         this.stateCache = new Set(); // Cache für bestehende States
         this.commandDatapoints = [
             {
-                id: "maxOutputPower",
-                description: { en: "Micro-inverter maximum power (W)", de: "Mikrowechselrichter maximale Leistung (W)" },
-                type: "number",
+                id: 'maxOutputPower',
+                description: {
+                    en: 'Micro-inverter maximum power (W)',
+                    de: 'Mikrowechselrichter maximale Leistung (W)',
+                },
+                type: 'number',
                 min: 300,
-                max: 1800
+                max: 1800,
             },
             {
-                id: "offlinePower",
-                description: { en: "Offline output power (W)", de: "Offline-Ausgangsleistung (W)" },
-                type: "number",
+                id: 'offlinePower',
+                description: { en: 'Offline output power (W)', de: 'Offline-Ausgangsleistung (W)' },
+                type: 'number',
                 min: 50,
-                max: 600
+                max: 600,
             },
             {
-                id: "baseLoad",
-                description: { en: "Adjust output (W)", de: "Ausgabe anpassen (W)" },
-                type: "number",
+                id: 'baseLoad',
+                description: { en: 'Adjust output (W)', de: 'Ausgabe anpassen (W)' },
+                type: 'number',
                 min: -100,
-                max: 100
+                max: 100,
             },
             {
-                id: "threshold",
-                description: { en: "Response tolerance (W)", de: "Reaktionstoleranz (W)" },
-                type: "number",
+                id: 'threshold',
+                description: { en: 'Response tolerance (W)', de: 'Reaktionstoleranz (W)' },
+                type: 'number',
                 min: 5,
-                max: 50
+                max: 50,
             },
             {
-                id: "minSOC",
-                description: { en: "Minimum battery discharge", de: "Minimale Batterieentladung" },
-                type: "number",
+                id: 'minSOC',
+                description: { en: 'Minimum battery discharge', de: 'Minimale Batterieentladung' },
+                type: 'number',
                 min: 0,
-                max: 99
+                max: 99,
             },
             {
-                id: "maxSOC",
-                description: { en: "Maximum battery discharge", de: "Maximale Batterieentladung" },
-                type: "number",
+                id: 'maxSOC',
+                description: { en: 'Maximum battery discharge', de: 'Maximale Batterieentladung' },
+                type: 'number',
                 min: 20,
-                max: 100
+                max: 100,
             },
             {
-                id: "dcAlgorithm",
-                description: { en: "CCU control behavior (algorithm)", de: "Steuerungsverhalten der CCU (Algorithmus)" },
-                type: "number",
-                states: { "1": "Basic (0.38)", "2": "Forced (0.40+)" }
-            }
+                id: 'dcAlgorithm',
+                description: {
+                    en: 'CCU control behavior (algorithm)',
+                    de: 'Steuerungsverhalten der CCU (Algorithmus)',
+                },
+                type: 'number',
+                states: { 1: 'Basic (0.38)', 2: 'Forced (0.40+)' },
+            },
         ];
     }
 
@@ -86,16 +92,16 @@ class Commands {
         }
     }
 
-
-
     async handleCommandChange(id, state) {
-        if (!state || state.ack) return;
+        if (!state || state.ack) {
+            return;
+        }
 
-        const parts = id.split(".");
+        const parts = id.split('.');
         const deviceId = name2id(parts[2]);
         const datapointId = parts[parts.length - 1];
 
-        const commandDatapoint = this.commandDatapoints.find((dp) => dp.id === datapointId);
+        const commandDatapoint = this.commandDatapoints.find(dp => dp.id === datapointId);
         if (!commandDatapoint) {
             this.adapter.log.warn(`Unknown command datapoint: ${id}`);
             return;
@@ -125,13 +131,25 @@ class Commands {
             const url = `http://${ipState.val}/config`;
             const payload = `${datapointId}=${state.val}`;
             await axios.post(url, payload, {
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                timeout: 15000 // Timeout in Millisekunden, hier 15 Sekunden
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                timeout: 15000, // Timeout in Millisekunden, hier 15 Sekunden
             });
             this.adapter.log.debug(`Command ${datapointId} successfully sent to device ${deviceId}: ${state.val}`);
         } catch (error) {
             this.adapter.log.error(`Error sending command ${datapointId} to device ${deviceId}: ${error.message}`);
         }
+    }
+
+    cleanup() {
+        // Entfernt alle Abonnements für Zustandsänderungen
+        this.commandDatapoints.forEach(dp => {
+            const namespace = `${this.adapter.namespace}`;
+            const fullPath = `${namespace}.sendcommand.${dp.id}`;
+            this.adapter.unsubscribeStates(fullPath);
+        });
+
+        // Leert den State-Cache
+        this.stateCache.clear();
     }
 }
 

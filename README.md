@@ -14,6 +14,12 @@
 ![Test and Release](https://github.com/blabond/ioBroker.maxxi-charge/actions/workflows/test-and-release.yml/badge.svg)
 
 
+
+**ioBroker.MaxxiCharge** is an adapter for the ioBroker system that enables the integration and control of MaxxiCharge CCU devices. The adapter provides a range of features, including reading device data, adjusting configurations, and sending control commands.
+
+http://www.maxxisun.de
+
+
 ## Documentation
 
 [🇺🇸 Documentation](./docs/en/README.md)
@@ -21,6 +27,10 @@
 [🇩🇪 Dokumentation](./docs/de/README.md)
 
 ## Changelog
+
+### 1.4.2 (2025-01-19)
+
+- Fixes for stable release on ioBroker adapter.
 
 ### 1.4.1 (2025-01-12)
 
@@ -49,7 +59,7 @@
 ## License
 MIT License
 
-Copyright (c) 2025 Christoph Böhrs git@mr-bond.de
+Copyright (c) 2024-2025
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
