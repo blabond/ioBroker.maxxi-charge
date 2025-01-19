@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,                     // Kein Output, nur Typprüfung
+    "skipLibCheck": true,               // Überspringt Bibliotheken
+    "strict": true                      // Aktiviert strikte Typprüfungen
+  },
+  "include": [
+    "./**/*.ts",                        // Alle TypeScript-Dateien prüfen
+    "./**/*.js",                        // Optional: JS-Dateien ebenfalls prüfen
+    "./*.js"
+  ],
+  "exclude": [
+    "node_modules",                     // Schließe Abhängigkeiten aus
+    "build",                            // Build-Ordner ausschließen
+    "dist",                             // Distribution-Ordner ausschließen
+    "admin/build"                       // Admin-Build-Ordner ausschließen
+  ]
+}
