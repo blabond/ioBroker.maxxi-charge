@@ -91,6 +91,28 @@
                     "max": 9999,
                     "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
                     "style": { "margin": "0 auto", "width": "30%", "textAlign": "center" }
+                },
+                "_helpLine": {
+                    "newLine": true,
+                    "type": "divider",
+                    "color": "secondary"
+                },
+                "_donateTxt": {
+                    "type": "staticText",
+                    "text": "Your support means the world to me! If you'd like to help me improve this project, a donation would be greatly appreciated. Thank you so much!",
+                    "newLine": true,
+                    "style": { "textAlign": "right" },
+                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12
+                },
+                "_donate": {
+                    "type": "staticImage",
+                    "tooltip": "Support via PayPal",
+                    "noTranslation": true,
+                    "href": "https://paypal.me/boehrs",
+                    "src": "https://img.shields.io/badge/Paypal-Donate-blue?style=flat",
+                    "newLine": true,
+                    "style": { "display": "block", "marginLeft": "auto", "marginRight": "0" },
+                    "xl": 1, "lg": 0.8, "md": 0.6, "sm": 0.4, "xs": 0.2
                 }
             }
         },
@@ -212,6 +234,28 @@
                     "sm": 12,
                     "xs": 12,
                     "style": { "margin": "10px auto", "textAlign": "center", "fontSize": "12px" }
+                },
+                "_helpLine": {
+                    "newLine": true,
+                    "type": "divider",
+                    "color": "secondary"
+                },
+                "_donateTxt": {
+                    "type": "staticText",
+                    "text": "Your support means the world to me! If you'd like to help me improve this project, a donation would be greatly appreciated. Thank you so much!",
+                    "newLine": true,
+                    "style": { "textAlign": "right" },
+                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12
+                },
+                "_donate": {
+                    "type": "staticImage",
+                    "tooltip": "Support via PayPal",
+                    "noTranslation": true,
+                    "href": "https://paypal.me/boehrs",
+                    "src": "https://img.shields.io/badge/Paypal-Donate-blue?style=flat",
+                    "newLine": true,
+                    "style": { "display": "block", "marginLeft": "auto", "marginRight": "0" },
+                    "xl": 1, "lg": 0.8, "md": 0.6, "sm": 0.4, "xs": 0.2
                 }
             }
         }

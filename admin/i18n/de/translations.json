@@ -38,5 +38,6 @@
 	"Select feed-in mode": "Wählen Sie den Einspeise-Modus",
 	"97% - Feed-In enabled": "97% - Einspeisung aktiv",
 	"100% - Feed-In disabled": "100% - Einspeisung deaktiviert",
-	"At 97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.": "Bei 97% wird überschüssige Energie ins Netz eingespeist, wenn der Akku diesen SOC überschreitet. Bei 100% wird keine Energie eingespeist."
+	"At 97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.": "Bei 97% wird überschüssige Energie ins Netz eingespeist, wenn der Akku diesen SOC überschreitet. Bei 100% wird keine Energie eingespeist.",
+	"Your support means the world to me! If you'd like to help me improve this project, a donation would be greatly appreciated. Thank you so much!": "Deine Unterstützung bedeutet mir sehr viel! Wenn du mir helfen möchtest, dieses Projekt zu verbessern, freue ich mich über eine Spende. Vielen Dank!"
 }
