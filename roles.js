@@ -45,7 +45,7 @@ function determineRole(key) {
             return roleMapping[pattern];
         }
     }
-    return 'state'; // Standardrolle, falls keine Zuordnung gefunden wurde
+    return 'value'; // Standardrolle, falls keine Zuordnung gefunden wurde
 }
 
 module.exports = { determineRole };

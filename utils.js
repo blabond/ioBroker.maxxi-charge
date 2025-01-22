@@ -10,18 +10,22 @@ function name2id(pName) {
 
 async function ensureStateExists(adapter, stateCache, statePath, obj) {
     const parentPath = statePath.substring(0, statePath.lastIndexOf('.'));
+
+    // Überprüfe und erstelle den übergeordneten Ordner
     if (parentPath && !stateCache.has(parentPath)) {
-        // Ersetzen von getObjectAsync und setObject
+        const isDevice = parentPath.split('.').pop().startsWith('maxxi-');
+        const parentType = isDevice ? 'device' : 'channel';
+
         await adapter.setObjectNotExists(parentPath, {
-            type: 'channel',
+            type: parentType,
             common: { name: '' },
             native: {},
         });
         stateCache.add(parentPath);
     }
 
+    // Überprüfe und erstelle den aktuellen State oder Ordner
     if (!stateCache.has(statePath)) {
-        // Ersetzen von getObjectAsync und setObject
         await adapter.setObjectNotExists(statePath, obj);
         stateCache.add(statePath);
     }
@@ -46,6 +50,8 @@ function getDateValue(date) {
 }
 
 async function processNestedData(adapter, basePath, data, stateCache) {
+    const folderTypes = ['batteriesInfo', 'convertersInfo']; // Definition innerhalb der Funktion
+
     for (const key in data) {
         if (!Object.hasOwn(data, key)) {
             continue;
@@ -55,11 +61,18 @@ async function processNestedData(adapter, basePath, data, stateCache) {
         const safeId = name2id(key);
         const stateId = `${basePath}.${safeId}`;
 
-        if (Array.isArray(value)) {
-            for (let index = 0; index < value.length; index++) {
-                await processNestedData(adapter, `${stateId}.${index}`, value[index], stateCache);
-            }
-        } else if (typeof value === 'object' && value !== null) {
+        // Bestimme den Typ basierend auf dem Filter
+        const objectType = folderTypes.includes(key) ? 'folder' : 'channel';
+
+        if (typeof value === 'object' && value !== null) {
+            // Sicherstellen, dass der Ordner existiert
+            await ensureStateExists(adapter, stateCache, stateId, {
+                type: objectType,
+                common: { name: key },
+                native: {},
+            });
+
+            // Rekursiv die nächsten Ebenen verarbeiten
             await processNestedData(adapter, stateId, value, stateCache);
         } else {
             const role = determineRole(key);

@@ -28,7 +28,7 @@ http://www.maxxisun.de
 
 ## Changelog
 
-### 1.4.3 (2025-01-18)
+### 1.4.4 (2025-01-22)
 
 - Fixes for stable release on ioBroker adapter.
 - Fixes for Deinstallation
