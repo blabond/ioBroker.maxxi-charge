@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.4.3",
+    "version": "1.4.4",
     "news": {
-      "1.4.3": {
+      "1.4.4": {
         "en": "Fixes for stable release on ioBroker adapter.",
         "de": "Fixes für die Stable-Veröffentlichung des ioBroker-Adapters.",
         "ru": "Исправления для стабильного выпуска адаптера ioBroker.",
@@ -158,7 +158,7 @@
     ],
 	"globalDependencies": [
           {
-              "admin": ">=6.17.14"
+              "admin": ">=6.17.714"
           }
       ]
   },
@@ -175,5 +175,14 @@
     "feedInMode": 97
   },
   "objects": [],
-  "instanceObjects": []
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    }
+    ]
 }

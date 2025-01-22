@@ -58,7 +58,7 @@ class MaxxiCharge extends utils.Adapter {
                         de: 'Aktive CCUs',
                     },
                     type: 'string',
-                    role: 'value',
+                    role: 'text',
                     read: true,
                     write: false,
                 },

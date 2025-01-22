@@ -38,7 +38,8 @@
                     "default": "",
                     "help": "Enter the name of the Maxxi CCU (e.g., maxxi-XXXXXX-YYY).",
                     "xl": 6, "lg": 6, "md": 6, "sm": 12, "xs": 12,
-                    "style": { "margin": "0 auto", "width": "50%", "textAlign": "center" }
+                    "style": { "margin": "0 auto", "width": "50%", "textAlign": "center" },
+                    "maxLength": 17
                 },
                 "ccuinterval": {
                     "type": "slider",

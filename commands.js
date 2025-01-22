@@ -17,6 +17,7 @@ class Commands {
                 type: 'number',
                 min: 300,
                 max: 1800,
+                role: 'level.speed',
             },
             {
                 id: 'offlinePower',
@@ -24,6 +25,7 @@ class Commands {
                 type: 'number',
                 min: 50,
                 max: 600,
+                role: 'level.speed',
             },
             {
                 id: 'baseLoad',
@@ -31,6 +33,7 @@ class Commands {
                 type: 'number',
                 min: -100,
                 max: 100,
+                role: 'level.valve',
             },
             {
                 id: 'threshold',
@@ -38,6 +41,7 @@ class Commands {
                 type: 'number',
                 min: 5,
                 max: 50,
+                role: 'level.valve',
             },
             {
                 id: 'minSOC',
@@ -45,6 +49,7 @@ class Commands {
                 type: 'number',
                 min: 0,
                 max: 99,
+                role: 'level.min',
             },
             {
                 id: 'maxSOC',
@@ -52,6 +57,7 @@ class Commands {
                 type: 'number',
                 min: 20,
                 max: 100,
+                role: 'level.max',
             },
             {
                 id: 'dcAlgorithm',
@@ -61,6 +67,7 @@ class Commands {
                 },
                 type: 'number',
                 states: { 1: 'Basic (0.38)', 2: 'Forced (0.40+)' },
+                role: 'level.valve',
             },
         ];
     }
@@ -77,7 +84,7 @@ class Commands {
                 common: {
                     name: dp.description,
                     type: dp.type,
-                    role: 'value',
+                    role: dp.role || 'value',
                     read: true,
                     write: true,
                     min: dp.min,
@@ -87,7 +94,7 @@ class Commands {
                 native: {},
             });
 
-            // Datenpunkt-Abonnieren
+            // Datenpunkt abonnieren
             this.adapter.subscribeStates(fullPath);
         }
     }
