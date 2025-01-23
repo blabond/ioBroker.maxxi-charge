@@ -16,21 +16,19 @@
     - Dynamische Datenpunkte (`<deviceId>.sendcommand`) zum Senden von Befehlen an die CCU.
 - **Flexibles Abfrageintervall (Cloud-Modus)**:
     - Der Nutzer kann das Abfrageintervall der CCU-Daten zwischen 5 und 90 Sekunden anpassen.
-- **Fehlerhandling**:
-    - Dokumentation von Fehlern und Bereitstellung von Fallback-Mechanismen.
 
 ## Anforderungen
 
-| Komponente                  | Beschreibung                                              |
-|-----------------------------|----------------------------------------------------------|
-| **MaxxiCharge CCU**         | Unterstütztes Gerät mit Netzwerkverbindung.              |
-| **ioBroker**                | Installierte ioBroker-Instanz.                           |
+| Komponente                  | Beschreibung                                                 |
+|-----------------------------|--------------------------------------------------------------|
+| **MaxxiCharge CCU**         | Unterstütztes Gerät mit Netzwerkverbindung.                  |
+| **ioBroker**                | Installierte ioBroker-Instanz.                               |
 | **Node.js**                 | Aktuelle Version von Node.js (siehe ioBroker-Anforderungen). |
 
 ## Installation
 
 1. **Adapter konfigurieren**:
-    - Den Namen der CCU (`Maxxi CCU Name`) eintragen.
+    - Den Namen der CCU (`maxxi-XXXXXX-YYY`) eintragen.
     - API-Modus auswählen (Cloud oder Local).
     - Bei Auswahl der Local-API in der CCU unter `Api-Route` folgendes eintragen: `http://"IP":"PORT"`.
 2. **Wichtiger Hinweis beim Update**:
@@ -85,11 +83,14 @@ Die Einspeisungssteuerung ermöglicht es, die maximale Ladung (`maxSOC`) so zu k
 
 Der Adapter erstellt dynamisch Datenpunkte basierend auf den von der CCU zurückgegebenen Informationen:
 
-| Datenpunkt                 | Beschreibung                     |
-|----------------------------|----------------------------------|
-| `<deviceId>.SOC`           | Batterie Ladezustand.            |
-| `<deviceId>.settings.*`    | Gerätespezifische Einstellungen. |
-| `<deviceId>.sendcommand.*` | Steuerbefehle für die CCU.       |
+| Datenpunkt                    | Beschreibung                                 |
+|-------------------------------|----------------------------------------------|
+| `<deviceId>.SOC`              | Batterie Ladezustand.                        |
+| `<deviceId>.PV_power_total`   | PV-Leistung gesamt.                          |
+| `<deviceId>.batteriesInfo.*`  | Batterieinformationen.                       |
+| `<deviceId>.convertersInfo.*` | Converter Status.                            |
+| `<deviceId>.settings.*`       | Gerätespezifische Einstellungen. (Nur Cloud) |
+| `<deviceId>.sendcommand.*`    | Steuerbefehle für die CCU.                   |
 
 ## Hinweise
 
@@ -100,6 +101,7 @@ Der Adapter erstellt dynamisch Datenpunkte basierend auf den von der CCU zurück
 
 - **Fehler beim Verarbeiten der Daten**:
     - `deviceId` nicht vorhanden → Adapter neu starten, nachdem die CCU-Info eingegeben wurde. 
-- 
+
+ 
 - **Eingaben auf der APP-Webseite(Online) werden zurückgesetzt**:
     - Verwende ausschließlich die Webseite `maxxi.local` oder die IP-Addresse der CCU, um manuelle Eingaben vorzunehmen. Bei der Nutzung von sendCommand-Steuerbefehlen werden die Online-Eingaben überschrieben.

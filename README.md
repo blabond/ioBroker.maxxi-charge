@@ -13,7 +13,7 @@
 ![GitHub issues](https://img.shields.io/github/issues/blabond/iobroker.maxxi-charge?logo=github&style=flat-square)
 ![Test and Release](https://github.com/blabond/ioBroker.maxxi-charge/actions/workflows/test-and-release.yml/badge.svg)
 
-
+[![Donation](https://img.shields.io/badge/Paypal-Donate-blue?style=flat)](https://paypal.me/boehrs)
 
 **ioBroker.MaxxiCharge** is an adapter for the ioBroker system that enables the integration and control of MaxxiCharge CCU devices. The adapter provides a range of features, including reading device data, adjusting configurations, and sending control commands.
 

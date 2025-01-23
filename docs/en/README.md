@@ -16,8 +16,6 @@
     - Dynamic datapoints (`<deviceId>.sendcommand`) for sending commands to the CCU.
 - **Flexible Query Interval (Cloud Mode)**:
     - Users can adjust the CCU data query interval between 5 and 90 seconds.
-- **Error Handling**:
-    - Documents errors and provides fallback mechanisms.
 
 ## Requirements
 
@@ -30,7 +28,7 @@
 ## Installation
 
 1. **Configure the Adapter**:
-    - Enter the name of the CCU (`Maxxi CCU Name`).
+    - Enter the name of the CCU (`maxxi-XXXXXX-YYY`).
     - Select API Mode (Cloud or Local).
     - If using Local-API, enter the following under `Api-Route` in the CCU: `http://"IP":"PORT"`.
 2. **Important Update Note**:
@@ -41,7 +39,7 @@
 | Setting                   | Description                                                              |
 |---------------------------|--------------------------------------------------------------------------|
 | **Maxxi CCU Name**        | Name or IP address of the Maxxi CCU.                                     |
-| **CCU Query Interval**    | Interval (10-90 seconds) for querying CCU data in Cloud Mode.             |
+| **CCU Query Interval**    | Interval (10-90 seconds) for querying CCU data in Cloud Mode.            |
 | **Summer/Winter Mode**    | Automatically adjusts charging parameters based on defined winter dates. |
 | **Port for Local-API**    | Defines the port on which the Local-API listens.                         |
 | **Feed-in Control**       | Configures whether excess energy is fed into the grid.                   |
@@ -85,11 +83,14 @@ The Feed-in Control feature allows configuration of the maximum charge (`maxSOC`
 
 The adapter dynamically creates datapoints based on the information returned by the CCU:
 
-| Datapoint                  | Description                   |
-|----------------------------|-------------------------------|
-| `<deviceId>.SOC`           | Battery Charge Level.         |
-| `<deviceId>.settings.*`    | Device-specific settings.     |
-| `<deviceId>.sendcommand.*` | Control commands for the CCU. |
+| Datapoint                   | Description                            |
+|-----------------------------|----------------------------------------|
+| `<deviceId>.SOC`            | Battery Charge Level.                  |
+| `<deviceId>.PV_power_total` | Total PV Power.                        |
+| `<deviceId>.batteriesInfo`  | Battery Info.                          |
+| `<deviceId>.convertersInfo` | Converter Status.                      |
+| `<deviceId>.settings.*`     | Device-specific settings. (only Cloud) |
+| `<deviceId>.sendcommand.*`  | Control commands for the CCU.          |
 
 ## Notes
 
@@ -100,6 +101,7 @@ The adapter dynamically creates datapoints based on the information returned by 
 
 - **Error processing data**:
     - `deviceId` not available → Restart the adapter after entering CCU information.
+
 
 - **Entries on the APP website (online) will be reset**:
     - Use only the `maxxi.local` website or the CCU's IP address to make manual entries. When using sendCommand control commands, online entries will be overwritten.
