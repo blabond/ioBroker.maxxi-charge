@@ -17,7 +17,7 @@ class Commands {
                 type: 'number',
                 min: 300,
                 max: 1800,
-                role: 'level.speed',
+                role: 'level',
             },
             {
                 id: 'offlinePower',
@@ -25,7 +25,7 @@ class Commands {
                 type: 'number',
                 min: 50,
                 max: 600,
-                role: 'level.speed',
+                role: 'level',
             },
             {
                 id: 'baseLoad',
@@ -33,7 +33,7 @@ class Commands {
                 type: 'number',
                 min: -100,
                 max: 100,
-                role: 'level.valve',
+                role: 'level',
             },
             {
                 id: 'threshold',
@@ -41,7 +41,7 @@ class Commands {
                 type: 'number',
                 min: 5,
                 max: 50,
-                role: 'level.valve',
+                role: 'level',
             },
             {
                 id: 'minSOC',
@@ -67,7 +67,7 @@ class Commands {
                 },
                 type: 'number',
                 states: { 1: 'Basic (0.38)', 2: 'Forced (0.40+)' },
-                role: 'level.valve',
+                role: 'level',
             },
         ];
     }
