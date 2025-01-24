@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.4.4",
+    "version": "1.4.5",
     "news": {
-      "1.4.4": {
+      "1.4.5": {
         "en": "Fixes for stable release on ioBroker adapter.",
         "de": "Fixes für die Stable-Veröffentlichung des ioBroker-Adapters.",
         "ru": "Исправления для стабильного выпуска адаптера ioBroker.",
