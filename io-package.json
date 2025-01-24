@@ -147,7 +147,7 @@
     },
     "enabled": true,
     "compact": true,
-    "type": "communication",
+    "type": "energy",
     "connectionType": "cloud",
     "dataSource": "poll",
     "tier": 2,
