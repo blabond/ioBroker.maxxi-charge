@@ -102,7 +102,6 @@ The adapter dynamically creates datapoints based on the information returned by 
 - **Error processing data**:
     - `deviceId` not available → Restart the adapter after entering CCU information.
 
-
 - **Entries on the APP website (online) will be reset**:
     - Use only the `maxxi.local` website or the CCU's IP address to make manual entries. When using sendCommand control commands, online entries will be overwritten.
 

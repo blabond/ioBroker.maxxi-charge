@@ -102,6 +102,5 @@ Der Adapter erstellt dynamisch Datenpunkte basierend auf den von der CCU zurück
 - **Fehler beim Verarbeiten der Daten**:
     - `deviceId` nicht vorhanden → Adapter neu starten, nachdem die CCU-Info eingegeben wurde. 
 
- 
 - **Eingaben auf der APP-Webseite(Online) werden zurückgesetzt**:
     - Verwende ausschließlich die Webseite `maxxi.local` oder die IP-Addresse der CCU, um manuelle Eingaben vorzunehmen. Bei der Nutzung von sendCommand-Steuerbefehlen werden die Online-Eingaben überschrieben.
