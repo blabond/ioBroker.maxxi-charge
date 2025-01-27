@@ -115,6 +115,7 @@
     "icon": "maxxi-charge.png",
     "extIcon": "https://raw.githubusercontent.com/blabond/ioBroker.maxxi-charge/main/admin/maxxi-charge.png",
     "readme": "https://github.com/blabond/ioBroker.maxxi-charge/blob/main/README.md",
+    "loglevel": "info",
     "materialize": false,
     "adminUI": {
       "config": "json"
