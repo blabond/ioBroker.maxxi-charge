@@ -27,7 +27,7 @@ class CloudApi {
     async fetchInfoData() {
         const infoUrl = `http://maxxicharge.mr-bond.de:3301/?info=${encodeURIComponent(this.maxxiccuname)}`;
         try {
-            const response = await axios.get(infoUrl, { timeout: 5000 }); // Timeout von 5 Sekunden
+            const response = await axios.get(infoUrl, { timeout: 7500 }); // Timeout von 7,5 Sekunden
             const deviceId = name2id(response.data.deviceId);
             const basePath = `${deviceId}.settings`;
 
@@ -40,7 +40,7 @@ class CloudApi {
     async fetchCcuData() {
         const ccuUrl = `http://maxxicharge.mr-bond.de:3301/?ccu=${encodeURIComponent(this.maxxiccuname)}`;
         try {
-            const response = await axios.get(ccuUrl, { timeout: 5000 }); // Timeout von 5 Sekunden
+            const response = await axios.get(ccuUrl, { timeout: 7500 }); // Timeout von 7,5 Sekunden
             const rawDeviceId = response.data.deviceId; // Original erhalten
             const deviceId = name2id(rawDeviceId).toLowerCase();
             const basePath = `${deviceId}`;
@@ -63,7 +63,7 @@ class CloudApi {
         void this.fetchCcuData();
 
         const infoInterval = validateInterval(5 * 60 * 1000, 180000, 3600000);
-        const ccuInterval = validateInterval(this.ccuintervalMs, 5000, 3600000);
+        const ccuInterval = validateInterval(this.ccuintervalMs, 10000, 3600000);
 
         this.adapter.setInterval(() => this.fetchInfoData(), infoInterval);
         this.adapter.setInterval(() => this.fetchCcuData(), ccuInterval);

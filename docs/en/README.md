@@ -15,7 +15,7 @@
 - **Control Commands**:
     - Dynamic datapoints (`<deviceId>.sendcommand`) for sending commands to the CCU.
 - **Flexible Query Interval (Cloud Mode)**:
-    - Users can adjust the CCU data query interval between 5 and 90 seconds.
+    - Users can adjust the CCU data query interval between 10 and 90 seconds.
 
 ## Requirements
 
@@ -28,9 +28,9 @@
 ## Installation
 
 1. **Configure the Adapter**:
-    - Enter the name of the CCU (`maxxi-XXXXXX-YYY`).
-    - Select API Mode (Cloud or Local).
-    - If using Local-API, enter the following under `Api-Route` in the CCU: `http://"IP":"PORT"`.
+    - Select the API mode (Cloud or Local).
+      - **Cloud:** Enter the CCU name (`maxxi-XXXXXX-YYY`).
+      - **Local:** Enter the ioBroker address on the MaxxiCharge webpage (`maxxi.local`) under `Api-Route`: `http://"ioBroker IP":"PORT"`.
 2. **Important Update Note**:
     - Delete the `.sendcommand` folder and restart the adapter if updating from an older version. (< 1.4.0)
 
@@ -81,7 +81,7 @@ The Feed-in Control feature allows configuration of the maximum charge (`maxSOC`
 
 ## Datapoints
 
-The adapter dynamically creates datapoints based on the information returned by the CCU:
+The adapter dynamically creates datapoints based on the information returned by the CCU. Here is a small excerpt of the datapoint structure layout:
 
 | Datapoint                   | Description                            |
 |-----------------------------|----------------------------------------|

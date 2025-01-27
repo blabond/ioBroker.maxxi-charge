@@ -28,7 +28,7 @@ http://www.maxxisun.de
 
 ## Changelog
 
-### 1.4.5 (2025-01-24)
+### 1.4.6 (2025-01-27)
 
 - Fixes for stable release on ioBroker adapter.
 - Fixes for Deinstallation
@@ -43,10 +43,6 @@ http://www.maxxisun.de
 - Fixed: Issue with the dcAlgorithm datapoint where the UI could crash due to an incorrect states definition
 - Removed the info.localip datapoint. The local IP address is now directly included in the jsonConfig.
 - Adjusted code to use modern methods, replacing deprecated ones like setObjectAsync.
-
-### 1.3.12 (2024-12-27)
-- Adjustments for ioBroker release
-- Code restructuring
 
 ### 1.3.0 (2024-12-15)
 - **Summer/Winter mode** added:

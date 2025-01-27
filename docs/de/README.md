@@ -15,7 +15,7 @@
 - **Steuerbefehle**:
     - Dynamische Datenpunkte (`<deviceId>.sendcommand`) zum Senden von Befehlen an die CCU.
 - **Flexibles Abfrageintervall (Cloud-Modus)**:
-    - Der Nutzer kann das Abfrageintervall der CCU-Daten zwischen 5 und 90 Sekunden anpassen.
+    - Der Nutzer kann das Abfrageintervall der CCU-Daten zwischen 10 und 90 Sekunden anpassen.
 
 ## Anforderungen
 
@@ -28,9 +28,9 @@
 ## Installation
 
 1. **Adapter konfigurieren**:
-    - Den Namen der CCU (`maxxi-XXXXXX-YYY`) eintragen.
     - API-Modus auswählen (Cloud oder Local).
-    - Bei Auswahl der Local-API in der CCU unter `Api-Route` folgendes eintragen: `http://"IP":"PORT"`.
+      - **Cloud:** Den Namen der CCU (`maxxi-XXXXXX-YYY`) eintragen.
+      - **Local:** Adresse von ioBroker auf der MaxxiCharge-Webseite (`maxxi.local`) unter `Api-Route` eintragen: `http://"ioBroker IP":"PORT"`.
 2. **Wichtiger Hinweis beim Update**:
     - Löschen Sie den Ordner `.sendcommand` und starten Sie den Adapter neu, wenn Sie von einer früheren Version aktualisieren. (< 1.4.0)
 
@@ -81,7 +81,7 @@ Die Einspeisungssteuerung ermöglicht es, die maximale Ladung (`maxSOC`) so zu k
 
 ## Datenpunkte
 
-Der Adapter erstellt dynamisch Datenpunkte basierend auf den von der CCU zurückgegebenen Informationen:
+Der Adapter erstellt dynamisch Datenpunkte basierend auf den von der CCU zurückgegebenen Informationen. Hier ein kleiner Teilausschnitt des Datenpunktstrukturaufbaus:
 
 | Datenpunkt                    | Beschreibung                                 |
 |-------------------------------|----------------------------------------------|
