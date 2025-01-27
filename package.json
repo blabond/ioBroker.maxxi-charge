@@ -29,7 +29,7 @@
     "@iobroker/adapter-dev": "^1.0.1",
     "@iobroker/eslint-config": "^1.0.0",
     "@iobroker/testing": "^5.0.0",
-    "mocha": "^11.0.1"
+    "mocha": "^11.1.0"
   },
   "main": "main.js",
   "files": [
