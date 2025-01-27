@@ -52,10 +52,7 @@
     "test": "npm run test:js && npm run test:package",
     "check": "tsc --noEmit -p tsconfig.check.json",
     "release": "release-script",
-    "lint": "eslint -c eslint.config.mjs .",
-    "addToLatest": "node lib/scripts.js addToLatest",
-    "addToStable": "node lib/scripts.js addToStable",
-    "updateStable": "node lib/scripts.js updateStable"
+    "lint": "eslint -c eslint.config.mjs ."
   },
   "engines": {
     "node": ">=18"
