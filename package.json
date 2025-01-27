@@ -54,7 +54,7 @@
     "lint": "eslint -c eslint.config.mjs ."
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=18"
   },
   "bugs": {
     "url": "https://github.com/blabond/ioBroker.maxxi-charge/issues"
