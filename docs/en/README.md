@@ -74,7 +74,7 @@ Battery calibration can be activated in the expert settings.
 
 The Feed-in Control feature allows configuration of the maximum charge (`maxSOC`) to determine whether excess energy is fed into the grid:
 
-- **97% (Feed-in active)**:
+- **90% / 97% (Feed-in active)**:
     - Excess energy is fed into the grid when the battery exceeds 97% SOC.
 - **100% (Feed-in disabled)**:
     - No excess energy is fed into the grid.

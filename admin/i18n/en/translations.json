@@ -37,7 +37,8 @@
 	"Zero Feed-In / Feed-In Mode": "Zero Feed-In / Feed-In Mode",
 	"Select feed-in mode": "Select feed-in mode",
 	"97% - Feed-In enabled": "97% - Feed-In enabled",
+	"90% - Feed-In enabled": "90% - Feed-In enabled",
 	"100% - Feed-In disabled": "100% - Feed-In disabled",
-	"At 97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.": "At 97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.",
+	"At 90%/97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.": "At 90%/97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.",
 	"Your support means the world to me! If you'd like to help me improve this project, a donation would be greatly appreciated. Thank you so much!": "Your support means the world to me! If you'd like to help me improve this project, a donation would be greatly appreciated. Thank you so much!"
 }

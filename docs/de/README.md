@@ -74,7 +74,7 @@ Die Kalibrierung kann in den Experteneinstellungen aktiviert werden.
 
 Die Einspeisungssteuerung ermöglicht es, die maximale Ladung (`maxSOC`) so zu konfigurieren, dass überschüssiger Strom ins Netz eingespeist wird oder nicht:
 
-- **97% (Einspeisung aktiv)**:
+- **90% / 97% (Einspeisung aktiv)**:
     - Überschüssiger Strom wird ins Netz eingespeist, wenn die Batterie mehr als 97% SOC hat.
 - **100% (Einspeisung deaktiviert)**:
     - Es wird kein überschüssiger Strom ins Netz eingespeist.
