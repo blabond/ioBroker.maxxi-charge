@@ -49,8 +49,7 @@
     "commands.js",
     "batteryMode.js",
     "roles.js",
-    "io-package.json",
-    "lib/"
+    "io-package.json"
   ],
   "scripts": {
     "test:js": "mocha --config test/mocharc.custom.json \"{!(node_modules|test)/**/*.test.js,*.test.js,test/**/test!(PackageFiles|Startup).js}\"",
