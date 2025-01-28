@@ -112,7 +112,7 @@
                     "src": "https://img.shields.io/badge/Paypal-donate%20%7C%20spenden-blue",
                     "newLine": true,
                     "style": { "display": "block", "marginLeft": "auto", "marginRight": "0" },
-                    "xs": 7,"sm": 3,"md": 3,"lg": 1.2,"xl": 1.2
+                    "xs": 12,"sm": 3,"md": 3,"lg": 1.2,"xl": 1.2
                 }
             }
         },
@@ -256,7 +256,7 @@
                     "src": "https://img.shields.io/badge/Paypal-donate%20%7C%20spenden-blue",
                     "newLine": true,
                     "style": { "display": "block", "marginLeft": "auto", "marginRight": "0" },
-                    "xs": 7,"sm": 3,"md": 3,"lg": 1.2,"xl": 1.2
+                    "xs": 12,"sm": 3,"md": 3,"lg": 1.2,"xl": 1.2
                 }
             }
         }
