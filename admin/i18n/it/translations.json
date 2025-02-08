@@ -31,7 +31,7 @@
 	"Start battery calibration process": "Start battery calibration process",
 	"0% - unloaded": "0% - unloaded",
 	"100% - load": "100% - load",
-	"Starts the battery calibration process. First, the battery switches to normal operation and waits until the charge drops below <1%. Then the battery's minSOC is set to 99%. Once this value is reached, the adapter resumes normal operation.": "Starts the battery calibration process. First, the battery switches to normal operation and waits until the charge drops below <2%. Then the battery's minSOC is set to 99%. Once this value is reached, the adapter resumes normal operation.",
+	"Starts the battery calibration process. First, the battery switches to normal operation and waits until the charge drops below <10%. Then the battery's minSOC is set to 99%. Once this value is reached, the adapter resumes normal operation.": "Starts the battery calibration process. First, the battery switches to normal operation and waits until the charge drops below <10%. Then the battery's minSOC is set to 99%. Once this value is reached, the adapter resumes normal operation.",
 	"Calibration progress direction": "Calibration progress direction",
 	"Select the direction for the calibration process.": "Select the direction for the calibration process.",
 	"Zero Feed-In / Feed-In Mode": "Zero Feed-In / Feed-In Mode",

@@ -82,7 +82,7 @@ class MaxxiCharge extends utils.Adapter {
                 await this.ecoMode.init();
             }
 
-            if (this.config.batterycalibration) {
+            if (this.config.batterycalibration && this.config.batterycalibration === true) {
                 await this.batteryMode.init();
             }
         } catch (error) {

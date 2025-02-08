@@ -63,11 +63,12 @@ class BatteryMode {
             return;
         }
         const calibrationProgress = this.adapter.config.calibrationProgress;
+        const calibrationStatus = this.adapter.config.batterycalibration;
 
-        if (calibrationProgress === 'down' && state.val <= 1) {
+        if (calibrationStatus === true && calibrationProgress === 'down' && state.val <= 10) {
             // "down" Zustand
             await changeSettingAkku(this.adapter, true, 'up');
-        } else if (calibrationProgress === 'up' && state.val >= 99) {
+        } else if (calibrationStatus === true && calibrationProgress === 'up' && state.val >= 98) {
             // "up" Zustand
             await changeSettingAkku(this.adapter, false, 'down');
         }

@@ -228,7 +228,7 @@
                 },
                 "_batteryCalibrationInfo": {
                     "type": "staticText",
-                    "text": "Starts the battery calibration process. First, the battery switches to normal operation and waits until the charge drops below <1%. Then the battery's minSOC is set to 99%. Once this value is reached, the adapter resumes normal operation.",
+                    "text": "Starts the battery calibration process. First, the battery switches to normal operation and waits until the charge drops below <10%. Then the battery's minSOC is set to 99%. Once this value is reached, the adapter resumes normal operation.",
                     "xl": 12,
                     "lg": 12,
                     "md": 12,

@@ -28,10 +28,10 @@ http://www.maxxisun.de
 
 ## Changelog
 
-### 1.4.8 (2025-01-28)
+### 1.4.9 (2025-02-08)
 
+- Bugfix on Battery Calibration.
 - Fixes for stable release on ioBroker adapter.
-- Fixes for Deinstallation
 - Feedback update
 
 ### 1.4.1 (2025-01-12)

@@ -1,20 +1,20 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.4.8",
+    "version": "1.4.9",
     "news": {
-      "1.4.8": {
-        "en": "Fixes for release on ioBroker adapter.",
-        "de": "Fixes für die Veröffentlichung des ioBroker-Adapters.",
-        "ru": "Исправления для стабильного выпуска адаптера ioBroker.",
-        "pt": "Correções para lançamento estável no adaptador ioBroker.",
-        "nl": "Fixes voor release van de ioBroker-adapter.",
-        "fr": "Correctifs pour la version de l'adaptateur ioBroker.",
-        "it": "Correzioni per il rilascio dell'adattatore ioBroker.",
-        "es": "Correcciones para la versión estable del adaptador ioBroker.",
-        "pl": "Poprawki do stabilnego wydania adaptera ioBroker.",
-        "uk": "Виправлення для стабільного випуску адаптера ioBroker.",
-        "zh-cn": "ioBroker 适配器稳定版本的修复。"
+      "1.4.9": {
+        "en": "Battery calibration fix and stable adjustments.",
+        "de": "Batterie Calibration Fix und Stable Anpassungen.",
+        "ru": "Исправление калибровки батареи и стабильные настройки.",
+        "pt": "Correção da calibração da bateria e ajustes estáveis.",
+        "nl": "Batterijkalibratie-fix en stabiele aanpassingen.",
+        "fr": "Correction de la calibration de la batterie et ajustements stables.",
+        "it": "Correzione della calibrazione della batteria e regolazioni stabili.",
+        "es": "Corrección de la calibración de la batería y ajustes estables.",
+        "pl": "Poprawka kalibracji baterii i stabilne dostosowania.",
+        "uk": "Виправлення калібрування батареї та стабільні налаштування.",
+        "zh-cn": "电池校准修复和稳定调整。"
       },
       "1.4.1": {
         "en": "Added battery calibration (expert settings) and redesigned the configuration interface for a better user experience.",
@@ -29,19 +29,19 @@
         "uk": "Додано калібрування батареї (експертні налаштування) та перероблено інтерфейс конфігурації для кращого досвіду користувача.",
         "zh-cn": "新增电池校准（专家设置）并重新设计配置界面，以提高用户体验。"
       },
-		"1.3.13": {
-		  "en": "ioBroker internal adjustments for compatibility",
-		  "de": "ioBroker interne Anpassung für Kompatibilität",
-		  "ru": "Внесены внутренние изменения для совместимости с ioBroker",
-		  "pt": "Ajustes internos do ioBroker para compatibilidade",
-		  "nl": "Interne ioBroker-aanpassingen voor compatibiliteit",
-		  "fr": "Ajustements internes ioBroker pour compatibilité",
-		  "it": "Adeguamenti interni di ioBroker per compatibilità",
-		  "es": "Ajustes internos de ioBroker para compatibilidad",
-		  "pl": "Wewnętrzne dostosowania ioBroker dla zgodności",
-		  "uk": "Внесено внутрішні налаштування ioBroker для сумісності",
-		  "zh-cn": "ioBroker 的内部调整以实现兼容性"
-		},
+      "1.3.13": {
+        "en": "ioBroker internal adjustments for compatibility",
+        "de": "ioBroker interne Anpassung für Kompatibilität",
+        "ru": "Внесены внутренние изменения для совместимости с ioBroker",
+        "pt": "Ajustes internos do ioBroker para compatibilidade",
+        "nl": "Interne ioBroker-aanpassingen voor compatibiliteit",
+        "fr": "Ajustements internes ioBroker pour compatibilité",
+        "it": "Adeguamenti interni di ioBroker per compatibilità",
+        "es": "Ajustes internos de ioBroker para compatibilidad",
+        "pl": "Wewnętrzne dostosowania ioBroker dla zgodności",
+        "uk": "Внесено внутрішні налаштування ioBroker для сумісності",
+        "zh-cn": "ioBroker 的内部调整以实现兼容性"
+      },
       "1.3.0": {
         "en": "Added summer/winter mode configuration",
         "de": "Sommer/Winter-Option hinzugefügt",
