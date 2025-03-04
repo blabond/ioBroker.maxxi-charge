@@ -116,7 +116,7 @@
     "extIcon": "https://raw.githubusercontent.com/blabond/ioBroker.maxxi-charge/main/admin/maxxi-charge.png",
     "readme": "https://github.com/blabond/ioBroker.maxxi-charge/blob/main/README.md",
     "docs": {
-      "en": "docs/en/README.md",
+      "en": "README.md",
       "de": "docs/de/README.md"
     },
     "loglevel": "info",
