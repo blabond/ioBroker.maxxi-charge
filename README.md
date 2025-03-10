@@ -26,6 +26,22 @@ http://www.maxxisun.de
 
 [🇩🇪 Dokumentation](./docs/de/README.md)
 
+## Versionskompatibilität
+
+| Version | CCU V1 Local | CCU V1 Cloud | CCU V2 Local | CCU V2 Cloud |
+|---------|--------------|--------------|--------------|--------------|
+| 0.36    | ❌           | ✅           |              |              |
+| 0.38    | ❌           | ✅           |              |              |
+| 0.40    | ❌           | ✅           |              |              |
+| 0.41    | ✅           | ✅           |              |              |
+| 0.44    | ✅           | ✅           |              |              |
+| 0.45    | ❓           | ❓           | ❓           | ❓           |
+
+🔹 **Legende**:  
+✅ - Kompatibel  
+❌ - Nicht kompatibel  
+❓ - Unbekannt
+
 ## Changelog
 
 ### 1.4.9 (2025-02-08)
