@@ -44,6 +44,10 @@ http://www.maxxisun.de
 
 ## Changelog
 
+### 1.4.10 (2025-03-17)
+- CloudApi: Request times no longer aligned to second 0 on all adapters, improving load distribution.
+- Updated dependencies.
+
 ### 1.4.9 (2025-02-08)
 
 - Bugfix on Battery Calibration.

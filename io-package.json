@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.4.9",
+    "version": "1.4.10",
     "news": {
+      "1.4.10": {
+        "en": "Request timings no longer synchronized, now based on adapter start time.",
+        "de": "Request-Zeitpunkte nicht mehr synchronisiert, starten jetzt relativ zum Adapter-Start.",
+        "ru": "Время запросов больше не синхронизируется, теперь основано на времени запуска адаптера.",
+        "pt": "Os horários das requisições não são mais sincronizados, agora baseados no início do adaptador.",
+        "nl": "Request-tijdstippen niet langer gesynchroniseerd, starten nu relatief aan de adapter-starttijd.",
+        "fr": "Les horaires des requêtes ne sont plus synchronisés, désormais basés sur le démarrage de l’adaptateur.",
+        "it": "I tempi delle richieste non sono più sincronizzati, ora basati sull'avvio dell'adattatore.",
+        "es": "Los tiempos de solicitud ya no están sincronizados, ahora basados en el inicio del adaptador.",
+        "pl": "Czas żądań nie jest już synchronizowany, teraz oparty na czasie uruchomienia adaptera.",
+        "uk": "Час запитів більше не синхронізується, тепер залежить від часу запуску адаптера.",
+        "zh-cn": "请求时间不再同步，现在基于适配器启动时间。"
+      },
       "1.4.9": {
         "en": "Battery calibration fix and stable adjustments.",
         "de": "Batterie Calibration Fix und Stable Anpassungen.",

@@ -59,14 +59,20 @@ class CloudApi {
     }
 
     startFetchingData() {
-        void this.fetchInfoData();
-        void this.fetchCcuData();
-
         const infoInterval = validateInterval(5 * 60 * 1000, 180000, 3600000);
         const ccuInterval = validateInterval(this.ccuintervalMs, 10000, 3600000);
 
-        this.adapter.setInterval(() => this.fetchInfoData(), infoInterval);
-        this.adapter.setInterval(() => this.fetchCcuData(), ccuInterval);
+        // Direkt starten + Intervall
+        void this.fetchInfoData();
+        this.infoInterval = this.adapter.setInterval(() => {
+            void this.fetchInfoData();
+        }, infoInterval);
+
+        // Direkt starten + Intervall
+        void this.fetchCcuData();
+        this.ccuInterval = this.adapter.setInterval(() => {
+            void this.fetchCcuData();
+        }, ccuInterval);
     }
 
     cleanup() {
