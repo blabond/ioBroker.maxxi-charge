@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.4.10",
+    "version": "1.4.11",
     "news": {
-      "1.4.10": {
+      "1.4.11": {
         "en": "Request timings no longer synchronized, now based on adapter start time.",
         "de": "Request-Zeitpunkte nicht mehr synchronisiert, starten jetzt relativ zum Adapter-Start.",
         "ru": "Время запросов больше не синхронизируется, теперь основано на времени запуска адаптера.",

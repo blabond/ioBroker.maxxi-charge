@@ -33,7 +33,7 @@ class CloudApi {
 
             await processNestedData(this.adapter, basePath, response.data, this.stateCache);
         } catch (error) {
-            this.adapter.log.error(`Error fetching Settings data: ${error.message}`);
+            this.adapter.log.info(`Error fetching Settings data: ${error.message}`);
         }
     }
 
@@ -54,7 +54,7 @@ class CloudApi {
 
             await this.adapter.updateActiveCCU(deviceId);
         } catch (error) {
-            this.adapter.log.error(`Error fetching CCU data: ${error.message}`);
+            this.adapter.log.info(`Error fetching CCU data: ${error.message}`);
         }
     }
 
@@ -62,17 +62,20 @@ class CloudApi {
         const infoInterval = validateInterval(5 * 60 * 1000, 180000, 3600000);
         const ccuInterval = validateInterval(this.ccuintervalMs, 10000, 3600000);
 
-        // Direkt starten + Intervall
+        // Direkt starten + Intervall für Info
         void this.fetchInfoData();
         this.infoInterval = this.adapter.setInterval(() => {
             void this.fetchInfoData();
         }, infoInterval);
 
-        // Direkt starten + Intervall
-        void this.fetchCcuData();
-        this.ccuInterval = this.adapter.setInterval(() => {
+        // Direkt starten + 1,5 Sekunden Delay für CCU
+        setTimeout(() => {
             void this.fetchCcuData();
-        }, ccuInterval);
+            // Intervall erst danach starten
+            this.ccuInterval = this.adapter.setInterval(() => {
+                void this.fetchCcuData();
+            }, ccuInterval);
+        }, 1500); // 1,5 Sekunden Delay
     }
 
     cleanup() {
