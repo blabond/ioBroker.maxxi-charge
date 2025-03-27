@@ -44,6 +44,9 @@ http://www.maxxisun.de
 
 ## Changelog
 
+### 1.4.20 (2025-03-27)
+- New cloud login method (check config)
+
 ### 1.4.11 (2025-03-17)
 - CloudApi: Request times no longer aligned to second 0 on all adapters, improving load distribution.
 - Updated dependencies.

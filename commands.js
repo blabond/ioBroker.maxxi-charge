@@ -126,16 +126,29 @@ class Commands {
             return;
         }
 
-        const ipPath = `${deviceId}.ip_addr`;
-        const ipState = await this.adapter.getStateAsync(ipPath);
+        let ipAddress;
 
-        if (!ipState || !ipState.val) {
-            this.adapter.log.error(`No IP address found for device ${deviceId}. Expected path: ${ipPath}`);
-            return;
+        if (this.adapter.config.apimode === 'cloud') {
+            ipAddress = this.adapter.config.maxxiip;
+
+            if (!ipAddress) {
+                this.adapter.log.error(`No IP address configured for cloud mode (config.maxxiip missing).`);
+                return;
+            }
+        } else {
+            const ipPath = `${deviceId}.ip_addr`;
+            const ipState = await this.adapter.getStateAsync(ipPath);
+
+            if (!ipState || !ipState.val) {
+                this.adapter.log.error(`No IP address found for device ${deviceId}. Expected path: ${ipPath}`);
+                return;
+            }
+
+            ipAddress = ipState.val;
         }
 
         try {
-            const url = `http://${ipState.val}/config`;
+            const url = `http://${ipAddress}/config`;
             const payload = `${datapointId}=${state.val}`;
             await axios.post(url, payload, {
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

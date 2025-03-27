@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.4.11",
+    "version": "1.4.20",
     "news": {
+      "1.4.20": {
+        "en": "New cloud login method (check config)",
+        "de": "Neue Cloud-Login-Methode (Config beachten)",
+        "ru": "Новый метод входа в облако (проверьте конфигурацию)",
+        "pt": "Novo método de login na nuvem (verifique a configuração)",
+        "nl": "Nieuwe cloud-loginmethode (controleer configuratie)",
+        "fr": "Nouvelle méthode de connexion cloud (vérifiez la configuration)",
+        "it": "Nuovo metodo di accesso al cloud (controlla la configurazione)",
+        "es": "Nuevo método de inicio de sesión en la nube (revisar configuración)",
+        "pl": "Nowa metoda logowania do chmury (sprawdź konfigurację)",
+        "uk": "Новий метод входу в хмару (перевірте налаштування)",
+        "zh-cn": "新的云登录方式（请检查配置）"
+      },
       "1.4.11": {
         "en": "Request timings no longer synchronized, now based on adapter start time.",
         "de": "Request-Zeitpunkte nicht mehr synchronisiert, starten jetzt relativ zum Adapter-Start.",
@@ -155,7 +168,9 @@
       ]
   },
   "native": {
+    "maxxiemail": "",
     "maxxiccuname": "",
+    "maxxiip": "",
 	"ccuinterval": "30",
     "port": "5501",
     "apimode": "local",
