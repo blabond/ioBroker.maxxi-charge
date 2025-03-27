@@ -44,6 +44,7 @@
     "main.js",
     "localApi.js",
     "cloudApi.js",
+    "cloudApi_stable.js",
     "ecoMode.js",
     "utils.js",
     "commands.js",
