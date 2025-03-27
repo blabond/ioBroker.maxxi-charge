@@ -30,6 +30,7 @@ class CloudApi {
         }
 
         this.startFetchingData();
+        await this.fetchInfoData();
     }
 
     async login() {
@@ -95,17 +96,22 @@ class CloudApi {
             const deviceId = name2id(this.maxxiccuname);
             const basePath = `${deviceId}.settings`;
 
-            await processNestedData(this.adapter, basePath, response.data, this.stateCache);
+            const payload = response.data?.data;
+            if (payload) {
+                await processNestedData(this.adapter, basePath, payload, this.stateCache);
+            } else {
+                this.adapter.log.warn('No "data" field found in /api/config response');
+            }
         } catch (error) {
             if (error.response && error.response.status === 401 && this.loginRetries < 2) {
                 this.loginRetries++;
-                this.adapter.log.warn(`JWT expired. Re-authenticating... (${this.loginRetries}/2)`);
+                this.adapter.log.debug(`JWT expired. Re-authenticating... (${this.loginRetries}/2)`);
                 const loginSuccess = await this.login();
                 if (loginSuccess) {
                     return this.fetchInfoData();
                 }
             } else if (retries > 0) {
-                this.adapter.log.info(`Retrying fetchInfoData due to error: ${error.message}`);
+                this.adapter.log.debug(`Retrying fetchInfoData due to error: ${error.message}`);
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 return this.fetchInfoData(retries - 1);
             }
@@ -125,7 +131,12 @@ class CloudApi {
             const deviceId = name2id(this.maxxiccuname).toLowerCase();
             const basePath = `${deviceId}`;
 
-            await processNestedData(this.adapter, basePath, response.data, this.stateCache);
+            const payload = response.data;
+            if (payload && payload.convertersInfo) {
+                delete payload.convertersInfo;
+            }
+
+            await processNestedData(this.adapter, basePath, payload, this.stateCache);
 
             if (!this.commandInitialized) {
                 await this.adapter.commands.initializeCommandSettings(deviceId);
@@ -136,7 +147,7 @@ class CloudApi {
         } catch (error) {
             if (error.response && error.response.status === 401 && this.loginRetries < 2) {
                 this.loginRetries++;
-                this.adapter.log.warn(`JWT expired. Re-authenticating... (${this.loginRetries}/2)`);
+                this.adapter.log.debug(`JWT expired. Re-authenticating... (${this.loginRetries}/2)`);
                 const loginSuccess = await this.login();
                 if (loginSuccess) {
                     return this.fetchCcuData();
@@ -153,7 +164,6 @@ class CloudApi {
         const randomOffset = Math.floor(Math.random() * infoInterval);
 
         setTimeout(() => {
-            void this.fetchInfoData();
             this.infoInterval = this.adapter.setInterval(() => {
                 void this.fetchInfoData();
             }, infoInterval);

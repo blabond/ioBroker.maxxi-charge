@@ -44,7 +44,7 @@ http://www.maxxisun.de
 
 ## Changelog
 
-### 1.4.20 (2025-03-27)
+### 1.4.21 (2025-03-27)
 - New cloud login method (check config)
 
 ### 1.4.11 (2025-03-17)

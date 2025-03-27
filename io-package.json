@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.4.20",
+    "version": "1.4.21",
     "news": {
-      "1.4.20": {
+      "1.4.21": {
         "en": "New cloud login method (check config)",
         "de": "Neue Cloud-Login-Methode (Config beachten)",
         "ru": "Новый метод входа в облако (проверьте конфигурацию)",
