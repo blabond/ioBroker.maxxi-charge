@@ -5,6 +5,7 @@ const { validateInterval, getActiveDeviceId } = require('./utils'); // utils imp
 const Commands = require('./commands');
 const LocalApi = require('./localApi');
 const CloudApi = require('./cloudApi');
+const CloudApiStable = require('./cloudApi_stable');
 const EcoMode = require('./ecoMode');
 const BatteryMode = require('./batteryMode');
 
@@ -23,6 +24,7 @@ class MaxxiCharge extends utils.Adapter {
         this.commands = new Commands(this); // Initialisiere Commands
         this.localApi = new LocalApi(this); // Initialisiere LocalApi
         this.cloudApi = null; // Platzhalter für CloudApi, wird in onReady initialisiert
+        this.cloudApi_backup = null; // Platzhalter für CloudApi, wird in onReady initialisiert
         this.ecoMode = new EcoMode(this); // Initialisiere EcoMode
         this.batteryMode = new BatteryMode(this);
 
@@ -65,13 +67,14 @@ class MaxxiCharge extends utils.Adapter {
                 native: {},
             });
 
-            // Initialisiere APIs basierend auf dem Modus
-            this.cloudApi = new CloudApi(this);
-
             if (this.config.apimode === 'local') {
                 await this.localApi.init();
             } else if (this.config.apimode === 'cloud') {
-                await this.cloudApi.init();
+                this.cloudApi = new CloudApi(this); // V1
+                await this.cloudApi.init(); // Cloud V1
+            } else if (this.config.apimode === 'cloud_backup') {
+                this.cloudApiStable = new CloudApiStable(this); // V2
+                await this.cloudApiStable.init(); // Cloud V2
             }
 
             // Cleanup-Intervall
@@ -193,6 +196,10 @@ class MaxxiCharge extends utils.Adapter {
             }
             if (this.cloudApi) {
                 this.cloudApi.cleanup();
+            }
+
+            if (this.cloudApi_backup) {
+                this.cloudApi_backup.cleanup();
             }
 
             // Timer/Intervalle entfernen

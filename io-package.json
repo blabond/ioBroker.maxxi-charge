@@ -1,20 +1,20 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.4.21",
+    "version": "1.4.22",
     "news": {
-      "1.4.21": {
-        "en": "New cloud login method (check config)",
-        "de": "Neue Cloud-Login-Methode (Config beachten)",
-        "ru": "Новый метод входа в облако (проверьте конфигурацию)",
-        "pt": "Novo método de login na nuvem (verifique a configuração)",
-        "nl": "Nieuwe cloud-loginmethode (controleer configuratie)",
-        "fr": "Nouvelle méthode de connexion cloud (vérifiez la configuration)",
-        "it": "Nuovo metodo di accesso al cloud (controlla la configurazione)",
-        "es": "Nuevo método de inicio de sesión en la nube (revisar configuración)",
-        "pl": "Nowa metoda logowania do chmury (sprawdź konfigurację)",
-        "uk": "Новий метод входу в хмару (перевірте налаштування)",
-        "zh-cn": "新的云登录方式（请检查配置）"
+      "1.4.22": {
+        "en": "New cloud method -backup- (check config)",
+        "de": "Neue Cloud Methode -backup- (Config beachten)",
+        "ru": "Новый облачный метод -backup- (проверьте конфигурацию)",
+        "pt": "Novo método de nuvem -backup- (verifique a configuração)",
+        "nl": "Nieuwe cloud-methode -backup- (controleer configuratie)",
+        "fr": "Nouvelle méthode cloud -backup- (vérifiez la configuration)",
+        "it": "Nuovo metodo cloud -backup- (controlla la configurazione)",
+        "es": "Nuevo método en la nube -backup- (revisar configuración)",
+        "pl": "Nowa metoda chmurowa -backup- (sprawdź konfigurację)",
+        "uk": "Новий хмарний метод -backup- (перевірте налаштування)",
+        "zh-cn": "新的云方式 -backup-（请检查配置）"
       },
       "1.4.11": {
         "en": "Request timings no longer synchronized, now based on adapter start time.",

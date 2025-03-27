@@ -17,7 +17,8 @@
                     "type": "select",
                     "label": "Select the API mode",
                     "options": [
-                        { "label": "Cloud API", "value": "cloud" },
+                        { "label": "Cloud API V1", "value": "cloud" },
+                        { "label": "Cloud API V2", "value": "cloud_v2" },
                         { "label": "Local API", "value": "local" }
                     ],
                     "default": "local",
@@ -31,14 +32,6 @@
                     "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
                     "style": { "textAlign": "center", "marginTop": "30px" }
                 },
-                "maxxiemail": {
-                    "type": "text",
-                    "label": "Maxxi Account E-Mail",
-                    "default": "",
-                    "help": "Enter the e-mail address used for Maxxisun login.",
-                    "xl": 6, "lg": 6, "md": 6, "sm": 12, "xs": 12,
-                    "style": { "margin": "0 auto", "width": "50%", "textAlign": "center" }
-                },
                 "maxxiccuname": {
                     "type": "text",
                     "label": "Maxxi CCU Name",
@@ -48,6 +41,14 @@
                     "xl": 6, "lg": 6, "md": 6, "sm": 12, "xs": 12,
                     "style": { "margin": "0 auto", "width": "50%", "textAlign": "center" },
                     "maxLength": 17
+                },
+                "maxxiemail": {
+                    "type": "text",
+                    "label": "Maxxi Account E-Mail",
+                    "default": "",
+                    "help": "Enter the e-mail address used for Maxxisun login.",
+                    "xl": 6, "lg": 6, "md": 6, "sm": 12, "xs": 12,
+                    "style": { "margin": "0 auto", "width": "50%", "textAlign": "center" }
                 },
                 "maxxiip": {
                     "type": "text",

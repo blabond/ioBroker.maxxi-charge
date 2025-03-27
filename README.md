@@ -44,8 +44,10 @@ http://www.maxxisun.de
 
 ## Changelog
 
-### 1.4.21 (2025-03-27)
-- New cloud login method (check config)
+### 1.4.22 (2025-03-27)
+- New cloud method – Backup mode V2 (check config)
+  > Note: Cloud V1 provides more datapoints but may be less stable.  
+  > Cloud V2 (Backup mode) is more stable but delivers fewer datapoints.
 
 ### 1.4.11 (2025-03-17)
 - CloudApi: Request times no longer aligned to second 0 on all adapters, improving load distribution.
