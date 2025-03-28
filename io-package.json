@@ -1,20 +1,20 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.4.23",
+    "version": "1.4.24",
     "news": {
-      "1.4.23": {
-        "en": "New cloud method -Server 1- (check config) and version control system",
-        "de": "Neue Cloud-Methode -Server 1- (Config beachten) und Versionierungssteuerung",
-        "ru": "Новый облачный метод -Сервер 1- (проверьте конфигурацию) и система контроля версий",
-        "pt": "Novo método de nuvem -Servidor 1- (verifique a configuração) e controle de versão",
-        "nl": "Nieuwe cloudmethode -Server 1- (controleer configuratie) en versiebeheer",
-        "fr": "Nouvelle méthode cloud -Serveur 1- (vérifiez la configuration) et gestion des versions",
-        "it": "Nuovo metodo cloud -Server 1- (controlla la configurazione) e controllo versione",
-        "es": "Nuevo método en la nube -Servidor 1- (revisar configuración) y control de versiones",
-        "pl": "Nowa metoda chmurowa -Serwer 1- (sprawdź konfigurację) i system wersjonowania",
-        "uk": "Новий хмарний метод -Сервер 1- (перевірте налаштування) та контроль версій",
-        "zh-cn": "新的云方法 -服务器 1-（请检查配置）和版本控制系统"
+      "1.4.24": {
+        "en": "New cloud method -Server 2- (check config) and version control system",
+        "de": "Neue Cloud-Methode -Server 2- (Config beachten) und Versionierungssteuerung",
+        "ru": "Новый облачный метод -Сервер 2- (проверьте конфигурацию) и система контроля версий",
+        "pt": "Novo método de nuvem -Servidor 2- (verifique a configuração) e controle de versão",
+        "nl": "Nieuwe cloudmethode -Server 2- (controleer configuratie) en versiebeheer",
+        "fr": "Nouvelle méthode cloud -Serveur 2- (vérifiez la configuration) et gestion des versions",
+        "it": "Nuovo metodo cloud -Server 2- (controlla la configurazione) e controllo versione",
+        "es": "Nuevo método en la nube -Servidor 2- (revisar configuración) y control de versiones",
+        "pl": "Nowa metoda chmurowa -Serwer 2- (sprawdź konfigurację) i system wersjonowania",
+        "uk": "Новий хмарний метод -Сервер 2- (перевірте налаштування) та контроль версій",
+        "zh-cn": "新的云方法 -服务器 2-（请检查配置）和版本控制系统"
       },
       "1.4.11": {
         "en": "Request timings no longer synchronized, now based on adapter start time.",
