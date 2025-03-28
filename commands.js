@@ -16,7 +16,7 @@ class Commands {
                 },
                 type: 'number',
                 min: 300,
-                max: 1800,
+                max: 2300,
                 role: 'level',
             },
             {
@@ -128,7 +128,7 @@ class Commands {
 
         let ipAddress;
 
-        if (this.adapter.config.apimode === 'cloud') {
+        if (this.adapter.config.apimode === 'cloud' || this.adapter.config.apimode === 'local') {
             ipAddress = this.adapter.config.maxxiip;
 
             if (!ipAddress) {

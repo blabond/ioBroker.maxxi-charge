@@ -34,19 +34,19 @@ class CloudApi {
             await processNestedData(this.adapter, basePath, response.data, this.stateCache);
         } catch (error) {
             if (retries > 0) {
-                this.adapter.log.info(`Retrying fetchInfoData due to error: ${error.message}`);
+                this.adapter.log.debug(`Retrying fetchInfoData due to error: ${error.message}`);
                 await new Promise(resolve => setTimeout(resolve, 2000)); // 2s Delay
                 return this.fetchInfoData(retries - 1);
             }
-            this.adapter.log.info(`Error fetching CCU data: ${error.message}`);
+            this.adapter.log.debug(`V1: Error fetching Info data: ${error.message}`);
         }
     }
 
-    async fetchCcuData() {
+    async fetchCcuData(retries = 3) {
         const ccuUrl = `http://maxxicharge.mr-bond.de:3301/?ccu=${encodeURIComponent(this.maxxiccuname)}`;
         try {
-            const response = await axios.get(ccuUrl, { timeout: 7500 }); // Timeout von 7,5 Sekunden
-            const rawDeviceId = response.data.deviceId; // Original erhalten
+            const response = await axios.get(ccuUrl, { timeout: 7500 });
+            const rawDeviceId = response.data.deviceId;
             const deviceId = name2id(rawDeviceId).toLowerCase();
             const basePath = `${deviceId}`;
 
@@ -59,7 +59,12 @@ class CloudApi {
 
             await this.adapter.updateActiveCCU(deviceId);
         } catch (error) {
-            this.adapter.log.info(`Error fetching CCU data: ${error.message}`);
+            if (retries > 0) {
+                this.adapter.log.debug(`Retrying fetchCcuData due to error: ${error.message}`);
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                return this.fetchCcuData(retries - 1);
+            }
+            this.adapter.log.debug(`V1: Error fetching CCU data: ${error.message}`);
         }
     }
 
@@ -69,10 +74,6 @@ class CloudApi {
 
         // ZUFÄLLIGE Verzögerung für Info-Request
         const randomOffset = Math.floor(Math.random() * infoInterval); // 0 - 5 Min
-
-        this.adapter.log.info(
-            `Starting fetchInfoData with random offset of ${Math.floor(randomOffset / 1000)} seconds`,
-        );
 
         // Erst nach Zufallszeit starten
         setTimeout(() => {

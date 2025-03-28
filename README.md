@@ -44,10 +44,11 @@ http://www.maxxisun.de
 
 ## Changelog
 
-### 1.4.22 (2025-03-27)
-- New cloud method – Backup mode V2 (check config)
-  > Note: Cloud V1 provides more datapoints but may be less stable.  
-  > Cloud V2 (Backup mode) is more stable but delivers fewer datapoints.
+### 1.4.23 (2025-03-28)
+- New cloud method – Backup mode Server 1 (check config)
+  > Note: Cloud Server 1 provides more datapoints but may be less stable.  
+  > Cloud Server 2 (Backup mode) is more stable but delivers fewer datapoints.
+- Adds dynamic firmware version management with categorized release listings.
 
 ### 1.4.11 (2025-03-17)
 - CloudApi: Request times no longer aligned to second 0 on all adapters, improving load distribution.

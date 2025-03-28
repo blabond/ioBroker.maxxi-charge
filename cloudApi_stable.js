@@ -100,7 +100,7 @@ class CloudApiStable {
             if (payload) {
                 await processNestedData(this.adapter, basePath, payload, this.stateCache);
             } else {
-                this.adapter.log.warn('No "data" field found in /api/config response');
+                this.adapter.log.debug('No "data" field found in /api/config response');
             }
         } catch (error) {
             if (error.response && error.response.status === 401 && this.loginRetries < 2) {
@@ -115,7 +115,7 @@ class CloudApiStable {
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 return this.fetchInfoData(retries - 1);
             }
-            this.adapter.log.info(`Error fetching config data: ${error.message}`);
+            this.adapter.log.debug(`V2: Error fetching Info data: ${error.message}`);
         }
     }
 
@@ -153,7 +153,7 @@ class CloudApiStable {
                     return this.fetchCcuData();
                 }
             }
-            this.adapter.log.info(`Error fetching last data: ${error.message}`);
+            this.adapter.log.debug(`V2: Error fetching CCU data: ${error.message}`);
         }
     }
 
