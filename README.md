@@ -45,7 +45,7 @@ http://www.maxxisun.de
 ## Changelog
 
 ### 1.4.23 (2025-03-28)
-- New cloud method – Backup mode Server 1 (check config)
+- New cloud method – Backup mode Server 2 (check config)
   > Note: Cloud Server 1 provides more datapoints but may be less stable.  
   > Cloud Server 2 (Backup mode) is more stable but delivers fewer datapoints.
 - Adds dynamic firmware version management with categorized release listings.
