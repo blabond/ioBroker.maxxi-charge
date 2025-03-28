@@ -128,11 +128,11 @@ class Commands {
 
         let ipAddress;
 
-        if (this.adapter.config.apimode === 'cloud' || this.adapter.config.apimode === 'local') {
+        if (this.adapter.config.apimode === 'cloud_v2') {
             ipAddress = this.adapter.config.maxxiip;
 
             if (!ipAddress) {
-                this.adapter.log.error(`No IP address configured for cloud mode (config.maxxiip missing).`);
+                this.adapter.log.error(`No IP address configured for cloud mode.`);
                 return;
             }
         } else {

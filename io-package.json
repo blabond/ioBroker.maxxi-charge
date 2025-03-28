@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.4.24",
+    "version": "1.4.25",
     "news": {
-      "1.4.24": {
+      "1.4.25": {
         "en": "New cloud method -Server 2- (check config) and version control system",
         "de": "Neue Cloud-Methode -Server 2- (Config beachten) und Versionierungssteuerung",
         "ru": "Новый облачный метод -Сервер 2- (проверьте конфигурацию) и система контроля версий",
