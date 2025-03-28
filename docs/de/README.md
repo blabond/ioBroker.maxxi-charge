@@ -16,6 +16,9 @@
     - Dynamische Datenpunkte (`<deviceId>.sendcommand`) zum Senden von Befehlen an die CCU.
 - **Flexibles Abfrageintervall (Cloud-Modus)**:
     - Der Nutzer kann das Abfrageintervall der CCU-Daten zwischen 10 und 90 Sekunden anpassen.
+- **Firmware-Versionsteuerung**:
+    - Automatischer Abruf und Kategorisierung verfügbarer Firmware-Versionen in „Releases“ und „Experimentell“.
+    - Ermöglicht sicheres Umschalten der Firmware über einen Umschalt-Datenpunkt unter `VersionControl.Releases`.
 
 ## Anforderungen
 
@@ -28,8 +31,11 @@
 ## Installation
 
 1. **Adapter konfigurieren**:
-    - API-Modus auswählen (Cloud oder Local).
-      - **Cloud:** Den Namen der CCU (`maxxi-XXXXXX-YYY`) eintragen.
+    - API-Modus auswählen (**Cloud - Server 1**, **Cloud - Server 2** oder **Local**).
+        - **Cloud S1 / Cloud S2**:
+            - Tragen Sie den **CCU-Namen** ein (z. B. `maxxi-XXXXXX-YYY`).
+            - Tragen Sie die **E-Mail-Adresse** des Maxxisun-Kontos ein.
+            - Tragen Sie die **lokale IP-Adresse** Ihres MaxxiCharge Speichers ein (z. B. `192.168.1.123`).
       - **Local:** Adresse von ioBroker auf der MaxxiCharge-Webseite (`maxxi.local`) unter `Api-Route` eintragen: `http://"ioBroker IP":"PORT"`.
 2. **Wichtiger Hinweis beim Update**:
     - Löschen Sie den Ordner `.sendcommand` und starten Sie den Adapter neu, wenn Sie von einer früheren Version aktualisieren. (< 1.4.0)

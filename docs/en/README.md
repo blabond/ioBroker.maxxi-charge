@@ -16,6 +16,9 @@
     - Dynamic datapoints (`<deviceId>.sendcommand`) for sending commands to the CCU.
 - **Flexible Query Interval (Cloud Mode)**:
     - Users can adjust the CCU data query interval between 10 and 90 seconds.
+- **Firmware Version Control**:
+    - Automatically retrieves and categorizes available firmware versions into "Releases" and "Experimental".
+    - Enables safe firmware switching through a toggle datapoint under `VersionControl.Releases`.
 
 ## Requirements
 
@@ -28,8 +31,11 @@
 ## Installation
 
 1. **Configure the Adapter**:
-    - Select the API mode (Cloud or Local).
-      - **Cloud:** Enter the CCU name (`maxxi-XXXXXX-YYY`).
+    - Select the API mode (**Cloud - Server 1**, **Cloud - Server 2**, or **Local**).
+        - **Cloud S1 / Cloud S2**:
+            - Enter the **CCU name** (e.g., `maxxi-XXXXXX-YYY`).
+            - Enter the **e-mail address** associated with your Maxxisun account.
+            - Enter the **local IP address** of your MaxxiCharge device (e.g., `192.168.1.123`).
       - **Local:** Enter the ioBroker address on the MaxxiCharge webpage (`maxxi.local`) under `Api-Route`: `http://"ioBroker IP":"PORT"`.
 2. **Important Update Note**:
     - Delete the `.sendcommand` folder and restart the adapter if updating from an older version. (< 1.4.0)
