@@ -14,6 +14,8 @@
     - **Einspeisungssteuerung**: Konfiguration der maximalen Ladung zur Aktivierung oder Deaktivierung der Einspeisung.
 - **Steuerbefehle**:
     - Dynamische Datenpunkte (`<deviceId>.sendcommand`) zum Senden von Befehlen an die CCU.
+    - Der Ordner `<deviceId>.VersionControl` dient zur Änderung der aktuell installierten CCU-Version.
+    - Der Ordner `<deviceId>.VersionControl.Experimentell not for Use` enthält experimentelle Versionen und sollte **nur auf eigene Gefahr** verwendet werden.
 - **Flexibles Abfrageintervall (Cloud-Modus)**:
     - Der Nutzer kann das Abfrageintervall der CCU-Daten zwischen 10 und 90 Sekunden anpassen.
 - **Firmware-Versionsteuerung**:
@@ -39,6 +41,8 @@
       - **Local:** Adresse von ioBroker auf der MaxxiCharge-Webseite (`maxxi.local`) unter `Api-Route` eintragen: `http://"ioBroker IP":"PORT"`.
 2. **Wichtiger Hinweis beim Update**:
     - Löschen Sie den Ordner `.sendcommand` und starten Sie den Adapter neu, wenn Sie von einer früheren Version aktualisieren. (< 1.4.0)
+
+**Hinweis:** Cloud Server 1 liefert mehr Datenpunkte als Cloud Server 2.
 
 ## Konfigurationsmöglichkeiten
 
@@ -89,14 +93,15 @@ Die Einspeisungssteuerung ermöglicht es, die maximale Ladung (`maxSOC`) so zu k
 
 Der Adapter erstellt dynamisch Datenpunkte basierend auf den von der CCU zurückgegebenen Informationen. Hier ein kleiner Teilausschnitt des Datenpunktstrukturaufbaus:
 
-| Datenpunkt                    | Beschreibung                                 |
-|-------------------------------|----------------------------------------------|
-| `<deviceId>.SOC`              | Batterie Ladezustand.                        |
-| `<deviceId>.PV_power_total`   | PV-Leistung gesamt.                          |
-| `<deviceId>.batteriesInfo.*`  | Batterieinformationen.                       |
-| `<deviceId>.convertersInfo.*` | Converter Status.                            |
-| `<deviceId>.settings.*`       | Gerätespezifische Einstellungen. (Nur Cloud) |
-| `<deviceId>.sendcommand.*`    | Steuerbefehle für die CCU.                   |
+| Datenpunkt                    | Beschreibung                                               |
+|-------------------------------|------------------------------------------------------------|
+| `<deviceId>.SOC`              | Batterie Ladezustand.                                      |
+| `<deviceId>.PV_power_total`   | PV-Leistung gesamt.                                        |
+| `<deviceId>.batteriesInfo.*`  | Batterieinformationen.                                     |
+| `<deviceId>.convertersInfo.*` | Converter Status.                                          |
+| `<deviceId>.settings.*`       | Gerätespezifische Einstellungen. (Nur Cloud)               |
+| `<deviceId>.sendcommand.*`    | Steuerbefehle für die CCU.                                 |
+| `<deviceId>.VersionControl.*` | Werkzeuge zum Ändern der CCU-Version. (nur im Cloud-Modus) |
 
 ## Hinweise
 

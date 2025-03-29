@@ -29,13 +29,13 @@ http://www.maxxisun.de
 ## Version Compatibility
 
 | Version | CCU V1 Local | CCU V1 Cloud | CCU V2 Local | CCU V2 Cloud |
-|---------|--------------|-------------|--------------|--------------|
-| 0.36    | ❌           | ✅           |              |              |
-| 0.38    | ❌           | ✅           |              |              |
-| 0.40    | ❌           | ✅           |              |              |
-| 0.41    | ✅           | ✅           |              |              |
-| 0.44    | ✅           | ✅           |              |              |
-| 0.45    | ❓           | ❓           | ❓           | ❓            |
+|---------|------------|-------------|-------------|--------------|
+| 0.36    | ❌          | ✅           |             |              |
+| 0.38    | ❌          | ✅           |             |              |
+| 0.40    | ❌          | ✅           |             |              |
+| 0.41    | ✅          | ✅           |             |              |
+| 0.44    | ✅          | ✅           |             |              |
+| 0.46    | ✅          | ✅           | ❓           | ❓           |
 
 🔹 **Legend**:  
 ✅ - Compatible  
@@ -44,7 +44,7 @@ http://www.maxxisun.de
 
 ## Changelog
 
-### 1.4.25 (2025-03-28)
+### 1.4.30 (2025-03-29)
 - New cloud method – Backup mode Server 2 (check config)
   > Note: Cloud Server 1 provides more datapoints but may be less stable.  
   > Cloud Server 2 (Backup mode) is more stable but delivers fewer datapoints.

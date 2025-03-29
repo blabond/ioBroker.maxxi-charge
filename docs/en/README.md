@@ -13,7 +13,9 @@
     - **Battery Calibration**: Supports an automated calibration process for the battery.
     - **Feed-in Control**: Configures maximum charge to enable or disable energy feed-in to the grid.
 - **Control Commands**:
-    - Dynamic datapoints (`<deviceId>.sendcommand`) for sending commands to the CCU.
+    - Dynamic datapoints (`<deviceId>.sendcommand`) are used to send commands to the CCU.
+    - The folder `<deviceId>.VersionControl` is used to change the currently installed CCU version.
+    - The folder `<deviceId>.VersionControl.Experimentell not for Use` contains experimental versions and should be used **at your own risk**.
 - **Flexible Query Interval (Cloud Mode)**:
     - Users can adjust the CCU data query interval between 10 and 90 seconds.
 - **Firmware Version Control**:
@@ -39,6 +41,8 @@
       - **Local:** Enter the ioBroker address on the MaxxiCharge webpage (`maxxi.local`) under `Api-Route`: `http://"ioBroker IP":"PORT"`.
 2. **Important Update Note**:
     - Delete the `.sendcommand` folder and restart the adapter if updating from an older version. (< 1.4.0)
+
+**Info:** Cloud Server 1 provides more datapoints than Cloud Server 2.
 
 ## Configuration Options
 
@@ -89,14 +93,15 @@ The Feed-in Control feature allows configuration of the maximum charge (`maxSOC`
 
 The adapter dynamically creates datapoints based on the information returned by the CCU. Here is a small excerpt of the datapoint structure layout:
 
-| Datapoint                   | Description                            |
-|-----------------------------|----------------------------------------|
-| `<deviceId>.SOC`            | Battery Charge Level.                  |
-| `<deviceId>.PV_power_total` | Total PV Power.                        |
-| `<deviceId>.batteriesInfo`  | Battery Info.                          |
-| `<deviceId>.convertersInfo` | Converter Status.                      |
-| `<deviceId>.settings.*`     | Device-specific settings. (only Cloud) |
-| `<deviceId>.sendcommand.*`  | Control commands for the CCU.          |
+| Datapoint                     | Description                                          |
+|-------------------------------|------------------------------------------------------|
+| `<deviceId>.SOC`              | Battery Charge Level.                                |
+| `<deviceId>.PV_power_total`   | Total PV Power.                                      |
+| `<deviceId>.batteriesInfo`    | Battery Info.                                        |
+| `<deviceId>.convertersInfo`   | Converter Status.                                    |
+| `<deviceId>.settings.*`       | Device-specific settings. (only Cloud)               |
+| `<deviceId>.sendcommand.*`    | Control commands for the CCU.                        |
+| `<deviceId>.VersionControl.*` | Tools for changing CCU version. (only in Cloud mode) |
 
 ## Notes
 

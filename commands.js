@@ -147,16 +147,32 @@ class Commands {
             ipAddress = ipState.val;
         }
 
-        try {
-            const url = `http://${ipAddress}/config`;
-            const payload = `${datapointId}=${state.val}`;
-            await axios.post(url, payload, {
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                timeout: 15000, // Timeout in Millisekunden, hier 15 Sekunden
-            });
-            this.adapter.log.debug(`Command ${datapointId} successfully sent to device ${deviceId}: ${state.val}`);
-        } catch (error) {
-            this.adapter.log.error(`Error sending command ${datapointId} to device ${deviceId}: ${error.message}`);
+        await this.sendCommandWithRetry(ipAddress, datapointId, state, deviceId);
+    }
+
+    async sendCommandWithRetry(ipAddress, datapointId, state, deviceId, retryCount = 1) {
+        const url = `http://${ipAddress}/config`;
+        const payload = `${datapointId}=${state.val}`;
+
+        for (let attempt = 1; attempt <= retryCount + 1; attempt++) {
+            try {
+                await axios.post(url, payload, {
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    timeout: 15000,
+                });
+
+                this.adapter.log.debug(`Command ${datapointId} successfully sent to device ${deviceId}: ${state.val}`);
+                return;
+            } catch (error) {
+                if (attempt <= retryCount) {
+                    this.adapter.log.warn(`Attempt ${attempt} failed for device ${deviceId}. Retrying...`);
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                } else {
+                    this.adapter.log.error(
+                        `Error sending command ${datapointId} to device ${deviceId}: ${error.message}`,
+                    );
+                }
+            }
         }
     }
 

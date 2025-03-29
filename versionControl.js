@@ -24,7 +24,7 @@ class VersionControlFetcher {
                 }
             }
         } else if (mode === 'cloud' || mode === 'local') {
-            if (!this.adapter.config.maxxiemail || !this.adapter.config.maxxiccuname) {
+            if (!this.adapter.config.email || !this.adapter.config.maxxiccuname) {
                 return;
             }
 
@@ -48,6 +48,7 @@ class VersionControlFetcher {
         this.interval = this.adapter.setInterval(() => this.fetchVersions(), refreshInterval);
 
         this.adapter.subscribeStates('*VersionControl.Releases*');
+        this.adapter.subscribeStates('*VersionControl.Experimentell*');
     }
 
     async login() {
@@ -55,7 +56,7 @@ class VersionControlFetcher {
             const response = await axios.post(
                 'https://maxxisun.app:3000/api/authentication/log-in',
                 {
-                    email: this.adapter.config.maxxiemail,
+                    email: this.adapter.config.email,
                     ccu: this.adapter.config.maxxiccuname,
                 },
                 {
@@ -172,42 +173,23 @@ class VersionControlFetcher {
                     const versionId = versionLabel.replace(/\./g, '_');
                     const id = `${catPath}.${versionId}`;
 
-                    if (category === 'Experimentell not for Use') {
-                        await this.adapter.setObjectNotExistsAsync(id, {
-                            type: 'state',
-                            common: {
-                                name: version.message,
-                                type: 'string',
-                                role: 'text',
-                                read: true,
-                                write: false,
-                            },
-                            native: {},
-                        });
+                    await this.adapter.setObjectNotExistsAsync(id, {
+                        type: 'state',
+                        common: {
+                            name: version.message,
+                            type: 'boolean',
+                            role: 'switch',
+                            read: true,
+                            write: true,
+                            def: false,
+                        },
+                        native: {},
+                    });
 
-                        await this.adapter.setStateAsync(id, {
-                            val: 'Not allowed',
-                            ack: true,
-                        });
-                    } else {
-                        await this.adapter.setObjectNotExistsAsync(id, {
-                            type: 'state',
-                            common: {
-                                name: version.message,
-                                type: 'boolean',
-                                role: 'switch',
-                                read: true,
-                                write: true,
-                                def: false,
-                            },
-                            native: {},
-                        });
-
-                        await this.adapter.setStateAsync(id, {
-                            val: false,
-                            ack: true,
-                        });
-                    }
+                    await this.adapter.setStateAsync(id, {
+                        val: false,
+                        ack: true,
+                    });
                 }
             }
         } catch (error) {
@@ -260,6 +242,11 @@ class VersionControlFetcher {
 
             if (response.data?.response === true && response.data?.version) {
                 this.adapter.log.info(`Version change successfully initiated to version ${response.data.version}`);
+                if (this.adapter.config.apimode === 'local') {
+                    this.adapter.log.info(
+                        'Note: Local mode is active. Please switch to cloud mode manually to perform the update.',
+                    );
+                }
                 setTimeout(() => {
                     void this.adapter.setStateAsync(id, { val: false, ack: true });
                 }, 5000);

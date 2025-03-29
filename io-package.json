@@ -1,20 +1,20 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.4.25",
+    "version": "1.4.30",
     "news": {
-      "1.4.25": {
-        "en": "New cloud method -Server 2- (check config) and version control system",
-        "de": "Neue Cloud-Methode -Server 2- (Config beachten) und Versionierungssteuerung",
-        "ru": "Новый облачный метод -Сервер 2- (проверьте конфигурацию) и система контроля версий",
-        "pt": "Novo método de nuvem -Servidor 2- (verifique a configuração) e controle de versão",
-        "nl": "Nieuwe cloudmethode -Server 2- (controleer configuratie) en versiebeheer",
-        "fr": "Nouvelle méthode cloud -Serveur 2- (vérifiez la configuration) et gestion des versions",
-        "it": "Nuovo metodo cloud -Server 2- (controlla la configurazione) e controllo versione",
-        "es": "Nuevo método en la nube -Servidor 2- (revisar configuración) y control de versiones",
-        "pl": "Nowa metoda chmurowa -Serwer 2- (sprawdź konfigurację) i system wersjonowania",
-        "uk": "Новий хмарний метод -Сервер 2- (перевірте налаштування) та контроль версій",
-        "zh-cn": "新的云方法 -服务器 2-（请检查配置）和版本控制系统"
+      "1.4.30": {
+        "en": "New cloud method -Server 2- (check config)\nAbility to change CCU version",
+        "de": "Neue Cloud-Methode -Server 2- (Config beachten)\nMöglichkeit zum CCU-Version ändern",
+        "ru": "Новый облачный метод -Сервер 2- (проверьте конфигурацию)\nВозможность смены версии CCU",
+        "pt": "Novo método de nuvem -Servidor 2- (verifique a configuração)\nPossibilidade de alterar a versão da CCU",
+        "nl": "Nieuwe cloudmethode -Server 2- (controleer configuratie)\nMogelijkheid om CCU-versie te wijzigen",
+        "fr": "Nouvelle méthode cloud -Serveur 2- (vérifiez la configuration)\nPossibilité de changer la version CCU",
+        "it": "Nuovo metodo cloud -Server 2- (controlla la configurazione)\nPossibilità di cambiare versione CCU",
+        "es": "Nuevo método en la nube -Servidor 2- (revisar configuración)\nPosibilidad de cambiar la versión de la CCU",
+        "pl": "Nowa metoda chmurowa -Serwer 2- (sprawdź konfigurację)\nMożliwość zmiany wersji CCU",
+        "uk": "Новий хмарний метод -Сервер 2- (перевірте налаштування)\nМожливість змінити версію CCU",
+        "zh-cn": "新的云方法 -服务器 2-（请检查配置）\n可以更改 CCU 版本"
       },
       "1.4.11": {
         "en": "Request timings no longer synchronized, now based on adapter start time.",
@@ -80,19 +80,6 @@
         "pl": "Dodano opcję trybu lato/zima",
         "uk": "Додано опцію режиму літо/зима",
         "zh-cn": "添加了夏季/冬季模式选项"
-      },
-      "1.0.42": {
-        "en": "Release",
-        "de": "Veröffentlichung",
-        "ru": "Релиз",
-        "pt": "Lançamento",
-        "nl": "Uitgave",
-        "fr": "Publication",
-        "it": "Rilascio",
-        "es": "Lanzamiento",
-        "pl": "Wydanie",
-        "uk": "Реліз",
-        "zh-cn": "发布"
       }
     },
     "titleLang": {
@@ -168,7 +155,7 @@
       ]
   },
   "native": {
-    "maxxiemail": "",
+    "email": "",
     "maxxiccuname": "",
     "maxxiip": "",
 	"ccuinterval": "30",

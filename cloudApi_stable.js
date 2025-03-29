@@ -6,7 +6,7 @@ class CloudApiStable {
     constructor(adapter) {
         this.adapter = adapter;
         this.maxxiccuname = this.adapter.config.maxxiccuname || '';
-        this.maxxiemail = this.adapter.config.maxxiemail || '';
+        this.email = this.adapter.config.email || '';
         this.ccuintervalMs = (this.adapter.config.ccuinterval || 30) * 1000;
         this.stateCache = new Set();
         this.commandInitialized = false;
@@ -18,7 +18,7 @@ class CloudApiStable {
     }
 
     async init() {
-        if (!this.maxxiccuname || !this.maxxiemail) {
+        if (!this.maxxiccuname || !this.email) {
             this.adapter.log.warn('Missing Maxxi CCU name or E-Mail in configuration.');
             return;
         }
@@ -38,7 +38,7 @@ class CloudApiStable {
             const response = await axios.post(
                 'https://maxxisun.app:3000/api/authentication/log-in',
                 {
-                    email: this.maxxiemail,
+                    email: this.email,
                     ccu: this.maxxiccuname,
                 },
                 {
