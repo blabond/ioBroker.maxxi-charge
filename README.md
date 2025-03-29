@@ -77,9 +77,6 @@ http://www.maxxisun.de
   - Configurable with start and end dates.
 - **Cloud API query interval**: Interval for CCU queries in cloud mode is now configurable via a slider between 10 and 60 seconds.
 
-### 1.2.191 (2024-12-08)
-- Release
-
 ## License
 MIT License
 
