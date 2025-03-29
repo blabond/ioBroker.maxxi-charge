@@ -243,7 +243,7 @@ class VersionControlFetcher {
             if (response.data?.response === true && response.data?.version) {
                 this.adapter.log.info(`Version change successfully initiated to version ${response.data.version}`);
                 if (this.adapter.config.apimode === 'local') {
-                    this.adapter.log.info(
+                    this.adapter.log.warn(
                         'Note: Local mode is active. Please switch to cloud mode manually to perform the update.',
                     );
                 }

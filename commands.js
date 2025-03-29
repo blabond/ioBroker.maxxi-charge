@@ -165,7 +165,6 @@ class Commands {
                 return;
             } catch (error) {
                 if (attempt <= retryCount) {
-                    this.adapter.log.warn(`Attempt ${attempt} failed for device ${deviceId}. Retrying...`);
                     await new Promise(resolve => setTimeout(resolve, 1000));
                 } else {
                     this.adapter.log.error(
