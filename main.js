@@ -168,7 +168,7 @@ class MaxxiCharge extends utils.Adapter {
         for (const deviceId in this.activeDevices) {
             if (this.activeDevices[deviceId] < fiveMinAgo) {
                 delete this.activeDevices[deviceId];
-                this.log.info(`Device ${deviceId} marked as inactive and removed.`);
+                this.log.warn(`Device ${deviceId} marked as inactive and removed.`);
             }
         }
 

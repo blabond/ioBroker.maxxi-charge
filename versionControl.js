@@ -47,8 +47,7 @@ class VersionControlFetcher {
         const refreshInterval = validateInterval(6 * 60 * 60 * 1000, 300000, 24 * 60 * 60 * 1000);
         this.interval = this.adapter.setInterval(() => this.fetchVersions(), refreshInterval);
 
-        this.adapter.subscribeStates('*VersionControl.Releases*');
-        this.adapter.subscribeStates('*VersionControl.Experimentell*');
+        this.adapter.subscribeStates('*VersionControl.releases*');
     }
 
     async login() {
@@ -101,11 +100,13 @@ class VersionControlFetcher {
 
     async clearVersionStates() {
         const deviceId = this.adapter.config.maxxiccuname ? this.adapter.config.maxxiccuname.toLowerCase() : 'default';
-        const basePath = `${deviceId}.VersionControl`;
-        const existingStates = await this.adapter.getStatesAsync(`${basePath}.*`);
 
-        for (const fullId of Object.keys(existingStates)) {
-            await this.adapter.delObjectAsync(fullId);
+        const basePath = `${deviceId}.VersionControl`;
+
+        try {
+            await this.adapter.delObjectAsync(basePath, { recursive: true });
+        } catch {
+            // Fehler still ignorieren
         }
     }
 
@@ -135,23 +136,23 @@ class VersionControlFetcher {
             });
 
             const categories = {
-                Releases: [],
-                'Experimentell not for Use': [],
+                releases: [],
+                'future or obsolete': [],
             };
 
             for (const v of allVersions) {
                 if (v.current === true) {
-                    categories.Releases.push(v);
+                    categories.releases.push(v);
                 } else if (v.beta === false && v.visible === true) {
-                    categories.Releases.push(v);
+                    categories.releases.push(v);
                 } else {
-                    categories['Experimentell not for Use'].push(v);
+                    categories['future or obsolete'].push(v);
                 }
             }
 
             const nameMap = {
-                Releases: 'Releases',
-                'Experimentell not for Use': 'Experimentell',
+                releases: 'releases',
+                'future or obsolete': 'Experimentell',
             };
 
             for (const [category, versions] of Object.entries(categories)) {
@@ -173,23 +174,42 @@ class VersionControlFetcher {
                     const versionId = versionLabel.replace(/\./g, '_');
                     const id = `${catPath}.${versionId}`;
 
-                    await this.adapter.setObjectNotExistsAsync(id, {
-                        type: 'state',
-                        common: {
-                            name: version.message,
-                            type: 'boolean',
-                            role: 'switch',
-                            read: true,
-                            write: true,
-                            def: false,
-                        },
-                        native: {},
-                    });
+                    if (category === 'future or obsolete') {
+                        await this.adapter.setObjectNotExistsAsync(id, {
+                            type: 'state',
+                            common: {
+                                name: version.message,
+                                type: 'string',
+                                role: 'text',
+                                read: true,
+                                write: false,
+                            },
+                            native: {},
+                        });
 
-                    await this.adapter.setStateAsync(id, {
-                        val: false,
-                        ack: true,
-                    });
+                        await this.adapter.setStateAsync(id, {
+                            val: 'Not allowed',
+                            ack: true,
+                        });
+                    } else {
+                        await this.adapter.setObjectNotExistsAsync(id, {
+                            type: 'state',
+                            common: {
+                                name: version.message,
+                                type: 'boolean',
+                                role: 'switch',
+                                read: true,
+                                write: true,
+                                def: false,
+                            },
+                            native: {},
+                        });
+
+                        await this.adapter.setStateAsync(id, {
+                            val: false,
+                            ack: true,
+                        });
+                    }
                 }
             }
         } catch (error) {
