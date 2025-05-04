@@ -156,7 +156,7 @@ class Commands {
 
         for (let attempt = 1; attempt <= retryCount + 1; attempt++) {
             try {
-                await axios.put(url, payload, {
+                await axios.post(url, payload, {
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     timeout: 15000,
                 });
