@@ -9,6 +9,7 @@ const CloudApiStable = require('./cloudApi_stable');
 const VersionControl = require('./versionControl');
 const EcoMode = require('./ecoMode');
 const BatteryMode = require('./batteryMode');
+const BKWMode = require('./bkwMode');
 
 class MaxxiCharge extends utils.Adapter {
     constructor(options) {
@@ -29,6 +30,7 @@ class MaxxiCharge extends utils.Adapter {
         this.ecoMode = new EcoMode(this);
         this.versionControl = new VersionControl(this);
         this.batteryMode = new BatteryMode(this);
+        this.bkwMode = new BKWMode(this, this.commands);
 
         this.maxxiccuname = ''; // Platzhalter, wird in onReady gesetzt
         this.stateCache = new Set(); // Cache für vorhandene States
@@ -111,6 +113,7 @@ class MaxxiCharge extends utils.Adapter {
             if (id.endsWith('.SOC')) {
                 await this.ecoMode.handleSOCChange(id, state);
                 await this.batteryMode.handleCalibrationSOCChange(id, state);
+                await this.bkwMode.handleSOCChange(id, state);
             }
 
             if (id === `${this.namespace}.info.connection` && !state.val) {
@@ -211,6 +214,10 @@ class MaxxiCharge extends utils.Adapter {
             }
             if (this.versionControl) {
                 this.versionControl.cleanup();
+            }
+
+            if (this.bkwMode) {
+                this.bkwMode.cleanup();
             }
 
             // Timer/Intervalle entfernen

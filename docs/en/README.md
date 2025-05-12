@@ -46,14 +46,15 @@
 
 ## Configuration Options
 
-| Setting                   | Description                                                              |
-|---------------------------|--------------------------------------------------------------------------|
-| **Maxxi CCU Name**        | Name or IP address of the Maxxi CCU.                                     |
-| **CCU Query Interval**    | Interval (10-90 seconds) for querying CCU data in Cloud Mode.            |
-| **Summer/Winter Mode**    | Automatically adjusts charging parameters based on defined winter dates. |
-| **Port for Local-API**    | Defines the port on which the Local-API listens.                         |
-| **Feed-in Control**       | Configures whether excess energy is fed into the grid.                   |
-| **Battery Calibration**   | Starts the automated calibration process for the battery.                |
+| Setting                 | Description                                                                                                                                                                                                    |
+|-------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Maxxi CCU Name**      | Name or IP address of the Maxxi CCU.                                                                                                                                                                           |
+| **CCU Query Interval**  | Interval (10-90 seconds) for querying CCU data in Cloud Mode.                                                                                                                                                  |
+| **Summer/Winter Mode**  | Automatically adjusts charging parameters based on defined winter dates.                                                                                                                                       |
+| **Port for Local-API**  | Defines the port on which the Local-API listens.                                                                                                                                                               |
+| **Feed-in Control**     | Configures whether excess energy is fed into the grid.                                                                                                                                                         |
+| **Battery Calibration** | Starts the automated calibration process for the battery.                                                                                                                                                      |
+| **BKW-Mode*             | At a battery level of ≥ 97%, the script enables BKW mode to feed a constant 600–800 W into the grid alongside household use, potentially receiving compensation if registered as a balcony power system (BKW). |
 
 ## Summer / Winter Mode
 
@@ -66,6 +67,18 @@ The Summer/Winter Mode dynamically adjusts the charging parameters:
     - Minimum charge is set to 10%.
     - Maximum charge is capped at 97%.
 - Activation occurs through a checkbox in the adapter settings, and the timeframes are defined by the winter start and end dates.
+
+## BKW Mode
+
+The BKW mode allows surplus energy from the battery storage system to be intentionally fed into the public power grid.
+When the battery’s state of charge (SOC) reaches ≥ 97%, the adapter automatically activates BKW mode.
+In this mode, a fixed power (e.g., 600 or 800 W) is continuously fed into the grid alongside the normal household consumption.
+This is useful if a balcony power system (BKW) has been officially registered and grid feed-in compensation is possible.
+
+If the battery SOC drops below 97%, BKW mode is automatically deactivated, and the additional grid feed-in is reduced or stopped.
+The process runs fully automatically and requires no further user interaction.
+
+Note: BKW mode is only activated if Enable BKW mode is selected in the adapter settings and battery calibration mode (batterycalibration) is disabled.
 
 ## Battery Calibration
 

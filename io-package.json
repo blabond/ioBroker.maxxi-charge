@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.4.32",
+    "version": "1.4.40",
     "news": {
+      "1.4.40": {
+        "en": "Added BKW mode\nAutomatic grid feed-in (e.g. 600 or 800 W) when battery SOC reaches ≥97%",
+        "de": "BKW-Modus hinzugefügt\nAutomatische Netzeinspeisung (z. B. 600 oder 800 W) ab Akkustand ≥97%",
+        "ru": "Добавлен режим BKW\nАвтоматическая подача в сеть (например, 600 или 800 Вт) при заряде батареи ≥97%",
+        "pt": "Adicionado modo BKW\nInjeção automática na rede (por exemplo, 600 ou 800 W) quando a bateria atingir ≥97%",
+        "nl": "BKW-modus toegevoegd\nAutomatische netinjectie (bijv. 600 of 800 W) bij een accuniveau ≥97%",
+        "fr": "Mode BKW ajouté\nInjection automatique dans le réseau (par ex. 600 ou 800 W) lorsque la batterie atteint ≥97%",
+        "it": "Aggiunta modalità BKW\nImmissione automatica in rete (es. 600 o 800 W) quando la batteria raggiunge ≥97%",
+        "es": "Añadido modo BKW\nInyección automática a la red (p. ej., 600 o 800 W) cuando la batería alcanza ≥97%",
+        "pl": "Dodano tryb BKW\nAutomatyczne oddawanie energii do sieci (np. 600 lub 800 W) przy poziomie baterii ≥97%",
+        "uk": "Додано режим BKW\nАвтоматична подача в мережу (наприклад, 600 або 800 Вт) при заряді батареї ≥97%",
+        "zh-cn": "新增 BKW 模式\n当电池电量达到 ≥97% 时自动并网（例如 600 或 800 瓦）"
+      },
       "1.4.32": {
         "en": "New cloud method -Server 2- (check config)\nAbility to change CCU version",
         "de": "Neue Cloud-Methode -Server 2- (Config beachten)\nMöglichkeit zum CCU-Version ändern",
@@ -166,7 +179,10 @@
     "winterto": "07.02",
     "batterycalibration": false,
     "calibrationProgress": "down",
-    "feedInMode": 97
+    "feedInMode": 97,
+    "bkw_enable": false,
+    "bkw_powerTarget": -600,
+    "bkw_adjustment": -35
   },
   "objects": [],
   "instanceObjects": [

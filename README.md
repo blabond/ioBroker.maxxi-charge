@@ -41,6 +41,10 @@ http://www.maxxisun.de
 
 ## Changelog
 
+### 1.4.40 (2025-05-13)
+- New Option Mode "BKW"
+> At a battery level of ≥ 97%, the script enables BKW mode to feed a constant 600–800 W into the grid alongside household use, potentially receiving compensation if registered as a balcony power system (BKW).
+
 ### 1.4.32 (2025-04-06)
 - New cloud method – Backup mode Server 2 (check config)
   > Note: Cloud Server 1 provides more datapoints but may be less stable.  

@@ -46,5 +46,12 @@
 	"90% - Feed-In enabled": "90% - Feed-In enabled",
 	"100% - Feed-In disabled": "100% - Feed-In disabled",
 	"At 90%/97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.": "At 90%/97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.",
-	"Your support means the world to me! If you'd like to help me improve this project, a donation would be greatly appreciated. Thank you so much!": "Your support means the world to me! If you'd like to help me improve this project, a donation would be greatly appreciated. Thank you so much!"
+	"Your support means the world to me! If you'd like to help me improve this project, a donation would be greatly appreciated. Thank you so much!": "Your support means the world to me! If you'd like to help me improve this project, a donation would be greatly appreciated. Thank you so much!",
+	"BKW Mode": "BKW Mode",
+	"Enable BKW Mode": "Enable BKW Mode",
+	"BKW Feed-In Power (Watt)": "BKW Feed-In Power (Watt)",
+	"Set the feed-in power in watts.": "Set the feed-in power in watts.",
+	"MaxxiCharge 'baseLoad' Default (Adjust Output in Watt)": "MaxxiCharge 'baseLoad' Default (Adjust Output in Watt)",
+	"Adjust the feed-in offset (baseLoad) in watts for MaxxiCharge.": "Adjust the feed-in offset (baseLoad) in watts for MaxxiCharge.",
+	"If enabled, the system will attempt to feed the specified power into the grid, but only when the state of charge is equal to or greater than 97%. Additionally, the 'Zero Feed-In Mode' must be set to 100%. Afterward, it returns to the 'normal' operation mode.": "If enabled, the system will attempt to feed the specified power into the grid, but only when the state of charge is equal to or greater than 97%. Additionally, the 'Zero Feed-In Mode' must be set to 100%. Afterward, it returns to the 'normal' operation mode."
 }
