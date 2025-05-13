@@ -31,7 +31,7 @@ class BkwMode {
 
         // Only send if change detected
         if (soc >= 97 && this.lastState !== 'high') {
-            targetValue = this.adapter.config.bkw_powerTarget;
+            targetValue = -this.adapter.config.bkw_powerTarget;
             this.lastState = 'high';
         } else if (soc < 97 && this.lastState !== 'low') {
             targetValue = this.adapter.config.bkw_adjustment;
@@ -65,7 +65,7 @@ class BkwMode {
             const dummyState = { val: targetValue };
             await this.commands.sendCommandWithRetry(ipAddress, 'baseLoad', dummyState, deviceId);
 
-            this.adapter.log.debug(`bkwMode: baseLoad set to ${targetValue} W (SOC=${soc}%).`);
+            this.adapter.log.debug(`bkwMode: baseLoad set to -${targetValue} W (SOC=${soc}%).`);
         }
     }
 

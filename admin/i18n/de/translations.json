@@ -45,7 +45,7 @@
 	"97% - Feed-In enabled": "97% - Einspeisung aktiv",
 	"90% - Feed-In enabled": "90% - Einspeisung aktiv",
 	"100% - Feed-In disabled": "100% - Einspeisung deaktiviert",
-	"At 90%/97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.": "Bei 90%/97% wird überschüssige Energie ins Netz eingespeist, wenn der Akku diesen SOC überschreitet. Bei 100% wird keine Energie eingespeist.",
+	"At 90%/97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.": "Bei 90%/97% wird überschüssige Energie ins Netz eingespeist, wenn der Akku diesen SOC überschreitet.<br>Bei 100% wird keine Energie eingespeist.",
 	"Your support means the world to me! If you'd like to help me improve this project, a donation would be greatly appreciated. Thank you so much!": "Deine Unterstützung bedeutet mir sehr viel! Wenn du mir helfen möchtest, dieses Projekt zu verbessern, freue ich mich über eine Spende. Vielen Dank!",
     "BKW Mode": "BKW-Modus",
     "Enable BKW Mode": "BKW-Modus aktivieren",
@@ -53,5 +53,5 @@
     "Set the feed-in power in watts.": "Einspeiseleistung in Watt festlegen.",
     "MaxxiCharge 'baseLoad' Default (Adjust Output in Watt)": "MaxxiCharge 'baseLoad' (Ausgabe anpassen in Watt)",
     "Adjust the feed-in offset (baseLoad) in watts for MaxxiCharge.": "Die Einspeiseabweichung (baseLoad) für MaxxiCharge in Watt anpassen.",
-    "If enabled, the system will attempt to feed the specified power into the grid, but only when the state of charge is equal to or greater than 97%. Additionally, the 'Zero Feed-In Mode' must be set to 100%. Afterward, it returns to the 'normal' operation mode.": "Wenn aktiviert, versucht das System, die angegebene Leistung ins Netz einzuspeisen, jedoch nur, wenn der Ladezustand 97% oder mehr beträgt. Zusätzlich muss der 'Nulleinspeisungsmodus' auf 100% eingestellt sein. Anschließend kehrt das System in den 'normalen' Betriebsmodus zurück."
+    "If enabled, the system will attempt to feed the specified power into the grid, but only when the state of charge is equal to or greater than 97%. Additionally, the 'Zero Feed-In Mode' must be set to 100%. Afterward, it returns to the 'normal' operation mode.": "Wenn aktiviert, versucht das System, die angegebene Leistung ins Netz einzuspeisen, jedoch nur, wenn der Ladezustand 97% oder mehr beträgt.<br>Zusätzlich muss der 'Nulleinspeisungsmodus' auf 100% eingestellt sein. Anschließend kehrt das System in den 'normalen' Betriebsmodus zurück."
 }

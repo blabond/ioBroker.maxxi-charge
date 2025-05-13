@@ -182,7 +182,7 @@
                     "md": 12,
                     "sm": 12,
                     "xs": 12,
-                    "style": { "margin": "20px auto", "width": "50%", "textAlign": "center", "whiteSpace": "pre-line" }
+                    "style": { "margin": "20px auto", "width": "70%", "textAlign": "center", "whiteSpace": "pre-line" }
                 },
                 "_headerFeedIn": {
                     "type": "header",
@@ -206,7 +206,7 @@
                     "sm": 12,
                     "xs": 12,
                     "help": "At 90%/97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.",
-                    "style": { "margin": "10px auto", "width": "30%", "textAlign": "center" }
+                    "style": { "margin": "10px auto", "width": "50%", "textAlign": "center" }
                 },
                 "_headerBkw": {
                     "type": "header",
@@ -225,9 +225,9 @@
                         "bkw_powerTarget": {
                             "type": "slider",
                             "label": "BKW Feed-In Power (Watt)",
-                            "default": -600,
-                            "min": -800,
-                            "max": -200,
+                            "default": 600,
+                            "min": 200,
+                            "max": 800,
                             "step": 25,
                             "help": "Set the feed-in power in watts.",
                             "xl": 4,
@@ -255,7 +255,7 @@
                     "type": "staticText",
                     "text": "If enabled, the system will attempt to feed the specified power into the grid, but only when the state of charge is equal to or greater than 97%. Additionally, the 'Zero Feed-In Mode' must be set to 100%. Afterward, it returns to the 'normal' operation mode.",
                     "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
-                    "style": { "margin": "10px auto", "width": "30%", "textAlign": "center" }
+                    "style": { "margin": "10px auto", "width": "70%", "textAlign": "center" }
                 },
                 "_headerCalibration": {
                     "type": "header",
@@ -299,7 +299,7 @@
                     "md": 12,
                     "sm": 12,
                     "xs": 12,
-                    "style": { "margin": "10px auto", "textAlign": "center", "fontSize": "12px" }
+                    "style": { "margin": "10px auto", "width": "70%", "textAlign": "center", "fontSize": "12px" }
                 },
 
                 "_helpLine": {

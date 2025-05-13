@@ -181,7 +181,7 @@
     "calibrationProgress": "down",
     "feedInMode": 97,
     "bkw_enable": false,
-    "bkw_powerTarget": -600,
+    "bkw_powerTarget": 600,
     "bkw_adjustment": -35
   },
   "objects": [],
