@@ -41,6 +41,10 @@ http://www.maxxisun.de
 
 ## Changelog
 
+### 1.4.41 (2025-06-10)
+- Local API now stores the connecting IP if none is provided.
+- Multiple CCUs can be connected simultaneously; `info.aktivCCU` lists all active devices.
+
 ### 1.4.40 (2025-05-13)
 - New Option Mode "BKW"
 > At a battery level of ≥ 97%, the script enables BKW mode to feed a constant 600–800 W into the grid alongside household use, potentially receiving compensation if registered as a balcony power system (BKW).
