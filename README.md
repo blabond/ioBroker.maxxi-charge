@@ -41,7 +41,7 @@ http://www.maxxisun.de
 
 ## Changelog
 
-### 1.4.41 (2025-06-10)
+### 1.4.41 ** Alpha
 - Multiple CCUs can be connected simultaneously; `info.aktivCCU` lists all active devices.
 
 ### 1.4.40 (2025-05-13)
