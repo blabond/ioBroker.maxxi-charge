@@ -135,6 +135,7 @@ class MaxxiCharge extends utils.Adapter {
     }
 
     async updateActiveCCU(deviceId) {
+        const isNewDevice = !this.activeDevices[deviceId];
         this.activeDevices[deviceId] = Date.now();
 
         const keys = Object.keys(this.activeDevices);
@@ -150,13 +151,13 @@ class MaxxiCharge extends utils.Adapter {
             // Zustand hat sich geändert, also aktualisieren
             await this.setState('info.connection', { val: isConnected, ack: true });
             this.lastConnectionState = isConnected;
+        }
 
-            if (isConnected) {
-                await this.subscribeDynamicStates(deviceId);
-                if (this.config.enableseasonmode && !this.ecoModeInitialized) {
-                    this.ecoModeInitialized = true; // Sicherstellen, dass `EcoMode` nur einmal gestartet wird
-                    await this.ecoMode.startMonitoring();
-                }
+        if (isNewDevice) {
+            await this.subscribeDynamicStates(deviceId);
+            if (this.config.enableseasonmode && !this.ecoModeInitialized) {
+                this.ecoModeInitialized = true; // Sicherstellen, dass `EcoMode` nur einmal gestartet wird
+                await this.ecoMode.startMonitoring();
             }
         }
 
@@ -172,6 +173,8 @@ class MaxxiCharge extends utils.Adapter {
         for (const deviceId in this.activeDevices) {
             if (this.activeDevices[deviceId] < ninetySecAgo) {
                 delete this.activeDevices[deviceId];
+                const socState = `${this.namespace}.${deviceId}.SOC`;
+                this.unsubscribeStates(socState);
                 this.log.warn(`Device ${deviceId} marked as inactive and removed.`);
             }
         }

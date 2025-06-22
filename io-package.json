@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.4.40",
+    "version": "1.4.41",
     "news": {
+      "1.4.41": {
+        "en": "Local API stores the connecting IP when missing and multiple CCUs can connect simultaneously.",
+        "de": "Lokale API speichert die verbindende IP, falls keine angegeben ist, und mehrere CCUs können gleichzeitig verbunden sein.",
+        "ru": "Локальный API сохраняет IP подключающегося устройства при его отсутствии и поддерживает одновременное подключение нескольких CCU.",
+        "pt": "A API local armazena o IP de conexão quando ausente e várias CCUs podem se conectar simultaneamente.",
+        "nl": "De lokale API slaat het verbindende IP op indien afwezig en ondersteunt gelijktijdige verbinding van meerdere CCU's.",
+        "fr": "L'API locale enregistre l'adresse IP de connexion si elle est manquante et plusieurs CCU peuvent se connecter simultanément.",
+        "it": "L'API locale memorizza l'IP di connessione se mancante e consente la connessione simultanea di più CCU.",
+        "es": "La API local guarda la IP de conexión cuando falta y se pueden conectar varias CCU simultáneamente.",
+        "pl": "Interfejs lokalny zapisuje adres IP połączenia w razie braku i obsługuje jednoczesne połączenie wielu CCU.",
+        "uk": "Локальний API зберігає IP підключення, якщо його немає, і підтримує одночасне підключення декількох CCU.",
+        "zh-cn": "本地 API 在缺少时会存储连接 IP，并支持多个 CCU 同时连接。"
+      },
       "1.4.40": {
         "en": "Added BKW mode\nAutomatic grid feed-in (e.g. 600 or 800 W) when battery SOC reaches ≥97%",
         "de": "BKW-Modus hinzugefügt\nAutomatische Netzeinspeisung (z. B. 600 oder 800 W) ab Akkustand ≥97%",
