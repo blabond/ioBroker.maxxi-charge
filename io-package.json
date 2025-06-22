@@ -1,24 +1,9 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.4.42",
-    "news": {
-      "1.4.42": {
-        "en": "Limit command retries and acknowledge command states.",
-        "de": "Begrenzt die Wiederholungen von Befehlen und quittiert Steuerdatenpunkte.",
-        "ru": "Ограничивает количество попыток команд и подтверждает состояния команд.",
-        "pt": "Limita as tentativas de comando e confirma os estados de comando.",
-        "nl": "Beperkt het aantal commandopogingen en bevestigt commandostates.",
-        "fr": "Limite les nouvelles tentatives de commande et acquitte les états de commande.",
-        "it": "Limita i tentativi di comando e riconosce gli stati dei comandi.",
-        "es": "Limita los reintentos de comando y confirma los estados de comando.",
-        "pl": "Ogranicza ponowienia poleceń i potwierdza stany poleceń.",
-        "uk": "Обмежує спроби команд і підтверджує стани команд.",
-        "zh-cn": "限制命令重试并确认命令状态。"
-      },
       "1.4.41": {
-        "en": "Local API stores the connecting IP when missing and multiple CCUs can connect simultaneously.",
-        "de": "Lokale API speichert die verbindende IP, falls keine angegeben ist, und mehrere CCUs können gleichzeitig verbunden sein.",
+        "en": "Multiple CCUs can connect simultaneously.",
+        "de": "Mehrere CCUs können gleichzeitig verbunden sein.",
         "ru": "Локальный API сохраняет IP подключающегося устройства при его отсутствии и поддерживает одновременное подключение нескольких CCU.",
         "pt": "A API local armazena o IP de conexão quando ausente e várias CCUs podem se conectar simultaneamente.",
         "nl": "De lokale API slaat het verbindende IP op indien afwezig en ondersteunt gelijktijdige verbinding van meerdere CCU's.",

@@ -1,6 +1,5 @@
 {
   "name": "iobroker.maxxi-charge",
-  "version": "1.4.42",
   "description": "Adapter for integration and control of MaxxiCharge CCU devices, including data retrieval, configuration, and dynamic command sending.",
   "author": {
     "name": "Christoph Böhrs",
@@ -55,7 +54,7 @@
     "io-package.json"
   ],
   "scripts": {
-    "test:js": "mocha --config test/mocharc.custom.json \"{!(node_modules|test)/**/*.test.js,*.test.js,test/**/test!(PackageFiles|Startup).js}\"",
+    "test:js": "mocha --config test/mocharc.custom.json \"{!(node_modules|test)/**/*.test.js,*.test.js,test/**/*.test.js,test/**/test!(PackageFiles|Startup).js}\"",
     "test:package": "mocha test/package --exit",
     "test:integration": "mocha test/integration --exit",
     "test": "npm run test:js && npm run test:package",

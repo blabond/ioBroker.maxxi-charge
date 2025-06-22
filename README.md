@@ -41,9 +41,6 @@ http://www.maxxisun.de
 
 ## Changelog
 
-### 1.4.42 (2025-06-22)
-- Commands now acknowledge state updates and stop retrying after three attempts.
-
 ### 1.4.41 (2025-06-10)
 - Local API now stores the connecting IP if none is provided.
 - Multiple CCUs can be connected simultaneously; `info.aktivCCU` lists all active devices.
