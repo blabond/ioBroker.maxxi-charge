@@ -33,6 +33,10 @@ class LocalApi {
                 req.on('end', async () => {
                     try {
                         const data = JSON.parse(body);
+                        const remoteIp = req.socket.remoteAddress?.replace(/^::ffff:/, '');
+                        if (!data.ip_addr && remoteIp) {
+                            data.ip_addr = remoteIp;
+                        }
                         const rawDeviceId = data.deviceId || 'UnknownDevice'; // Original erhalten
                         const deviceId = name2id(rawDeviceId).toLowerCase(); // Kleinbuchstaben erzwingen
 

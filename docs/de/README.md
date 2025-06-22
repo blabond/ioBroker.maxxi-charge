@@ -7,6 +7,7 @@
 - **Datenabfrage**:
     - Liest Informationen wie IP-Adresse, Status oder Leistung der CCU.
     - Automatische Erstellung dynamischer Datenpunkte für Gerätedaten.
+    - Unterstützt mehrere CCU-Einheiten gleichzeitig.
 - **Konfiguration**:
     - Anpassung von Parametern wie maximaler Ausgangsleistung, Schwellenwerten oder Ladeverhalten.
     - **Sommer/Winter-Betrieb**: Dynamische Anpassung der Ladeparameter basierend auf der Jahreszeit.

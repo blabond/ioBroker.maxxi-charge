@@ -7,6 +7,7 @@
 - **Data Query**:
     - Reads information such as IP address, status, or performance of the CCU.
     - Automatically creates dynamic datapoints for device data.
+    - Supports multiple CCU units at the same time.
 - **Configuration**:
     - Adjusts parameters such as maximum output power, thresholds, or charging behavior.
     - **Summer/Winter Mode**: Dynamically adjusts charging parameters based on the season.
