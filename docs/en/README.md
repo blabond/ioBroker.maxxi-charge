@@ -120,6 +120,7 @@ The adapter dynamically creates datapoints based on the information returned by 
 ## Notes
 
 - Changes to datapoints in the `<deviceId>.sendcommand` section are automatically detected and sent to the CCU.
+- Commands acknowledge their states and retry sending up to three times when errors occur.
 - If issues occur with missing datapoints or unexpected behavior, restart the adapter.
 
 ## Errors

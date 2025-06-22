@@ -120,6 +120,7 @@ Der Adapter erstellt dynamisch Datenpunkte basierend auf den von der CCU zurück
 ## Hinweise
 
 - Änderungen an Datenpunkten im Bereich `<deviceId>.sendcommand` werden automatisch erkannt und an die CCU gesendet.
+- Befehle bestätigen ihren Status und versuchen bei Fehlern bis zu drei Mal erneut zu senden.
 - Bei Problemen mit fehlenden Datenpunkten oder unerwartetem Verhalten: Adapter neu starten.
 
 ## Fehler
