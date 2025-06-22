@@ -54,7 +54,7 @@
 | **Port for Local-API**  | Defines the port on which the Local-API listens.                                                                                                                                                               |
 | **Feed-in Control**     | Configures whether excess energy is fed into the grid.                                                                                                                                                         |
 | **Battery Calibration** | Starts the automated calibration process for the battery.                                                                                                                                                      |
-| **BKW-Mode*             | At a battery level of ≥ 97%, the script enables BKW mode to feed a constant 600–800 W into the grid alongside household use, potentially receiving compensation if registered as a balcony power system (BKW). |
+| **BKW Mode**            | At a battery level of ≥ 97%, the script enables BKW mode to feed a constant 600–800 W into the grid alongside household use, potentially receiving compensation if registered as a balcony power system (BKW). |
 
 ## Summer / Winter Mode
 
