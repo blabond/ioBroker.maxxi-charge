@@ -7,6 +7,7 @@
 - **Datenabfrage**:
     - Liest Informationen wie IP-Adresse, Status oder Leistung der CCU.
     - Automatische Erstellung dynamischer Datenpunkte für Gerätedaten.
+    - Unterstützt mehrere CCU-Einheiten gleichzeitig.
 - **Konfiguration**:
     - Anpassung von Parametern wie maximaler Ausgangsleistung, Schwellenwerten oder Ladeverhalten.
     - **Sommer/Winter-Betrieb**: Dynamische Anpassung der Ladeparameter basierend auf der Jahreszeit.
@@ -119,6 +120,7 @@ Der Adapter erstellt dynamisch Datenpunkte basierend auf den von der CCU zurück
 ## Hinweise
 
 - Änderungen an Datenpunkten im Bereich `<deviceId>.sendcommand` werden automatisch erkannt und an die CCU gesendet.
+- Befehle bestätigen ihren Status und versuchen bei Fehlern bis zu drei Mal erneut zu senden.
 - Bei Problemen mit fehlenden Datenpunkten oder unerwartetem Verhalten: Adapter neu starten.
 
 ## Fehler

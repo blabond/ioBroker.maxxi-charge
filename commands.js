@@ -151,14 +151,17 @@ class Commands {
             ipAddress = ipState.val;
         }
 
-        await this.sendCommandWithRetry(ipAddress, datapointId, state, deviceId);
+        const success = await this.sendCommandWithRetry(ipAddress, datapointId, state, deviceId);
+
+        // Acknowledge the state so repeated attempts are avoided
+        await this.adapter.setStateAsync(id, { val: state.val, ack: true });
     }
 
-    async sendCommandWithRetry(ipAddress, datapointId, state, deviceId, retryCount = 1) {
+    async sendCommandWithRetry(ipAddress, datapointId, state, deviceId, retryCount = 3) {
         const url = `http://${ipAddress}/config`;
         const payload = `${datapointId}=${state.val}`;
 
-        for (let attempt = 1; attempt <= retryCount + 1; attempt++) {
+        for (let attempt = 1; attempt <= retryCount; attempt++) {
             try {
                 await axios.post(url, payload, {
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -166,14 +169,15 @@ class Commands {
                 });
 
                 this.adapter.log.debug(`Command ${datapointId} successfully sent to device ${deviceId}: ${state.val}`);
-                return;
+                return true;
             } catch (error) {
-                if (attempt <= retryCount) {
+                if (attempt < retryCount) {
                     await new Promise(resolve => setTimeout(resolve, 1000));
                 } else {
                     this.adapter.log.error(
                         `Error sending command ${datapointId} to device ${deviceId}: ${error.message}`,
                     );
+                    return false;
                 }
             }
         }
