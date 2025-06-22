@@ -7,6 +7,7 @@ class Commands {
     constructor(adapter) {
         this.adapter = adapter;
         this.stateCache = new Set(); // Cache für bestehende States
+        this.initializedDevices = new Set(); // Keep track of devices with subscribed states
         this.commandDatapoints = [
             {
                 id: 'maxOutputPower',
@@ -74,6 +75,9 @@ class Commands {
 
     async initializeCommandSettings(deviceId) {
         const namespace = `${name2id(deviceId)}.sendcommand`;
+
+        // Remember which devices have command datapoints initialized
+        this.initializedDevices.add(name2id(deviceId));
 
         for (const dp of this.commandDatapoints) {
             const fullPath = `${namespace}.${dp.id}`;
@@ -177,11 +181,16 @@ class Commands {
 
     cleanup() {
         // Entfernt alle Abonnements für Zustandsänderungen
-        this.commandDatapoints.forEach(dp => {
-            const namespace = `${this.adapter.namespace}`;
-            const fullPath = `${namespace}.sendcommand.${dp.id}`;
-            this.adapter.unsubscribeStates(fullPath);
+        // Unsubscribe from all previously subscribed states
+        this.initializedDevices.forEach(deviceId => {
+            this.commandDatapoints.forEach(dp => {
+                const fullPath = `${deviceId}.sendcommand.${dp.id}`;
+                this.adapter.unsubscribeStates(fullPath);
+            });
         });
+
+        // Clear the list of initialized devices
+        this.initializedDevices.clear();
 
         // Leert den State-Cache
         this.stateCache.clear();
