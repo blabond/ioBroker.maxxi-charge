@@ -166,10 +166,11 @@ class MaxxiCharge extends utils.Adapter {
 
     async cleanupActiveDevices() {
         const now = Date.now();
-        const fiveMinAgo = now - 90 * 1000;
+        // remove devices that haven't sent data in the last 90 seconds
+        const ninetySecAgo = now - 90 * 1000;
 
         for (const deviceId in this.activeDevices) {
-            if (this.activeDevices[deviceId] < fiveMinAgo) {
+            if (this.activeDevices[deviceId] < ninetySecAgo) {
                 delete this.activeDevices[deviceId];
                 this.log.warn(`Device ${deviceId} marked as inactive and removed.`);
             }
