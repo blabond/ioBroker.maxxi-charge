@@ -74,7 +74,6 @@ class MaxxiCharge extends utils.Adapter {
                 await this.cloudApi.init(); // Cloud V1
             }
 
-
             // Cleanup-Intervall
             this.cleanupInterval = this.setInterval(() => this.cleanupActiveDevices(), validateInterval(30 * 1000));
 
@@ -95,7 +94,7 @@ class MaxxiCharge extends utils.Adapter {
         // this.log.debug(`State changed: ${id}, Value: ${state.val}, Ack: ${state.ack}`);
 
         if (!state.ack) {
-                await this.commands.handleCommandChange(id, state);
+            await this.commands.handleCommandChange(id, state);
         } else {
             if (id.endsWith('.SOC')) {
                 await this.ecoMode.handleSOCChange(id, state);

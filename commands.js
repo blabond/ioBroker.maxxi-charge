@@ -132,15 +132,15 @@ class Commands {
 
         let ipAddress;
 
-            const ipPath = `${deviceId}.ip_addr`;
-            const ipState = await this.adapter.getStateAsync(ipPath);
+        const ipPath = `${deviceId}.ip_addr`;
+        const ipState = await this.adapter.getStateAsync(ipPath);
 
-            if (!ipState || !ipState.val) {
-                this.adapter.log.error(`No IP address found for device ${deviceId}. Expected path: ${ipPath}`);
-                return;
-            }
+        if (!ipState || !ipState.val) {
+            this.adapter.log.error(`No IP address found for device ${deviceId}. Expected path: ${ipPath}`);
+            return;
+        }
 
-            ipAddress = ipState.val;
+        ipAddress = ipState.val;
 
         await this.sendCommandWithRetry(ipAddress, datapointId, state, deviceId);
     }

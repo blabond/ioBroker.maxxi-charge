@@ -51,3 +51,28 @@ jobs:
           os: ${{ matrix.os }}
           # Uncomment the following line if your adapter cannot be installed using 'npm ci'
           # install-command: 'npm install'          
+
+  deploy:
+    needs: [adapter-tests]
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+
+      - run: npm ci
+
+      - name: Release
+        run: npm run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
