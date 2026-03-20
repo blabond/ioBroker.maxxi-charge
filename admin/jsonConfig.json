@@ -1,302 +1,416 @@
 {
-    "i18n": true,
-    "type": "tabs",
-    "items": {
-        "general": {
-            "type": "panel",
-            "label": "Maxxi-Charge Config",
-            "items": {
-                "_header1_5": {
-                    "type": "header",
-                    "text": "API Mode",
-                    "size": 3,
-                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
-                    "style": { "textAlign": "center" }
-                },
-                "apimode": {
-                    "type": "select",
-                    "label": "Select the API mode",
-                    "options": [
-                        { "label": "Local API CCU V1", "value": "local" },
-                        { "label": "Cloud API CCU V1", "value": "cloud" }
-                    ],
-                    "default": "local",
-                    "xl": 6, "lg": 6, "md": 6, "sm": 12, "xs": 12,
-                    "style": { "margin": "0 auto", "width": "50%", "textAlign": "center" }
-                },
-                "_headerLocal": {
-                    "type": "header",
-                    "text": "Local Configuration",
-                    "size": 3,
-                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
-                    "style": { "textAlign": "center", "marginTop": "30px" }
-                },
-                "_localApiHintIntro": {
-                    "type": "staticText",
-                    "text": "On the MaxxiCharge config page under 'Api-Route', enter the following:",
-                    "newLine": true,
-                    "xl": 12,
-                    "lg": 12,
-                    "md": 12,
-                    "sm": 12,
-                    "xs": 12,
-                    "style": { "margin": "10px auto", "textAlign": "center" }
-                },
-                "_localApiHintDetails": {
-                    "type": "staticText",
-                    "text": "http://{ioBrokerIP}:${data.port}",
-                    "newLine": true,
-                    "xl": 12,
-                    "lg": 12,
-                    "md": 12,
-                    "sm": 12,
-                    "xs": 12,
-                    "style": { "margin": "5px auto", "textAlign": "center", "fontWeight": "bold" }
-                },
-                "port": {
-                    "type": "number",
-                    "label": "Port",
-                    "newLine": true,
-                    "default": 5501,
-                    "help": "Define the port for the Local-API.",
-                    "min": 1,
-                    "max": 9999,
-                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
-                    "style": { "margin": "0 auto", "width": "30%", "textAlign": "center" }
-                },
-                "_headerCloud": {
-                    "type": "header",
-                    "text": "Cloud Configuration",
-                    "size": 3,
-                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
-                    "style": { "textAlign": "center", "marginTop": "30px" }
-                },
-                "maxxiccuname": {
-                    "type": "text",
-                    "label": "Maxxi CCU Name",
-                    "default": "",
-                    "help": "Enter the name of the Maxxi CCU (e.g., maxxi-XXXXXX-YYY).",
-                    "maxLength": 17,
-                    "xl": 4, "lg": 4, "md": 4, "sm": 12, "xs": 12,
-                    "style": { "margin": "0 auto", "textAlign": "center" }
-                },
-                "_helpLine": {
-                    "newLine": true,
-                    "type": "divider",
-                    "color": "secondary"
-                },
-                "_donateTxt": {
-                    "type": "staticText",
-                    "text": "Your support means the world to me! If you'd like to help me improve this project, a donation would be greatly appreciated. Thank you so much!",
-                    "newLine": true,
-                    "style": { "textAlign": "right" },
-                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12
-                },
-                "_donate": {
-                    "type": "staticImage",
-                    "tooltip": "Support via PayPal",
-                    "noTranslation": true,
-                    "href": "https://paypal.me/boehrs",
-                    "src": "https://img.shields.io/badge/Paypal-donate%20%7C%20spenden-blue",
-                    "newLine": true,
-                    "style": { "display": "block", "marginLeft": "auto", "marginRight": "0" },
-                    "xs": 12,"sm": 3,"md": 3,"lg": 1.2,"xl": 1.2
-                }
-            }
+  "i18n": true,
+  "type": "tabs",
+  "items": {
+    "general": {
+      "type": "panel",
+      "label": "Maxxi-Charge Config",
+      "items": {
+        "_header1_5": {
+          "type": "header",
+          "text": "API Mode",
+          "size": 3,
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "style": { "textAlign": "center" }
         },
-        "expert": {
-            "type": "panel",
-            "label": "Expert Settings",
-            "items": {
-                "_headerEco": {
-                    "type": "header",
-                    "text": "Summer / Winter Mode",
-                    "size": 3,
-                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
-                    "style": { "textAlign": "center", "marginTop": "30px" }
-                },
-                "enableseasonmode": {
-                    "type": "checkbox",
-                    "label": "Enable summer/winter mode",
-                    "default": false,
-                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
-                    "style": { "margin": "10px auto", "width": "30%", "textAlign": "center" }
-                },
-                "winterfrom": {
-                    "type": "text",
-                    "label": "Winter start date (Format: DD.MM)",
-                    "default": "20.11",
-                    "help": "Enter a date in the format DD.MM (e.g., 20.11 for 20th November)",
-                    "xl": 4,
-                    "lg": 4,
-                    "md": 6,
-                    "sm": 12,
-                    "xs": 12,
-                    "style": { "margin": "0 auto", "textAlign": "center" }
-                },
-                "winterto": {
-                    "type": "text",
-                    "label": "Winter end date (Format: DD.MM)",
-                    "default": "07.02",
-                    "help": "Enter a date in the format DD.MM (e.g., 07.02 for 7th February)",
-                    "xl": 4,
-                    "lg": 4,
-                    "md": 6,
-                    "sm": 12,
-                    "xs": 12,
-                    "style": { "margin": "0 auto", "textAlign": "center" }
-                },
-                "ecoHint": {
-                    "type": "staticText",
-                    "text": "Winter mode: Minimum charge set to 60%, if SOC ≥55% it drops to 40%.<br>Summer mode: Minimum charge 10%, maximum charge ${data.feedInMode}%.",
-                    "xl": 12,
-                    "lg": 12,
-                    "md": 12,
-                    "sm": 12,
-                    "xs": 12,
-                    "style": { "margin": "20px auto", "width": "70%", "textAlign": "center", "whiteSpace": "pre-line" }
-                },
-                "_headerFeedIn": {
-                    "type": "header",
-                    "text": "Zero Feed-In / Feed-In Mode",
-                    "size": 3,
-                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
-                    "style": { "textAlign": "center", "marginTop": "30px" }
-                },
-                "feedInMode": {
-                    "type": "select",
-                    "label": "Select feed-in mode",
-                    "options": [
-                        { "label": "95% - Feed-In enabled", "value": 95 },
-                        { "label": "97% - Feed-In enabled", "value": 97 },
-                        { "label": "100% - Feed-In disabled", "value": 100 }
-                    ],
-                    "default": "enabled",
-                    "xl": 12,
-                    "lg": 12,
-                    "md": 12,
-                    "sm": 12,
-                    "xs": 12,
-                    "help": "At 95%/97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.",
-                    "style": { "margin": "10px auto", "width": "50%", "textAlign": "center" }
-                },
-                "_headerBkw": {
-                    "type": "header",
-                    "text": "BKW Mode",
-                    "size": 3,
-                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
-                    "style": { "textAlign": "center", "marginTop": "30px" }
-                },
-                        "bkw_enable": {
-                            "type": "checkbox",
-                            "label": "Enable BKW Mode",
-                            "default": false,
-                            "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
-                            "style": { "margin": "10px auto", "width": "30%", "textAlign": "center" }
-                        },
-                        "bkw_powerTarget": {
-                            "type": "slider",
-                            "label": "BKW Feed-In Power (Watt)",
-                            "default": 600,
-                            "min": 200,
-                            "max": 800,
-                            "step": 25,
-                            "help": "Set the feed-in power in watts.",
-                            "xl": 4,
-                            "lg": 4,
-                            "md": 6,
-                            "sm": 12,
-                            "xs": 12,
-                            "style": { "margin": "0 auto", "textAlign": "center" }
-                        },
-                        "bkw_adjustment": {
-                            "type": "number",
-                            "label": "MaxxiCharge 'baseLoad' Default (Adjust Output in Watt)",
-                            "default": -35,
-                            "min": -100,
-                            "max": 100,
-                            "help": "Adjust the feed-in offset (baseLoad) in watts for MaxxiCharge.",
-                            "xl": 4,
-                            "lg": 4,
-                            "md": 4,
-                            "sm": 12,
-                            "xs": 12,
-                            "style": { "margin": "0 auto", "textAlign": "center" }
-                },
-                "bkw_info": {
-                    "type": "staticText",
-                    "text": "If enabled, the system will attempt to feed the specified power into the grid, but only when the state of charge is equal to or greater than 97%. Additionally, the 'Zero Feed-In Mode' must be set to 100%. Afterward, it returns to the 'normal' operation mode.",
-                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
-                    "style": { "margin": "10px auto", "width": "70%", "textAlign": "center" }
-                },
-                "_headerCalibration": {
-                    "type": "header",
-                    "text": "Battery Calibration",
-                    "size": 3,
-                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
-                    "style": { "textAlign": "center", "marginTop": "30px" }
-                },
-                "batterycalibration": {
-                    "type": "checkbox",
-                    "label": "Start battery calibration process",
-                    "default": false,
-                    "xl": 12,
-                    "lg": 12,
-                    "md": 12,
-                    "sm": 12,
-                    "xs": 12,
-                    "style": { "margin": "10px auto", "width": "30%", "textAlign": "center" }
-                },
-                "calibrationProgress": {
-                    "type": "select",
-                    "label": "Calibration progress direction",
-                    "options": [
-                        { "label": "0% - unloaded", "value": "down"  },
-                        { "label": "100% - load", "value": "up" }
-                    ],
-                    "default": 1,
-                    "xl": 12,
-                    "lg": 12,
-                    "md": 12,
-                    "sm": 12,
-                    "xs": 12,
-                    "help": "Select the direction for the calibration process.",
-                    "style": { "margin": "10px auto", "width": "30%", "textAlign": "center" }
-                },
-                "_batteryCalibrationInfo": {
-                    "type": "staticText",
-                    "text": "Starts the battery calibration process. First, the battery switches to normal operation and waits until the charge drops below <10%. Then the battery's minSOC is set to 99%. Once this value is reached, the adapter resumes normal operation.",
-                    "xl": 12,
-                    "lg": 12,
-                    "md": 12,
-                    "sm": 12,
-                    "xs": 12,
-                    "style": { "margin": "10px auto", "width": "70%", "textAlign": "center", "fontSize": "12px" }
-                },
-
-                "_helpLine": {
-                    "newLine": true,
-                    "type": "divider",
-                    "color": "secondary"
-                },
-                "_donateTxt": {
-                    "type": "staticText",
-                    "text": "Your support means the world to me! If you'd like to help me improve this project, a donation would be greatly appreciated. Thank you so much!",
-                    "newLine": true,
-                    "style": { "textAlign": "right" },
-                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12
-                },
-                "_donate": {
-                    "type": "staticImage",
-                    "tooltip": "Support via PayPal",
-                    "noTranslation": true,
-                    "href": "https://paypal.me/boehrs",
-                    "src": "https://img.shields.io/badge/Paypal-donate%20%7C%20spenden-blue",
-                    "newLine": true,
-                    "style": { "display": "block", "marginLeft": "auto", "marginRight": "0" },
-                    "xs": 12,"sm": 3,"md": 3,"lg": 1.2,"xl": 1.2
-                }
-            }
+        "apimode": {
+          "type": "select",
+          "label": "Select the API mode",
+          "options": [
+            { "label": "Local API CCU V1", "value": "local" },
+            { "label": "Cloud API CCU V1", "value": "cloud" }
+          ],
+          "default": "local",
+          "xl": 6,
+          "lg": 6,
+          "md": 6,
+          "sm": 12,
+          "xs": 12,
+          "style": { "margin": "0 auto", "width": "50%", "textAlign": "center" }
+        },
+        "_headerLocal": {
+          "type": "header",
+          "text": "Local Configuration",
+          "size": 3,
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "style": { "textAlign": "center", "marginTop": "30px" }
+        },
+        "_localApiHintIntro": {
+          "type": "staticText",
+          "text": "On the MaxxiCharge config page under 'Api-Route', enter the following:",
+          "newLine": true,
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "style": { "margin": "10px auto", "textAlign": "center" }
+        },
+        "_localApiHintDetails": {
+          "type": "staticText",
+          "text": "http://{ioBrokerIP}:${data.port}",
+          "newLine": true,
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "style": {
+            "margin": "5px auto",
+            "textAlign": "center",
+            "fontWeight": "bold"
+          }
+        },
+        "port": {
+          "type": "number",
+          "label": "Port",
+          "newLine": true,
+          "default": 5501,
+          "help": "Define the port for the Local-API.",
+          "min": 1,
+          "max": 9999,
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "style": { "margin": "0 auto", "width": "30%", "textAlign": "center" }
+        },
+        "_headerCloud": {
+          "type": "header",
+          "text": "Cloud Configuration",
+          "size": 3,
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "style": { "textAlign": "center", "marginTop": "30px" }
+        },
+        "maxxiccuname": {
+          "type": "text",
+          "label": "Maxxi CCU Name",
+          "default": "",
+          "help": "Enter the name of the Maxxi CCU (e.g., maxxi-XXXXXX-YYY).",
+          "maxLength": 17,
+          "xl": 4,
+          "lg": 4,
+          "md": 4,
+          "sm": 12,
+          "xs": 12,
+          "style": { "margin": "0 auto", "textAlign": "center" }
+        },
+        "_helpLine": {
+          "newLine": true,
+          "type": "divider",
+          "color": "secondary"
+        },
+        "_donateTxt": {
+          "type": "staticText",
+          "text": "Your support means the world to me! If you'd like to help me improve this project, a donation would be greatly appreciated. Thank you so much!",
+          "newLine": true,
+          "style": { "textAlign": "right" },
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12
+        },
+        "_donate": {
+          "type": "staticImage",
+          "tooltip": "Support via PayPal",
+          "noTranslation": true,
+          "href": "https://paypal.me/boehrs",
+          "src": "https://img.shields.io/badge/Paypal-donate%20%7C%20spenden-blue",
+          "newLine": true,
+          "style": {
+            "display": "block",
+            "marginLeft": "auto",
+            "marginRight": "0"
+          },
+          "xs": 12,
+          "sm": 3,
+          "md": 3,
+          "lg": 1.2,
+          "xl": 1.2
         }
+      }
+    },
+    "expert": {
+      "type": "panel",
+      "label": "Expert Settings",
+      "items": {
+        "_headerEco": {
+          "type": "header",
+          "text": "Summer / Winter Mode",
+          "size": 3,
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "style": { "textAlign": "center", "marginTop": "30px" }
+        },
+        "enableseasonmode": {
+          "type": "checkbox",
+          "label": "Enable summer/winter mode",
+          "default": false,
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "style": {
+            "margin": "10px auto",
+            "width": "30%",
+            "textAlign": "center"
+          }
+        },
+        "winterfrom": {
+          "type": "text",
+          "label": "Winter start date (Format: DD.MM)",
+          "default": "20.11",
+          "help": "Enter a date in the format DD.MM (e.g., 20.11 for 20th November)",
+          "xl": 4,
+          "lg": 4,
+          "md": 6,
+          "sm": 12,
+          "xs": 12,
+          "style": { "margin": "0 auto", "textAlign": "center" }
+        },
+        "winterto": {
+          "type": "text",
+          "label": "Winter end date (Format: DD.MM)",
+          "default": "07.02",
+          "help": "Enter a date in the format DD.MM (e.g., 07.02 for 7th February)",
+          "xl": 4,
+          "lg": 4,
+          "md": 6,
+          "sm": 12,
+          "xs": 12,
+          "style": { "margin": "0 auto", "textAlign": "center" }
+        },
+        "ecoHint": {
+          "type": "staticText",
+          "text": "Winter mode: Minimum charge set to 60%, if SOC ≥55% it drops to 40%.<br>Summer mode: Minimum charge 10%, maximum charge ${data.feedInMode}%.",
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "style": {
+            "margin": "20px auto",
+            "width": "70%",
+            "textAlign": "center",
+            "whiteSpace": "pre-line"
+          }
+        },
+        "_headerFeedIn": {
+          "type": "header",
+          "text": "Zero Feed-In / Feed-In Mode",
+          "size": 3,
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "style": { "textAlign": "center", "marginTop": "30px" }
+        },
+        "feedInMode": {
+          "type": "select",
+          "label": "Select feed-in mode",
+          "options": [
+            { "label": "95% - Feed-In enabled", "value": 95 },
+            { "label": "97% - Feed-In enabled", "value": 97 },
+            { "label": "100% - Feed-In disabled", "value": 100 }
+          ],
+          "default": "enabled",
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "help": "At 95%/97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.",
+          "style": {
+            "margin": "10px auto",
+            "width": "50%",
+            "textAlign": "center"
+          }
+        },
+        "_headerBkw": {
+          "type": "header",
+          "text": "BKW Mode",
+          "size": 3,
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "style": { "textAlign": "center", "marginTop": "30px" }
+        },
+        "bkw_enable": {
+          "type": "checkbox",
+          "label": "Enable BKW Mode",
+          "default": false,
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "style": {
+            "margin": "10px auto",
+            "width": "30%",
+            "textAlign": "center"
+          }
+        },
+        "bkw_powerTarget": {
+          "type": "slider",
+          "label": "BKW Feed-In Power (Watt)",
+          "default": 600,
+          "min": 200,
+          "max": 800,
+          "step": 25,
+          "help": "Set the feed-in power in watts.",
+          "xl": 4,
+          "lg": 4,
+          "md": 6,
+          "sm": 12,
+          "xs": 12,
+          "style": { "margin": "0 auto", "textAlign": "center" }
+        },
+        "bkw_adjustment": {
+          "type": "number",
+          "label": "MaxxiCharge 'baseLoad' Default (Adjust Output in Watt)",
+          "default": -35,
+          "min": -100,
+          "max": 100,
+          "help": "Adjust the feed-in offset (baseLoad) in watts for MaxxiCharge.",
+          "xl": 4,
+          "lg": 4,
+          "md": 4,
+          "sm": 12,
+          "xs": 12,
+          "style": { "margin": "0 auto", "textAlign": "center" }
+        },
+        "bkw_info": {
+          "type": "staticText",
+          "text": "If enabled, the system will attempt to feed the specified power into the grid, but only when the state of charge is equal to or greater than 97%. Additionally, the 'Zero Feed-In Mode' must be set to 100%. Afterward, it returns to the 'normal' operation mode.",
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "style": {
+            "margin": "10px auto",
+            "width": "70%",
+            "textAlign": "center"
+          }
+        },
+        "_headerCalibration": {
+          "type": "header",
+          "text": "Battery Calibration",
+          "size": 3,
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "style": { "textAlign": "center", "marginTop": "30px" }
+        },
+        "batterycalibration": {
+          "type": "checkbox",
+          "label": "Start battery calibration process",
+          "default": false,
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "style": {
+            "margin": "10px auto",
+            "width": "30%",
+            "textAlign": "center"
+          }
+        },
+        "calibrationProgress": {
+          "type": "select",
+          "label": "Calibration progress direction",
+          "options": [
+            { "label": "0% - unloaded", "value": "down" },
+            { "label": "100% - load", "value": "up" }
+          ],
+          "default": 1,
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "help": "Select the direction for the calibration process.",
+          "style": {
+            "margin": "10px auto",
+            "width": "30%",
+            "textAlign": "center"
+          }
+        },
+        "_batteryCalibrationInfo": {
+          "type": "staticText",
+          "text": "Starts the battery calibration process. First, the battery switches to normal operation and waits until the charge drops below <10%. Then the battery's minSOC is set to 99%. Once this value is reached, the adapter resumes normal operation.",
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "style": {
+            "margin": "10px auto",
+            "width": "70%",
+            "textAlign": "center",
+            "fontSize": "12px"
+          }
+        },
+
+        "_helpLine": {
+          "newLine": true,
+          "type": "divider",
+          "color": "secondary"
+        },
+        "_donateTxt": {
+          "type": "staticText",
+          "text": "Your support means the world to me! If you'd like to help me improve this project, a donation would be greatly appreciated. Thank you so much!",
+          "newLine": true,
+          "style": { "textAlign": "right" },
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12
+        },
+        "_donate": {
+          "type": "staticImage",
+          "tooltip": "Support via PayPal",
+          "noTranslation": true,
+          "href": "https://paypal.me/boehrs",
+          "src": "https://img.shields.io/badge/Paypal-donate%20%7C%20spenden-blue",
+          "newLine": true,
+          "style": {
+            "display": "block",
+            "marginLeft": "auto",
+            "marginRight": "0"
+          },
+          "xs": 12,
+          "sm": 3,
+          "md": 3,
+          "lg": 1.2,
+          "xl": 1.2
+        }
+      }
     }
+  }
 }

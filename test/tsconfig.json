@@ -1,13 +1,13 @@
 {
-    "extends": "../tsconfig.json",
-    "compilerOptions": {
-        "noImplicitAny": false
-    },
-    "include": [
-        "eslint.config.mjs",
-        "prettier.config.mjs",
-        "./*.js",
-        "./**/*.js",
-        "./**/*.ts"
-    ]
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noImplicitAny": false
+  },
+  "include": [
+    "eslint.config.mjs",
+    "prettier.config.mjs",
+    "./*.js",
+    "./**/*.js",
+    "./**/*.ts"
+  ]
 }

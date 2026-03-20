@@ -60,7 +60,8 @@
     "test": "npm run test:js && npm run test:package",
     "check": "tsc --noEmit -p tsconfig.check.json",
     "release": "release-script",
-    "lint": "eslint -c eslint.config.mjs ."
+    "lint": "eslint -c eslint.config.mjs .",
+    "lint:fix": "eslint -c eslint.config.mjs . --fix"
   },
   "engines": {
     "node": ">=20"
