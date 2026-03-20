@@ -5,8 +5,6 @@ const { validateInterval, getActiveDeviceId } = require('./utils'); // utils imp
 const Commands = require('./commands');
 const LocalApi = require('./localApi');
 const CloudApi = require('./cloudApi');
-const CloudApiStable = require('./cloudApi_stable');
-const VersionControl = require('./versionControl');
 const EcoMode = require('./ecoMode');
 const BatteryMode = require('./batteryMode');
 const BKWMode = require('./bkwMode');
@@ -26,9 +24,7 @@ class MaxxiCharge extends utils.Adapter {
         this.commands = new Commands(this);
         this.localApi = new LocalApi(this);
         this.cloudApi = null;
-        this.cloudApi_backup = null;
         this.ecoMode = new EcoMode(this);
-        this.versionControl = new VersionControl(this);
         this.batteryMode = new BatteryMode(this);
         this.bkwMode = new BKWMode(this, this.commands);
 
@@ -76,13 +72,8 @@ class MaxxiCharge extends utils.Adapter {
             } else if (this.config.apimode === 'cloud') {
                 this.cloudApi = new CloudApi(this); // V1
                 await this.cloudApi.init(); // Cloud V1
-            } else if (this.config.apimode === 'cloud_v2') {
-                this.cloudApiStable = new CloudApiStable(this); // V2
-                await this.cloudApiStable.init(); // Cloud V2
             }
 
-            // Version Control
-            await this.versionControl.init();
 
             // Cleanup-Intervall
             this.cleanupInterval = this.setInterval(() => this.cleanupActiveDevices(), validateInterval(30 * 1000));
@@ -104,11 +95,7 @@ class MaxxiCharge extends utils.Adapter {
         // this.log.debug(`State changed: ${id}, Value: ${state.val}, Ack: ${state.ack}`);
 
         if (!state.ack) {
-            if (id.includes('.VersionControl.')) {
-                await this.versionControl.handleStateChange(id, state);
-            } else {
                 await this.commands.handleCommandChange(id, state);
-            }
         } else {
             if (id.endsWith('.SOC')) {
                 await this.ecoMode.handleSOCChange(id, state);
@@ -213,13 +200,6 @@ class MaxxiCharge extends utils.Adapter {
             if (this.cloudApi) {
                 this.cloudApi.cleanup();
             }
-            if (this.cloudApi_backup) {
-                this.cloudApi_backup.cleanup();
-            }
-            if (this.versionControl) {
-                this.versionControl.cleanup();
-            }
-
             if (this.bkwMode) {
                 this.bkwMode.cleanup();
             }

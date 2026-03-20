@@ -14,14 +14,9 @@
     - **Batteriekalibrierung**: Unterstützt einen automatisierten Kalibrierungsprozess für die Batterie.
     - **Einspeisungssteuerung**: Konfiguration der maximalen Ladung zur Aktivierung oder Deaktivierung der Einspeisung.
 - **Steuerbefehle**:
-    - Dynamische Datenpunkte (`<deviceId>.sendcommand`) zum Senden von Befehlen an die CCU.
-    - Der Ordner `<deviceId>.VersionControl` dient zur Änderung der aktuell installierten CCU-Version.
-    - Der Ordner `<deviceId>.VersionControl.Experimentell not for Use` enthält experimentelle Versionen und sollte **nur auf eigene Gefahr** verwendet werden.
+    - Dynamische Datenpunkte (`<deviceId>.sendcommand`) zum Senden von Befehlen an die CCU.  
 - **Flexibles Abfrageintervall (Cloud-Modus)**:
-    - Der Nutzer kann das Abfrageintervall der CCU-Daten zwischen 10 und 90 Sekunden anpassen.
-- **Firmware-Versionsteuerung**:
-    - Automatischer Abruf und Kategorisierung verfügbarer Firmware-Versionen in „Releases“ und „Experimentell“.
-    - Ermöglicht sicheres Umschalten der Firmware über einen Umschalt-Datenpunkt unter `VersionControl.Releases`.
+    - Der Nutzer kann das Abfrageintervall der CCU-Daten zwischen 10 und 90 Sekunden anpassen. 
 
 ## Anforderungen
 
@@ -86,7 +81,7 @@ Die Kalibrierung kann in den Experteneinstellungen aktiviert werden.
 
 Die Einspeisungssteuerung ermöglicht es, die maximale Ladung (`maxSOC`) so zu konfigurieren, dass überschüssiger Strom ins Netz eingespeist wird oder nicht:
 
-- **90% / 97% (Einspeisung aktiv)**:
+- **95% / 97% (Einspeisung aktiv)**:
     - Überschüssiger Strom wird ins Netz eingespeist, wenn die Batterie mehr als 97% SOC hat.
 - **100% (Einspeisung deaktiviert)**:
     - Es wird kein überschüssiger Strom ins Netz eingespeist.
@@ -115,7 +110,6 @@ Der Adapter erstellt dynamisch Datenpunkte basierend auf den von der CCU zurück
 | `<deviceId>.convertersInfo.*` | Converter Status.                                          |
 | `<deviceId>.settings.*`       | Gerätespezifische Einstellungen. (Nur Cloud)               |
 | `<deviceId>.sendcommand.*`    | Steuerbefehle für die CCU.                                 |
-| `<deviceId>.VersionControl.*` | Werkzeuge zum Ändern der CCU-Version. (nur im Cloud-Modus) |
 
 ## Hinweise
 

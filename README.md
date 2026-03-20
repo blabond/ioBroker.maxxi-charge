@@ -28,11 +28,16 @@ http://www.maxxisun.de
 
 ## Version Compatibility
 
-|    Version    | CCU V1 Local | CCU V2 Local | CCU V1 Cloud | CCU V2 Cloud |
-|:-------------:|:------------:|:------------:|:------------:|:------------:|
-|  0.36 - 0.40  |      ❌       |      ❌       |      ✅       |      ❌       |
-| 0.41 or newer |      ✅       |      ❓       |      ✅       |      ❓       |
+|    CCU V1     | Local API  | Cloud API  |
+|:-------------:|:----------:|:----------:|
+|  0.36 - 0.40  |     ❌      |     ✅      |
+| 0.41 or newer |     ✅      |     ✅      |
 
+|     CCU V2     | Local API  | Cloud API  |
+|:--------------:|:----------:|:----------:|
+| 2.0.0 or newer |     ❌      |     ❌      |
+|  Comming Soon  |     ❓      |     ❓      |
+<i>MaxxiSun can deactivate cloud services at any time. Local mode is always more secure.</i>
 
 🔹 **Legend**:  
 ✅ - Compatible  
@@ -40,6 +45,11 @@ http://www.maxxisun.de
 ❓ - Unknown
 
 ## Changelog
+
+### 1.5.0 (2025-X-X)
+- Adding CCU 2 Local API (MQTT Support)
+- Redesign Adapter Config Page
+- Dependencies update
 
 ### 1.4.40 (2025-05-13)
 - New Option Mode "BKW"

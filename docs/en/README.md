@@ -14,14 +14,9 @@
     - **Battery Calibration**: Supports an automated calibration process for the battery.
     - **Feed-in Control**: Configures maximum charge to enable or disable energy feed-in to the grid.
 - **Control Commands**:
-    - Dynamic datapoints (`<deviceId>.sendcommand`) are used to send commands to the CCU.
-    - The folder `<deviceId>.VersionControl` is used to change the currently installed CCU version.
-    - The folder `<deviceId>.VersionControl.Experimentell not for Use` contains experimental versions and should be used **at your own risk**.
+    - Dynamic datapoints (`<deviceId>.sendcommand`) are used to send commands to the CCU. 
 - **Flexible Query Interval (Cloud Mode)**:
     - Users can adjust the CCU data query interval between 10 and 90 seconds.
-- **Firmware Version Control**:
-    - Automatically retrieves and categorizes available firmware versions into "Releases" and "Experimental".
-    - Enables safe firmware switching through a toggle datapoint under `VersionControl.Releases`.
 
 ## Requirements
 
@@ -98,7 +93,7 @@ Battery calibration can be activated in the expert settings.
 
 The Feed-in Control feature allows configuration of the maximum charge (`maxSOC`) to determine whether excess energy is fed into the grid:
 
-- **90% / 97% (Feed-in active)**:
+- **95% / 97% (Feed-in active)**:
     - Excess energy is fed into the grid when the battery exceeds 97% SOC.
 - **100% (Feed-in disabled)**:
     - No excess energy is fed into the grid.
@@ -115,7 +110,6 @@ The adapter dynamically creates datapoints based on the information returned by 
 | `<deviceId>.convertersInfo`   | Converter Status.                                    |
 | `<deviceId>.settings.*`       | Device-specific settings. (only Cloud)               |
 | `<deviceId>.sendcommand.*`    | Control commands for the CCU.                        |
-| `<deviceId>.VersionControl.*` | Tools for changing CCU version. (only in Cloud mode) |
 
 ## Notes
 

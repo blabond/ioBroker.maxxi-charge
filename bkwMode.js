@@ -41,13 +41,6 @@ class BkwMode {
         if (targetValue !== null) {
             let ipAddress;
 
-            if (this.adapter.config.apimode === 'cloud_v2') {
-                ipAddress = this.adapter.config.maxxiip;
-                if (!ipAddress) {
-                    this.adapter.log.debug('bkwMode: No IP address configured for cloud_v2 mode.');
-                    return;
-                }
-            } else {
                 const ipPath = `${deviceId}.ip_addr`;
                 const ipState = await this.adapter.getStateAsync(ipPath);
 
@@ -59,7 +52,6 @@ class BkwMode {
                 }
 
                 ipAddress = ipState.val;
-            }
 
             // Send command
             const dummyState = { val: targetValue };

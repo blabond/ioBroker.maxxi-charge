@@ -17,56 +17,12 @@
                     "type": "select",
                     "label": "Select the API mode",
                     "options": [
-                        { "label": "Cloud API - Server 1", "value": "cloud" },
-                        { "label": "Cloud API - Server 2", "value": "cloud_v2" },
-                        { "label": "Local API", "value": "local" }
+                        { "label": "Local API CCU V1", "value": "local" },
+                        { "label": "Cloud API CCU V1", "value": "cloud" }
                     ],
                     "default": "local",
                     "xl": 6, "lg": 6, "md": 6, "sm": 12, "xs": 12,
                     "style": { "margin": "0 auto", "width": "50%", "textAlign": "center" }
-                },
-                "_headerCloud": {
-                    "type": "header",
-                    "text": "Cloud Configuration",
-                    "size": 3,
-                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
-                    "style": { "textAlign": "center", "marginTop": "30px" }
-                },
-                "email": {
-                    "type": "text",
-                    "label": "Maxxi Account E-Mail",
-                    "default": "",
-                    "help": "Enter the e-mail address used for Maxxisun login.",
-                    "xl": 4, "lg": 4, "md": 4, "sm": 12, "xs": 12,
-                    "style": { "textAlign": "center" }
-                },
-                "maxxiccuname": {
-                    "type": "text",
-                    "label": "Maxxi CCU Name",
-                    "default": "",
-                    "help": "Enter the name of the Maxxi CCU (e.g., maxxi-XXXXXX-YYY).",
-                    "maxLength": 17,
-                    "xl": 4, "lg": 4, "md": 4, "sm": 12, "xs": 12,
-                    "style": { "textAlign": "center" }
-                },
-                "maxxiip": {
-                    "type": "text",
-                    "label": "IP: MaxxiCharge",
-                    "default": "",
-                    "help": "Enter the local IP address of your MaxxiCharge (e.g., 192.168.1.123).",
-                    "xl": 4, "lg": 4, "md": 4, "sm": 12, "xs": 12,
-                    "style": { "textAlign": "center" }
-                },
-                "ccuinterval": {
-                    "type": "slider",
-                    "label": "CCU Query Interval (Seconds)",
-                    "default": 30,
-                    "min": 10,
-                    "max": 90,
-                    "step": 5,
-                    "help": "Set the interval for CCU queries in seconds (10-90).",
-                    "xl": 6, "lg": 6, "md": 6, "sm": 12, "xs": 12,
-                    "style": { "margin": "0 auto", "textAlign": "center" }
                 },
                 "_headerLocal": {
                     "type": "header",
@@ -107,6 +63,22 @@
                     "max": 9999,
                     "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
                     "style": { "margin": "0 auto", "width": "30%", "textAlign": "center" }
+                },
+                "_headerCloud": {
+                    "type": "header",
+                    "text": "Cloud Configuration",
+                    "size": 3,
+                    "xl": 12, "lg": 12, "md": 12, "sm": 12, "xs": 12,
+                    "style": { "textAlign": "center", "marginTop": "30px" }
+                },
+                "maxxiccuname": {
+                    "type": "text",
+                    "label": "Maxxi CCU Name",
+                    "default": "",
+                    "help": "Enter the name of the Maxxi CCU (e.g., maxxi-XXXXXX-YYY).",
+                    "maxLength": 17,
+                    "xl": 4, "lg": 4, "md": 4, "sm": 12, "xs": 12,
+                    "style": { "margin": "0 auto", "textAlign": "center" }
                 },
                 "_helpLine": {
                     "newLine": true,
@@ -195,7 +167,7 @@
                     "type": "select",
                     "label": "Select feed-in mode",
                     "options": [
-                        { "label": "90% - Feed-In enabled", "value": 90 },
+                        { "label": "95% - Feed-In enabled", "value": 95 },
                         { "label": "97% - Feed-In enabled", "value": 97 },
                         { "label": "100% - Feed-In disabled", "value": 100 }
                     ],
@@ -205,7 +177,7 @@
                     "md": 12,
                     "sm": 12,
                     "xs": 12,
-                    "help": "At 90%/97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.",
+                    "help": "At 95%/97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.",
                     "style": { "margin": "10px auto", "width": "50%", "textAlign": "center" }
                 },
                 "_headerBkw": {

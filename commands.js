@@ -132,14 +132,6 @@ class Commands {
 
         let ipAddress;
 
-        if (this.adapter.config.apimode === 'cloud_v2') {
-            ipAddress = this.adapter.config.maxxiip;
-
-            if (!ipAddress) {
-                this.adapter.log.error(`No IP address configured for cloud mode.`);
-                return;
-            }
-        } else {
             const ipPath = `${deviceId}.ip_addr`;
             const ipState = await this.adapter.getStateAsync(ipPath);
 
@@ -149,7 +141,6 @@ class Commands {
             }
 
             ipAddress = ipState.val;
-        }
 
         await this.sendCommandWithRetry(ipAddress, datapointId, state, deviceId);
     }
