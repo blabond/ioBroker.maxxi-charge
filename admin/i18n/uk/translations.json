@@ -8,7 +8,7 @@
   "Maxxi CCU Name": "Maxxi CCU Name",
   "Enter the name of the Maxxi CCU (e.g., maxxi-XXXXXX-YYY).": "Enter the name of the Maxxi CCU (e.g., maxxi-XXXXXX-YYY).",
   "Local Configuration": "Local Configuration",
-  "Send local data to cloud for local operation with continued cloud availability.": "Nadsylaty lokalni dani do khmary dlya lokalnoyi roboty zi zberezhennyam dostupnosti khmary.",
+  "Send local data to cloud for local operation with continued cloud availability.": "Офлайн-режим - Передача даних до Maxxisun:<br>Інфо: <i>Працює у безпечному офлайн-режимі, але надсилає дані в хмару лише для відображення.<br>Жодного зовнішнього доступу, лише читання через застосунок!</i>",
   "Port": "Port",
   "Define the port for the Local-API.": "Define the port for the API to listen on.",
   "On the MaxxiCharge config page under 'Api-Route', enter the following:": "On the MaxxiCharge config page under 'Api-Route', enter the following:",
