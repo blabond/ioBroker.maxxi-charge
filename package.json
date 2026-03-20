@@ -1,6 +1,6 @@
 {
   "name": "iobroker.maxxi-charge",
-  "version": "1.5.0",
+  "version": "1.4.40",
   "description": "Adapter for integration and control of MaxxiCharge CCU devices, including data retrieval, configuration, and dynamic command sending.",
   "author": {
     "name": "Christoph B\\u00f6hrs",
@@ -19,7 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "@iobroker/adapter-core": "^3.3.2",
-    "axios": "1.13.6",
+    "axios": "^1.13.6",
     "minimist": "^1.2.8",
     "semver": "^7.7.3"
   },

@@ -61,17 +61,10 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v6
+      - uses: ioBroker/testing-action-deploy@v1
         with:
-          node-version: 22.x
-          cache: npm
-
-      - run: npm ci
-
-      - name: Release
-        run: npm run release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          node-version: "22.x"
+          npm-token: ${{ secrets.NPM_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
