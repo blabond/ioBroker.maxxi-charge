@@ -45,7 +45,7 @@
         },
         "localCloudMirror": {
           "type": "checkbox",
-          "label": "Send local data to cloud for local operation with continued cloud availability.",
+          "label": "Offline operation - Data Forwarder to Maxxisun",
           "default": false,
           "newLine": true,
           "xl": 6,
@@ -54,6 +54,22 @@
           "sm": 12,
           "xs": 12,
           "style": { "margin": "0 auto", "width": "50%", "textAlign": "center" }
+        },
+        "_localCloudMirrorInfo": {
+          "type": "staticText",
+          "text": "Info: Stays in secure offline mode, but sends data to the cloud for display only. No external access, read-only via the app!",
+          "newLine": true,
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "style": {
+            "margin": "8px auto 0 auto",
+            "width": "50%",
+            "textAlign": "center",
+            "fontStyle": "italic"
+          }
         },
         "_localApiHintIntro": {
           "type": "staticText",
