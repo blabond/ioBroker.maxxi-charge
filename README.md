@@ -46,9 +46,13 @@ http://www.maxxisun.de
 
 ## Changelog
 
-### 1.5.0 (2025-X-X)
+### 1.5.0 (comming soon 2026-X-X)
 
-- Adding CCU 2 Local API (MQTT Support)
+- Adding CCU V2 Local API
+
+### 1.4.45 (2026-03-20)
+
+- Added optional cloud sync when using local mode
 - Redesign Adapter Config Page
 - Dependencies update
 

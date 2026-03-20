@@ -43,6 +43,18 @@
           "xs": 12,
           "style": { "textAlign": "center", "marginTop": "30px" }
         },
+        "localCloudMirror": {
+          "type": "checkbox",
+          "label": "Send local data to cloud for local operation with continued cloud availability.",
+          "default": false,
+          "newLine": true,
+          "xl": 6,
+          "lg": 6,
+          "md": 6,
+          "sm": 12,
+          "xs": 12,
+          "style": { "margin": "0 auto", "width": "50%", "textAlign": "center" }
+        },
         "_localApiHintIntro": {
           "type": "staticText",
           "text": "On the MaxxiCharge config page under 'Api-Route', enter the following:",
@@ -52,7 +64,11 @@
           "md": 12,
           "sm": 12,
           "xs": 12,
-          "style": { "margin": "10px auto", "textAlign": "center" }
+          "style": {
+            "margin": "10px auto",
+            "width": "50%",
+            "textAlign": "center"
+          }
         },
         "_localApiHintDetails": {
           "type": "staticText",
