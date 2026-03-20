@@ -1,9 +1,9 @@
 {
   "name": "iobroker.maxxi-charge",
-  "version": "1.4.40",
+  "version": "1.5.0",
   "description": "Adapter for integration and control of MaxxiCharge CCU devices, including data retrieval, configuration, and dynamic command sending.",
   "author": {
-    "name": "Christoph Böhrs",
+    "name": "Christoph B\\u00f6hrs",
     "email": "git@mr-bond.de"
   },
   "homepage": "https://github.com/blabond/ioBroker.maxxi-charge",
