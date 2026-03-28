@@ -1,6 +1,6 @@
 "use strict";
 
-const http = require("http");
+const http = require("node:http");
 const axios = require("axios");
 const { name2id, processNestedData } = require("./utils");
 
