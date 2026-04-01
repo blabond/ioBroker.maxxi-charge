@@ -50,7 +50,7 @@ http://www.maxxisun.de
 
 - Adding CCU V2 Local API
 
-### 1.4.45 (2026-03-20)
+### 1.4.46 (2026-04-01)
 
 - Added optional cloud sync when using local mode
 - Redesign Adapter Config Page
@@ -60,13 +60,6 @@ http://www.maxxisun.de
 
 - New Option Mode "BKW"
   > At a battery level of ≥ 97%, the script enables BKW mode to feed a constant 600–800 W into the grid alongside household use, potentially receiving compensation if registered as a balcony power system (BKW).
-
-### 1.4.32 (2025-04-06)
-
-- New cloud method – Backup mode Server 2 (check config)
-  > Note: Cloud Server 1 provides more datapoints but may be less stable.  
-  > Cloud Server 2 (Backup mode) is more stable but delivers fewer datapoints.
-- Adds dynamic firmware version management with categorized release listings.
 
 ### 1.4.11 (2025-03-17)
 

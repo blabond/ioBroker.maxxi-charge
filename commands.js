@@ -8,6 +8,7 @@ class Commands {
     this.adapter = adapter;
     this.stateCache = new Set(); // Cache für bestehende States
     this.initializedDevices = new Set(); // Keep track of devices with subscribed states
+    this.refreshedNamespaces = new Set(); // Track sendcommand namespaces refreshed after adapter start
     this.commandDatapoints = [
       {
         id: "maxOutputPower",
@@ -35,8 +36,19 @@ class Commands {
         id: "baseLoad",
         description: { en: "Adjust output (W)", de: "Ausgabe anpassen (W)" },
         type: "number",
-        min: -100,
-        max: 100,
+        min: -600,
+        max: 600,
+        role: "level",
+      },
+      {
+        id: "offlineOutput",
+        description: {
+          en: "Offline output (W)",
+          de: "Offline-Ausgang (W)",
+        },
+        type: "number",
+        min: 50,
+        max: 600,
         role: "level",
       },
       {
@@ -46,7 +58,7 @@ class Commands {
           de: "Reaktionstoleranz (W)",
         },
         type: "number",
-        min: 5,
+        min: 3,
         max: 50,
         role: "level",
       },
@@ -73,13 +85,13 @@ class Commands {
         role: "level.max",
       },
       {
-        id: "dcAlgorithm",
+        id: "autoCalibration",
         description: {
-          en: "CCU control behavior (algorithm)",
-          de: "Steuerungsverhalten der CCU (Algorithmus)",
+          en: "Auto calibration",
+          de: "Automatische Kalibrierung",
         },
         type: "number",
-        states: { 1: "Basic (0.38)", 2: "Forced (0.40+)" },
+        states: { 0: "Off", 1: "On" },
         role: "level",
       },
     ];
@@ -87,6 +99,8 @@ class Commands {
 
   async initializeCommandSettings(deviceId) {
     const namespace = `${name2id(deviceId)}.sendcommand`;
+
+    await this.refreshCommandNamespace(namespace);
 
     // Remember which devices have command datapoints initialized
     this.initializedDevices.add(name2id(deviceId));
@@ -113,6 +127,29 @@ class Commands {
       // Datenpunkt abonnieren
       this.adapter.subscribeStates(fullPath);
     }
+  }
+
+  async refreshCommandNamespace(namespace) {
+    if (this.refreshedNamespaces.has(namespace)) {
+      return;
+    }
+
+    const existingNamespace = await this.adapter.getObjectAsync(namespace);
+    if (existingNamespace) {
+      this.adapter.unsubscribeStates(`${namespace}.*`);
+      await this.adapter.delObjectAsync(namespace, { recursive: true });
+
+      for (const cachedPath of [...this.stateCache]) {
+        if (
+          cachedPath === namespace ||
+          cachedPath.startsWith(`${namespace}.`)
+        ) {
+          this.stateCache.delete(cachedPath);
+        }
+      }
+    }
+
+    this.refreshedNamespaces.add(namespace);
   }
 
   async handleCommandChange(id, state) {
@@ -222,6 +259,7 @@ class Commands {
 
     // Clear the list of initialized devices
     this.initializedDevices.clear();
+    this.refreshedNamespaces.clear();
 
     // Leert den State-Cache
     this.stateCache.clear();

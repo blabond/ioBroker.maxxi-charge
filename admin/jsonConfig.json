@@ -43,18 +43,6 @@
           "xs": 12,
           "style": { "textAlign": "center", "marginTop": "30px" }
         },
-        "localCloudMirror": {
-          "type": "checkbox",
-          "label": "Send local data to cloud for local operation with continued cloud availability.",
-          "default": false,
-          "newLine": true,
-          "xl": 6,
-          "lg": 6,
-          "md": 6,
-          "sm": 12,
-          "xs": 12,
-          "style": { "margin": "0 auto", "width": "50%", "textAlign": "center" }
-        },
         "_localApiHintIntro": {
           "type": "staticText",
           "text": "On the MaxxiCharge config page under 'Api-Route', enter the following:",
@@ -99,6 +87,34 @@
           "sm": 12,
           "xs": 12,
           "style": { "margin": "0 auto", "width": "30%", "textAlign": "center" }
+        },
+        "localCloudMirror": {
+          "type": "checkbox",
+          "label": "Offline operation - Data Forwarder to Maxxisun",
+          "default": false,
+          "newLine": true,
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "style": { "margin": "0 auto", "width": "30%", "textAlign": "center" }
+        },
+        "_localCloudMirrorInfo": {
+          "type": "staticText",
+          "text": "Info: Stays in secure offline mode, but sends data to the cloud for display only. No external access, read-only via the app!",
+          "newLine": true,
+          "xl": 12,
+          "lg": 12,
+          "md": 12,
+          "sm": 12,
+          "xs": 12,
+          "style": {
+            "margin": "8px auto 0 auto",
+            "width": "50%",
+            "textAlign": "center",
+            "fontStyle": "italic"
+          }
         },
         "_headerCloud": {
           "type": "header",
@@ -244,6 +260,7 @@
           "type": "select",
           "label": "Select feed-in mode",
           "options": [
+            { "label": "90% - Feed-In enabled", "value": 90 },
             { "label": "95% - Feed-In enabled", "value": 95 },
             { "label": "97% - Feed-In enabled", "value": 97 },
             { "label": "100% - Feed-In disabled", "value": 100 }
@@ -254,7 +271,7 @@
           "md": 12,
           "sm": 12,
           "xs": 12,
-          "help": "At 95%/97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.",
+          "help": "At 90%/95%/97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.",
           "style": {
             "margin": "10px auto",
             "width": "50%",
@@ -306,8 +323,8 @@
           "type": "number",
           "label": "MaxxiCharge 'baseLoad' Default (Adjust Output in Watt)",
           "default": -35,
-          "min": -100,
-          "max": 100,
+          "min": -600,
+          "max": 600,
           "help": "Adjust the feed-in offset (baseLoad) in watts for MaxxiCharge.",
           "xl": 4,
           "lg": 4,
@@ -391,7 +408,6 @@
             "fontSize": "12px"
           }
         },
-
         "_helpLine": {
           "newLine": true,
           "type": "divider",

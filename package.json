@@ -1,6 +1,6 @@
 {
   "name": "iobroker.maxxi-charge",
-  "version": "1.4.45",
+  "version": "1.4.46",
   "description": "Adapter for integration and control of MaxxiCharge CCU devices, including data retrieval, configuration, and dynamic command sending.",
   "author": {
     "name": "Christoph B\\u00f6hrs",
@@ -43,9 +43,7 @@
     "main.js",
     "localApi.js",
     "cloudApi.js",
-    "cloudApi_stable.js",
     "ecoMode.js",
-    "versionControl.js",
     "bkwMode.js",
     "utils.js",
     "commands.js",

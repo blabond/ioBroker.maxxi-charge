@@ -6,7 +6,7 @@ class CloudApi {
   constructor(adapter) {
     this.adapter = adapter;
     this.maxxiccuname = this.adapter.config.maxxiccuname || ""; // Direkt aus der Konfiguration
-    this.ccuintervalMs = (this.adapter.config.ccuinterval || 30) * 1000;
+    this.ccuintervalMs = (this.adapter.config.ccuinterval || 10) * 1000;
     this.stateCache = new Set(); // Cache für bestehende States
     this.commandInitialized = false;
 

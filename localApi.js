@@ -116,6 +116,10 @@ class LocalApi {
         });
 
         req.on("error", (err) => {
+          if (err?.message === "aborted") {
+            return;
+          }
+
           this.adapter.log.error(
             `MaxxiCharge Local API: Request stream error: ${err.message}`,
           );

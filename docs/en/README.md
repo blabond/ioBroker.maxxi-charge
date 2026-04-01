@@ -29,16 +29,12 @@
 ## Installation
 
 1. **Configure the Adapter**:
-   - Select the API mode (**Cloud - Server 1**, **Cloud - Server 2**, or **Local**).
-     - **Cloud S1 / Cloud S2**:
+   - Select the API mode (**Cloud** or **Local**).
+     - **Cloud**:
        - Enter the **CCU name** (e.g., `maxxi-XXXXXX-YYY`).
-       - Enter the **e-mail address** associated with your Maxxisun account.
-       - Enter the **local IP address** of your MaxxiCharge device (e.g., `192.168.1.123`).
      - **Local:** Enter the ioBroker address on the MaxxiCharge webpage (`maxxi.local`) under `Api-Route`: `http://"ioBroker IP":"PORT"`.
 2. **Important Update Note**:
    - Delete the `.sendcommand` folder and restart the adapter if updating from an older version. (< 1.4.0)
-
-**Info:** Cloud Server 1 provides more datapoints than Cloud Server 2.
 
 ## Configuration Options
 
