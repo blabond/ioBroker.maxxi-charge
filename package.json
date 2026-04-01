@@ -1,6 +1,6 @@
 {
   "name": "iobroker.maxxi-charge",
-  "version": "1.4.46",
+  "version": "1.4.47",
   "description": "Adapter for integration and control of MaxxiCharge CCU devices, including data retrieval, configuration, and dynamic command sending.",
   "author": {
     "name": "Christoph B\\u00f6hrs",
@@ -21,6 +21,7 @@
     "@iobroker/adapter-core": "^3.3.2",
     "axios": "^1.13.6",
     "minimist": "^1.2.8",
+    "node-schedule": "^2.1.1",
     "semver": "^7.7.3"
   },
   "devDependencies": {

@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.4.46",
+    "version": "1.4.47",
     "news": {
-      "1.4.46": {
+      "1.4.47": {
         "en": "Added optional cloud sync when using local mode\nRedesign Adapter Config Page\nDependencies update",
         "de": "Optionale Cloud-Synchronisation im lokalen Modus hinzugefügt\nAdapter-Konfigurationsseite überarbeitet\nAbhängigkeiten aktualisiert",
         "ru": "Dobavlena neobyazatelnaya sinkhronizatsiya s oblakom pri ispolzovanii lokalnogo rezhima\nPererabotana stranitsa konfiguratsii adaptera\nObnovleny zavisimosti",
