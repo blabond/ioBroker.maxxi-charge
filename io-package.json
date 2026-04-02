@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "2.0.0-Beta1",
+    "version": "2.0.0-beta2",
     "news": {
       "2.0.0": {
         "en": "JavaScript migrated to TypeScript\nAdded CCU V2 Local API",
