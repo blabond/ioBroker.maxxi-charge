@@ -8,7 +8,6 @@ class Commands {
     this.adapter = adapter;
     this.stateCache = new Set(); // Cache für bestehende States
     this.initializedDevices = new Set(); // Keep track of devices with subscribed states
-    this.refreshedNamespaces = new Set(); // Track sendcommand namespaces refreshed after adapter start
     this.commandDatapoints = [
       {
         id: "maxOutputPower",
@@ -98,12 +97,21 @@ class Commands {
   }
 
   async initializeCommandSettings(deviceId) {
-    const namespace = `${name2id(deviceId)}.sendcommand`;
+    const normalizedDeviceId = name2id(deviceId);
+    const namespace = `${normalizedDeviceId}.sendcommand`;
+    const initFlagPath = `${normalizedDeviceId}._sendcommandInitialized`;
 
-    await this.refreshCommandNamespace(namespace);
+    await this.ensureCommandInitFlag(initFlagPath);
+
+    const initFlagState = await this.adapter.getStateAsync(initFlagPath);
+    const shouldRefreshNamespace = Number(initFlagState?.val ?? 0) === 0;
+
+    if (shouldRefreshNamespace) {
+      await this.refreshCommandNamespace(namespace);
+    }
 
     // Remember which devices have command datapoints initialized
-    this.initializedDevices.add(name2id(deviceId));
+    this.initializedDevices.add(normalizedDeviceId);
 
     for (const dp of this.commandDatapoints) {
       const fullPath = `${namespace}.${dp.id}`;
@@ -127,13 +135,40 @@ class Commands {
       // Datenpunkt abonnieren
       this.adapter.subscribeStates(fullPath);
     }
+
+    if (shouldRefreshNamespace) {
+      await this.adapter.setStateAsync(initFlagPath, { val: 1, ack: true });
+    }
+  }
+
+  async ensureCommandInitFlag(initFlagPath) {
+    await ensureStateExists(this.adapter, this.stateCache, initFlagPath, {
+      type: "state",
+      common: {
+        name: "Sendcommand initialization flag",
+        type: "number",
+        role: "value",
+        read: true,
+        write: true,
+        min: 0,
+        max: 1,
+        def: 0,
+        expert: true,
+      },
+      native: {},
+    });
+
+    const initFlagState = await this.adapter.getStateAsync(initFlagPath);
+    if (
+      !initFlagState ||
+      initFlagState.val === null ||
+      initFlagState.val === undefined
+    ) {
+      await this.adapter.setStateAsync(initFlagPath, { val: 0, ack: true });
+    }
   }
 
   async refreshCommandNamespace(namespace) {
-    if (this.refreshedNamespaces.has(namespace)) {
-      return;
-    }
-
     const existingNamespace = await this.adapter.getObjectAsync(namespace);
     if (existingNamespace) {
       this.adapter.unsubscribeStates(`${namespace}.*`);
@@ -148,8 +183,6 @@ class Commands {
         }
       }
     }
-
-    this.refreshedNamespaces.add(namespace);
   }
 
   async handleCommandChange(id, state) {
@@ -259,7 +292,6 @@ class Commands {
 
     // Clear the list of initialized devices
     this.initializedDevices.clear();
-    this.refreshedNamespaces.clear();
 
     // Leert den State-Cache
     this.stateCache.clear();
