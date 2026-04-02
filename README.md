@@ -46,8 +46,9 @@ http://www.maxxisun.de
 
 ## Changelog
 
-### 1.5.0 (comming soon 2026-X-X)
+### 2.0.0 (2026-04-02)
 
+- Javascript migration to Typescript
 - Adding CCU V2 Local API
 
 ### 1.4.48 (2026-04-01)

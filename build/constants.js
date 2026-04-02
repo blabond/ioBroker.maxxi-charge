@@ -1,0 +1,34 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BKW_SOC_THRESHOLD =
+  exports.CLOUD_API_BASE_URL =
+  exports.LOCAL_API_CLOUD_MIRROR_URL =
+  exports.LOCAL_API_SHUTDOWN_TIMEOUT_MS =
+  exports.LOCAL_API_BODY_LIMIT_BYTES =
+  exports.COMMAND_REQUEST_TIMEOUT_MS =
+  exports.REQUEST_TIMEOUT_MS =
+  exports.COMMAND_RETRY_DELAY_MS =
+  exports.COMMAND_RETRY_COUNT =
+  exports.CLOUD_RETRY_DELAY_MS =
+  exports.CLOUD_RETRY_COUNT =
+  exports.CLOUD_CCU_INITIAL_DELAY_MS =
+  exports.CLOUD_INFO_INTERVAL_MS =
+  exports.ACTIVE_DEVICE_CLEANUP_INTERVAL_MS =
+  exports.ACTIVE_DEVICE_TTL_MS =
+    void 0;
+exports.ACTIVE_DEVICE_TTL_MS = 90_000;
+exports.ACTIVE_DEVICE_CLEANUP_INTERVAL_MS = 30_000;
+exports.CLOUD_INFO_INTERVAL_MS = 5 * 60_000;
+exports.CLOUD_CCU_INITIAL_DELAY_MS = 1_500;
+exports.CLOUD_RETRY_COUNT = 3;
+exports.CLOUD_RETRY_DELAY_MS = 2_000;
+exports.COMMAND_RETRY_COUNT = 1;
+exports.COMMAND_RETRY_DELAY_MS = 1_000;
+exports.REQUEST_TIMEOUT_MS = 7_500;
+exports.COMMAND_REQUEST_TIMEOUT_MS = 15_000;
+exports.LOCAL_API_BODY_LIMIT_BYTES = 256 * 1024;
+exports.LOCAL_API_SHUTDOWN_TIMEOUT_MS = 5_000;
+exports.LOCAL_API_CLOUD_MIRROR_URL = "http://maxxisun.app:3001/text";
+exports.CLOUD_API_BASE_URL = "http://maxxicharge.mr-bond.de:3301/";
+exports.BKW_SOC_THRESHOLD = 97;
+//# sourceMappingURL=constants.js.map

@@ -1,6 +1,6 @@
 {
   "name": "iobroker.maxxi-charge",
-  "version": "1.4.48",
+  "version": "2.0.0-Beta1",
   "description": "Adapter for integration and control of MaxxiCharge CCU devices, including data retrieval, configuration, and dynamic command sending.",
   "author": {
     "name": "Christoph B\\u00f6hrs",
@@ -31,36 +31,34 @@
     "@alcalzone/release-script-plugin-manual-review": "^5.1.1",
     "@iobroker/adapter-dev": "^1.5.0",
     "@iobroker/eslint-config": "^2.2.0",
-    "@iobroker/testing": "^5.2.2"
+    "@iobroker/testing": "^5.2.2",
+    "@types/node": "^24.3.0",
+    "typescript": "^5.8.3"
   },
   "overrides": {
     "protobufjs": "^7.4.0",
     "google-gax": "^4.4.1",
     "@google-cloud/translate": "^7.2.2"
   },
-  "main": "main.js",
+  "main": "build/main.js",
   "files": [
     "admin",
-    "main.js",
-    "localApi.js",
-    "cloudApi.js",
-    "ecoMode.js",
-    "bkwMode.js",
-    "utils.js",
-    "commands.js",
-    "batteryMode.js",
-    "roles.js",
+    "build",
     "io-package.json"
   ],
   "scripts": {
+    "clean": "node -e \"require('fs').rmSync('build', { recursive: true, force: true })\"",
+    "build": "npm run clean && tsc -p tsconfig.build.json",
+    "watch": "tsc -p tsconfig.build.json --watch",
     "test:js": "mocha --config test/mocharc.custom.json \"{!(node_modules|test)/**/*.test.js,*.test.js,test/**/*.test.js,test/**/test!(PackageFiles|Startup).js}\"",
     "test:package": "mocha test/package --exit",
-    "test:integration": "mocha test/integration --exit",
-    "test": "npm run test:js && npm run test:package",
+    "test:integration": "npm run build && mocha test/integration --exit",
+    "test": "npm run build && npm run test:js && npm run test:package",
     "check": "tsc --noEmit -p tsconfig.check.json",
     "release": "release-script",
     "lint": "eslint -c eslint.config.mjs .",
-    "lint:fix": "eslint -c eslint.config.mjs . --fix"
+    "lint:fix": "eslint -c eslint.config.mjs . --fix",
+    "prepublishOnly": "npm run build && npm run check && npm run lint && npm test"
   },
   "engines": {
     "node": ">=20"

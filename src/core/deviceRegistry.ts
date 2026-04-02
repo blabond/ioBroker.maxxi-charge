@@ -1,0 +1,114 @@
+import { ACTIVE_DEVICE_TTL_MS } from "../constants";
+import type { AdapterInstance, DeviceTouchEvent } from "../types/shared";
+import { normalizeDeviceId } from "../utils/helpers";
+import type StateManager from "./stateManager";
+
+export default class DeviceRegistry {
+  private readonly activeDevices = new Map<string, number>();
+
+  private readonly subscribedSocStates = new Set<string>();
+
+  public constructor(
+    private readonly adapter: AdapterInstance,
+    private readonly stateManager: StateManager,
+    private readonly inactiveAfterMs = ACTIVE_DEVICE_TTL_MS,
+  ) {}
+
+  public getActiveDeviceIds(): string[] {
+    return [...this.activeDevices.keys()];
+  }
+
+  public getPrimaryDeviceId(): string | null {
+    return this.getActiveDeviceIds()[0] ?? null;
+  }
+
+  public async touch(deviceId: string): Promise<DeviceTouchEvent> {
+    const normalizedDeviceId = normalizeDeviceId(deviceId);
+    if (!normalizedDeviceId) {
+      return {
+        deviceId: "",
+        isNewDevice: false,
+        connectionBecameActive: false,
+      };
+    }
+
+    const wasConnected = this.activeDevices.size > 0;
+    const isNewDevice = !this.activeDevices.has(normalizedDeviceId);
+
+    this.activeDevices.set(normalizedDeviceId, Date.now());
+
+    if (isNewDevice) {
+      this.subscribeSocState(normalizedDeviceId);
+    }
+
+    await this.stateManager.setInfoStates(this.getActiveDeviceIds());
+
+    return {
+      deviceId: normalizedDeviceId,
+      isNewDevice,
+      connectionBecameActive: !wasConnected && this.activeDevices.size > 0,
+    };
+  }
+
+  public async cleanupInactiveDevices(): Promise<{
+    removedDeviceIds: string[];
+    connectionLost: boolean;
+  }> {
+    const staleBefore = Date.now() - this.inactiveAfterMs;
+    const removedDeviceIds: string[] = [];
+    const wasConnected = this.activeDevices.size > 0;
+
+    for (const [deviceId, lastSeen] of this.activeDevices.entries()) {
+      if (lastSeen >= staleBefore) {
+        continue;
+      }
+
+      this.activeDevices.delete(deviceId);
+      removedDeviceIds.push(deviceId);
+      this.unsubscribeSocState(deviceId);
+      this.adapter.log.warn(
+        `Device ${deviceId} marked as inactive and removed.`,
+      );
+    }
+
+    if (removedDeviceIds.length > 0) {
+      await this.stateManager.setInfoStates(this.getActiveDeviceIds());
+    }
+
+    return {
+      removedDeviceIds,
+      connectionLost: wasConnected && this.activeDevices.size === 0,
+    };
+  }
+
+  public async reset(): Promise<void> {
+    for (const deviceId of this.activeDevices.keys()) {
+      this.unsubscribeSocState(deviceId);
+    }
+
+    this.activeDevices.clear();
+    await this.stateManager.resetInfoStates();
+  }
+
+  private subscribeSocState(deviceId: string): void {
+    const fullId = `${this.adapter.namespace}.${deviceId}.SOC`;
+    if (this.subscribedSocStates.has(fullId)) {
+      return;
+    }
+
+    this.adapter.subscribeStates(fullId);
+    this.subscribedSocStates.add(fullId);
+    this.adapter.log.debug(`Subscribed to dynamic state ${fullId}.`);
+  }
+
+  private unsubscribeSocState(deviceId: string): void {
+    const fullId = `${this.adapter.namespace}.${deviceId}.SOC`;
+    if (!this.subscribedSocStates.has(fullId)) {
+      return;
+    }
+
+    this.adapter.unsubscribeStates(fullId);
+    this.subscribedSocStates.delete(fullId);
+    this.adapter.log.debug(`Unsubscribed from dynamic state ${fullId}.`);
+  }
+}

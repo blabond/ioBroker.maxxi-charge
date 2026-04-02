@@ -1,5 +1,5 @@
 describe("validateInterval", () => {
-  const { validateInterval } = require("../utils");
+  const { validateInterval } = require("../build/utils");
 
   it("should return the minimum when the value is too small", () => {
     validateInterval(500, 1000, 5000).should.equal(1000);

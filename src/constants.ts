@@ -1,0 +1,15 @@
+export const ACTIVE_DEVICE_TTL_MS = 90_000;
+export const ACTIVE_DEVICE_CLEANUP_INTERVAL_MS = 30_000;
+export const CLOUD_INFO_INTERVAL_MS = 5 * 60_000;
+export const CLOUD_CCU_INITIAL_DELAY_MS = 1_500;
+export const CLOUD_RETRY_COUNT = 3;
+export const CLOUD_RETRY_DELAY_MS = 2_000;
+export const COMMAND_RETRY_COUNT = 1;
+export const COMMAND_RETRY_DELAY_MS = 1_000;
+export const REQUEST_TIMEOUT_MS = 7_500;
+export const COMMAND_REQUEST_TIMEOUT_MS = 15_000;
+export const LOCAL_API_BODY_LIMIT_BYTES = 256 * 1024;
+export const LOCAL_API_SHUTDOWN_TIMEOUT_MS = 5_000;
+export const LOCAL_API_CLOUD_MIRROR_URL = "http://maxxisun.app:3001/text";
+export const CLOUD_API_BASE_URL = "http://maxxicharge.mr-bond.de:3301/";
+export const BKW_SOC_THRESHOLD = 97;

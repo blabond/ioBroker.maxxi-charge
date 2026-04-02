@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "1.4.48",
+    "version": "2.0.0-Beta1",
     "news": {
+      "2.0.0": {
+        "en": "JavaScript migrated to TypeScript\nAdded CCU V2 Local API",
+        "de": "JavaScript auf TypeScript migriert\nCCU V2 Local API hinzugefügt",
+        "ru": "Migratsiya s JavaScript na TypeScript\nDobavlen lokalnyy API dlya CCU V2",
+        "pt": "Migracao de JavaScript para TypeScript\nAdicionada API local da CCU V2",
+        "nl": "JavaScript gemigreerd naar TypeScript\nCCU V2 Local API toegevoegd",
+        "fr": "Migration de JavaScript vers TypeScript\nAjout de l API locale CCU V2",
+        "it": "Migrazione da JavaScript a TypeScript\nAggiunta API locale CCU V2",
+        "es": "Migracion de JavaScript a TypeScript\nAnadida API local de CCU V2",
+        "pl": "Migracja z JavaScript do TypeScript\nDodano lokalne API CCU V2",
+        "uk": "Migratsiya z JavaScript na TypeScript\nDodano lokalne API dlya CCU V2",
+        "zh-cn": "将 JavaScript 迁移到 TypeScript\n新增 CCU V2 本地 API"
+      },
       "1.4.48": {
         "en": "Added optional cloud sync when using local mode\nRedesign Adapter Config Page\nDependencies update",
         "de": "Optionale Cloud-Synchronisation im lokalen Modus hinzugefügt\nAdapter-Konfigurationsseite überarbeitet\nAbhängigkeiten aktualisiert",
@@ -143,6 +156,7 @@
     "ccuinterval": "5",
     "port": "5501",
     "apimode": "local",
+    "localCloudMirror": false,
     "enableseasonmode": false,
     "winterfrom": "20.11",
     "winterto": "07.02",
