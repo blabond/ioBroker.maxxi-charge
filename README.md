@@ -50,7 +50,7 @@ http://www.maxxisun.de
 
 - Adding CCU V2 Local API
 
-### 1.4.47 (2026-04-01)
+### 1.4.48 (2026-04-01)
 
 - Added optional cloud sync when using local mode
 - Redesign Adapter Config Page
