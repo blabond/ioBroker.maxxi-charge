@@ -48,6 +48,7 @@ http://www.maxxisun.de
 
 ### 2.0.0-beta.2 (2026-04-03)
 
+- Adapter requires node.js >= 20 now.
 - Javascript migration to Typescript
 
 Coming Soon:
