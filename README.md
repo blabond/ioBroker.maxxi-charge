@@ -46,12 +46,15 @@ http://www.maxxisun.de
 
 ## Changelog
 
-### 2.0.0 (2026-04-02)
+### 2.0.0-beta-2 (2026-04-02)
 
 - Javascript migration to Typescript
+
+Coming Soon:
+
 - Adding CCU V2 Local API
 
-### 1.4.48 (2026-04-01)
+### 1.4.48 (2026-04-02)
 
 - Added optional cloud sync when using local mode
 - Redesign Adapter Config Page
