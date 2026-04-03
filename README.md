@@ -46,7 +46,7 @@ http://www.maxxisun.de
 
 ## Changelog
 
-### 2.0.0-beta-2 (2026-04-02)
+### 2.0.0-beta.2 (2026-04-03)
 
 - Javascript migration to Typescript
 
