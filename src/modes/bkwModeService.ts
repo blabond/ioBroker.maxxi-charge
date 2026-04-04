@@ -240,7 +240,10 @@ export default class BkwModeService {
       return false;
     }
 
-    await this.handleSocChange(`${this.adapter.namespace}.${deviceId}.SOC`, state);
+    await this.handleSocChange(
+      `${this.adapter.namespace}.${deviceId}.SOC`,
+      state,
+    );
     return true;
   }
 

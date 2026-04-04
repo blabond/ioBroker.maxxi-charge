@@ -323,7 +323,7 @@
           "type": "number",
           "label": "MaxxiCharge 'baseLoad' Default (Adjust Output in Watt)",
           "default": -35,
-          "min": -600,
+          "min": -1200,
           "max": 600,
           "help": "Adjust the feed-in offset (baseLoad) in watts for MaxxiCharge.",
           "xl": 4,
@@ -335,7 +335,7 @@
         },
         "bkw_info": {
           "type": "staticText",
-          "text": "If enabled, the system will attempt to feed the specified power into the grid, but only when the state of charge is equal to or greater than 97%. Additionally, the 'Zero Feed-In Mode' must be set to 100%. Afterward, it returns to the 'normal' operation mode.",
+          "text": "Additionally, the 'Zero Feed-In Mode' must be set to 100%. Afterward, the system returns to the 'normal' operation mode.",
           "xl": 12,
           "lg": 12,
           "md": 12,

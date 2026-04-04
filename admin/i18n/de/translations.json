@@ -47,5 +47,5 @@
   "Set the feed-in power in watts.": "Einspeiseleistung in Watt festlegen.",
   "MaxxiCharge 'baseLoad' Default (Adjust Output in Watt)": "MaxxiCharge 'baseLoad' (Ausgabe anpassen in Watt)",
   "Adjust the feed-in offset (baseLoad) in watts for MaxxiCharge.": "Die Einspeiseabweichung (baseLoad) für MaxxiCharge in Watt anpassen.",
-  "If enabled, the system will attempt to feed the specified power into the grid, but only when the state of charge is equal to or greater than 97%. Additionally, the 'Zero Feed-In Mode' must be set to 100%. Afterward, it returns to the 'normal' operation mode.": "Wenn aktiviert, versucht das System, die angegebene Leistung ins Netz einzuspeisen, jedoch nur, wenn der Ladezustand 97% oder mehr beträgt.<br>Zusätzlich muss der 'Nulleinspeisungsmodus' auf 100% eingestellt sein. Anschließend kehrt das System in den 'normalen' Betriebsmodus zurück."
+  "Additionally, the 'Zero Feed-In Mode' must be set to 100%. Afterward, the system returns to the 'normal' operation mode.": "Zus?tzlich muss der 'Nulleinspeisungsmodus' auf 100% eingestellt sein. Anschlie?end kehrt das System in den 'normalen' Betriebsmodus zur?ck."
 }

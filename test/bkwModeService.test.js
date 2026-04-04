@@ -7,16 +7,15 @@ describe("BkwModeService", () => {
     restorePendingState = false,
     primaryDeviceId = "ccu1",
     activeDeviceIds = primaryDeviceId ? [primaryDeviceId] : [],
-    restorePendingDeviceIds = primaryDeviceId && restorePendingState ? [primaryDeviceId] : [],
+    restorePendingDeviceIds = primaryDeviceId && restorePendingState
+      ? [primaryDeviceId]
+      : [],
     socStates = {},
     applyDeviceSetting = async () => true,
   } = {}) {
     const states = new Map();
     for (const deviceId of restorePendingDeviceIds) {
-      states.set(
-        `${deviceId}._bkwModeRestorePending`,
-        true,
-      );
+      states.set(`${deviceId}._bkwModeRestorePending`, true);
     }
     for (const [deviceId, socValue] of Object.entries(socStates)) {
       states.set(`${deviceId}.SOC`, socValue);
@@ -210,18 +209,8 @@ describe("BkwModeService", () => {
     await service.start();
 
     commandCalls.should.deep.equal([
-      [
-        "ccu1",
-        "maxSOC",
-        100,
-        { source: "bkwMode:activate" },
-      ],
-      [
-        "ccu1",
-        "baseLoad",
-        -800,
-        { source: "bkwMode" },
-      ],
+      ["ccu1", "maxSOC", 100, { source: "bkwMode:activate" }],
+      ["ccu1", "baseLoad", -800, { source: "bkwMode" }],
     ]);
     setStateCalls.should.deep.equal([
       ["ccu1._bkwModeRestorePending", true, true],

@@ -106,7 +106,6 @@ export default class StateManager {
       read: true,
       write: false,
     });
-
   }
 
   public async ensureDevice(deviceId: string): Promise<void> {
