@@ -335,7 +335,7 @@
         },
         "bkw_info": {
           "type": "staticText",
-          "text": "Wenn aktiviert, versucht das System, die angegebene Leistung ins Netz einzuspeisen, jedoch nur, wenn der Ladezustand 97% oder mehr betr?gt.",
+          "text": "Additionally, the 'Zero Feed-In Mode' must be set to 100%. Afterward, the system returns to the 'normal' operation mode.",
           "xl": 12,
           "lg": 12,
           "md": 12,
