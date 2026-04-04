@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "maxxi-charge",
-    "version": "2.0.0-Beta.3",
+    "version": "2.0.0-Beta.4",
     "news": {
       "1.4.48": {
         "en": "Added optional cloud sync when using local mode\nRedesign Adapter Config Page\nDependencies update",
