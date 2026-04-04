@@ -73,6 +73,27 @@ class StateManager {
       read: true,
       write: false,
     });
+    await this.ensureStateObject("info.bkwModeRestorePending", {
+      name: {
+        en: "BKW mode baseLoad restore pending",
+        de: "BKW-Modus BaseLoad-Wiederherstellung ausstehend",
+      },
+      type: "boolean",
+      role: "indicator",
+      read: true,
+      write: false,
+      hidden: true,
+      def: false,
+    });
+    const restorePendingState = await this.adapter.getStateAsync(
+      "info.bkwModeRestorePending",
+    );
+    if (!restorePendingState) {
+      await this.adapter.setStateAsync("info.bkwModeRestorePending", {
+        val: false,
+        ack: true,
+      });
+    }
   }
   async ensureDevice(deviceId) {
     await this.ensureObject(deviceId, {

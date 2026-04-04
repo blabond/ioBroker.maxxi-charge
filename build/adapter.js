@@ -133,6 +133,7 @@ class MaxxiChargeAdapter extends utils.Adapter {
         this.runtimeConfig,
         this.commandService,
         this.deviceRegistry,
+        this.stateManager,
       );
       await this.stateManager.ensureInfoStructure();
       await this.stateManager.resetInfoStates();
@@ -162,6 +163,7 @@ class MaxxiChargeAdapter extends utils.Adapter {
       }
       await this.ecoMode.start();
       await this.batteryMode.start();
+      await this.bkwMode.start();
       this.cleanupIntervalHandle = this.scheduler.setInterval(
         async () => {
           const cleanupResult =
@@ -232,6 +234,7 @@ class MaxxiChargeAdapter extends utils.Adapter {
     try {
       await this.ecoMode?.handleDeviceAvailable(deviceEvent.deviceId);
       await this.batteryMode?.handleDeviceAvailable(deviceEvent.deviceId);
+      await this.bkwMode?.handleDeviceAvailable(deviceEvent.deviceId);
     } catch (error) {
       this.log.error(
         `Error while handling device activation for ${deviceEvent.deviceId}: ${error instanceof Error ? error.message : String(error)}`,
