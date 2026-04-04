@@ -1,19 +1,28 @@
-import type { AdapterInstance, RuntimeConfig, StateChange } from "../types/shared";
+import type {
+  AdapterInstance,
+  RuntimeConfig,
+  StateChange,
+} from "../types/shared";
 import type CommandService from "../commands/commandService";
 import type DeviceRegistry from "../core/deviceRegistry";
 export default class BatteryModeService {
-    private readonly adapter;
-    private readonly config;
-    private readonly commandService;
-    private readonly deviceRegistry;
-    private calibrationAppliedForConnection;
-    constructor(adapter: AdapterInstance, config: RuntimeConfig, commandService: CommandService, deviceRegistry: DeviceRegistry);
-    start(): Promise<void>;
-    handleDeviceAvailable(deviceId: string): Promise<void>;
-    handleConnectionLost(): void;
-    handleSocChange(_id: string, state: StateChange): Promise<void>;
-    dispose(): Promise<void>;
-    private applyCalibration;
-    private updateCalibrationState;
+  private readonly adapter;
+  private readonly config;
+  private readonly commandService;
+  private readonly deviceRegistry;
+  private calibrationAppliedForConnection;
+  constructor(
+    adapter: AdapterInstance,
+    config: RuntimeConfig,
+    commandService: CommandService,
+    deviceRegistry: DeviceRegistry,
+  );
+  start(): Promise<void>;
+  handleDeviceAvailable(deviceId: string): Promise<void>;
+  handleConnectionLost(): void;
+  handleSocChange(_id: string, state: StateChange): Promise<void>;
+  dispose(): Promise<void>;
+  private applyCalibration;
+  private updateCalibrationState;
 }
 //# sourceMappingURL=batteryModeService.d.ts.map
