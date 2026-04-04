@@ -211,7 +211,6 @@ export default class CommandService {
     deviceId: string,
     commandId: CommandId,
     rawValue: unknown,
-    _options: { source?: string } = {},
   ): Promise<boolean> {
     const normalizedDeviceId = normalizeDeviceId(deviceId);
     const definition = this.commandDefinitions.get(commandId);
