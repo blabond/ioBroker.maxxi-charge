@@ -232,7 +232,7 @@
         },
         "ecoHint": {
           "type": "staticText",
-          "text": "Winter mode: Minimum charge set to 60%, if SOC ≥55% it drops to 40%.<br>Summer mode: Minimum charge 10%, maximum charge ${data.feedInMode}%.",
+          "text": "Winter mode: Minimum charge set to 60%, if SOC â‰¥55% it drops to 40%.<br>Summer mode: Minimum charge 10%, maximum charge ${data.feedInMode}%.",
           "xl": 12,
           "lg": 12,
           "md": 12,
@@ -271,7 +271,7 @@
           "md": 12,
           "sm": 12,
           "xs": 12,
-          "help": "At 90%/95%/97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.",
+          "help": "At 90% / 95% / 97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.",
           "style": {
             "margin": "10px auto",
             "width": "50%",
@@ -323,7 +323,7 @@
           "type": "number",
           "label": "MaxxiCharge 'baseLoad' Default (Adjust Output in Watt)",
           "default": -35,
-          "min": -600,
+          "min": -1200,
           "max": 600,
           "help": "Adjust the feed-in offset (baseLoad) in watts for MaxxiCharge.",
           "xl": 4,
@@ -335,7 +335,7 @@
         },
         "bkw_info": {
           "type": "staticText",
-          "text": "If enabled, the system will attempt to feed the specified power into the grid, but only when the state of charge is equal to or greater than 97%. Additionally, the 'Zero Feed-In Mode' must be set to 100%. Afterward, it returns to the 'normal' operation mode.",
+          "text": "Wenn aktiviert, versucht das System, die angegebene Leistung ins Netz einzuspeisen, jedoch nur, wenn der Ladezustand 97% oder mehr betr?gt.",
           "xl": 12,
           "lg": 12,
           "md": 12,

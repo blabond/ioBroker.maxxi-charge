@@ -35,7 +35,7 @@ const COMMAND_DEFINITIONS = [
     },
     type: "number",
     role: "level",
-    min: -600,
+    min: -1200,
     max: 600,
     unit: "W",
   },
@@ -167,14 +167,14 @@ class CommandService {
     const normalizedDeviceId = (0, helpers_1.normalizeDeviceId)(deviceId);
     const definition = this.commandDefinitions.get(commandId);
     if (!normalizedDeviceId || !definition) {
-      this.adapter.log.warn(
+      this.adapter.log.debug(
         `CommandService: Unsupported command ${commandId} for device ${deviceId}.`,
       );
       return false;
     }
     const normalizedValue = this.normalizeValue(definition, rawValue);
     if (normalizedValue === null) {
-      this.adapter.log.warn(
+      this.adapter.log.debug(
         `CommandService: Invalid value ${JSON.stringify(rawValue)} for ${commandId}.`,
       );
       return false;
@@ -182,7 +182,7 @@ class CommandService {
     await this.ensureDeviceStates(normalizedDeviceId);
     const ipAddress = await this.resolveDeviceIp(normalizedDeviceId);
     if (!ipAddress) {
-      this.adapter.log.error(
+      this.adapter.log.debug(
         `CommandService: No IP address found for device ${normalizedDeviceId}.`,
       );
       return false;
@@ -192,7 +192,6 @@ class CommandService {
       commandId,
       normalizedValue,
       normalizedDeviceId,
-      options.source,
     );
     if (!sendSucceeded) {
       return false;
@@ -211,7 +210,7 @@ class CommandService {
     this.subscribedStateIds.clear();
     return Promise.resolve();
   }
-  async sendCommandWithRetry(ipAddress, commandId, value, deviceId, source) {
+  async sendCommandWithRetry(ipAddress, commandId, value, deviceId) {
     const url = `http://${ipAddress}/config`;
     const payload = new URLSearchParams({
       [commandId]: String(value),
@@ -229,9 +228,6 @@ class CommandService {
           timeoutMs: constants_1.COMMAND_REQUEST_TIMEOUT_MS,
           label: `Command ${commandId} for ${deviceId}`,
         });
-        this.adapter.log.debug(
-          `CommandService: Sent ${commandId}=${value} to ${deviceId}${source ? ` (${source})` : ""}.`,
-        );
         return true;
       } catch (error) {
         if (attempt <= constants_1.COMMAND_RETRY_COUNT) {
@@ -284,7 +280,7 @@ class CommandService {
     }
     const rawCommandId = parts[2];
     if (!this.commandDefinitions.has(rawCommandId)) {
-      this.adapter.log.warn(
+      this.adapter.log.debug(
         `CommandService: Unknown command datapoint ${fullId}.`,
       );
       return null;
