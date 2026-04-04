@@ -8,8 +8,8 @@
   "Maxxi CCU Name": "Maxxi CCU Name",
   "Enter the name of the Maxxi CCU (e.g., maxxi-XXXXXX-YYY).": "Enter the name of the Maxxi CCU (e.g., maxxi-XXXXXX-YYY).",
   "Local Configuration": "Local Configuration",
-  "Offline operation - Data Forwarder to Maxxisun": "ç¦»çº¿è¿è¡Œ - æ•°æ®è½¬å‘åˆ° Maxxisun",
-  "Info: Stays in secure offline mode, but sends data to the cloud for display only. No external access, read-only via the app!": "è¯´æ˜Žï¼šä¿æŒå®‰å…¨çš„ç¦»çº¿è¿è¡Œæ¨¡å¼ï¼Œä½†ä»…å°†æ•°æ®å‘é€åˆ°äº‘ç«¯ç”¨äºŽæ˜¾ç¤ºã€‚æ— æ³•ä»Žå¤–éƒ¨è®¿é—®ï¼Œåªèƒ½é€šè¿‡åº”ç”¨åªè¯»æŸ¥çœ‹ï¼",
+  "Offline operation - Data Forwarder to Maxxisun": "离线运行 - 数据转发到 Maxxisun",
+  "Info: Stays in secure offline mode, but sends data to the cloud for display only. No external access, read-only via the app!": "说明：保持安全的离线运行模式，但仅将数据发送到云端用于显示。无法从外部访问，只能通过应用只读查看！",
   "Port": "Port",
   "Define the port for the Local-API.": "Define the port for the API to listen on.",
   "On the MaxxiCharge config page under 'Api-Route', enter the following:": "On the MaxxiCharge config page under 'Api-Route', enter the following:",
@@ -19,7 +19,7 @@
   "Enter a date in the format DD.MM (e.g., 20.11 for 20th November)": "Enter a date in the format DD.MM (e.g., 20.11 for 20th November)",
   "Winter end date (Format: DD.MM)": "Winter end date (Format: DD.MM)",
   "Enter a date in the format DD.MM (e.g., 07.02 for 7th February)": "Enter a date in the format DD.MM (e.g., 07.02 for 7th February)",
-  "Winter mode: Minimum charge set to 60%, if SOC â‰¥55% it drops to 40%.<br>Summer mode: Minimum charge 10%, maximum charge 97%.": "Winter mode: Minimum charge set to 60%, if SOC â‰¥55% it drops to 40%.<br>Summer mode: Minimum charge 10%, maximum charge 97%.",
+  "Winter mode: Minimum charge set to 60%, if SOC ≥55% it drops to 40%.<br>Summer mode: Minimum charge 10%, maximum charge 97%.": "Winter mode: Minimum charge set to 60%, if SOC ≥55% it drops to 40%.<br>Summer mode: Minimum charge 10%, maximum charge 97%.",
   "apiMode": "API Mode",
   "enableSeasonMode": "Enable summer/winter mode",
   "dateFrom": "Winter start date (Format: DD.MM)",
@@ -39,7 +39,7 @@
   "97% - Feed-In enabled": "97% - Feed-In enabled",
   "95% - Feed-In enabled": "95% - Feed-In enabled",
   "100% - Feed-In disabled": "100% - Feed-In disabled",
-  "At 90% / 95% / 97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.": "At 90% / 95% / 97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.",
+  "At 90%/95%/97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.": "At 90%/95%/97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.",
   "Your support means the world to me! If you'd like to help me improve this project, a donation would be greatly appreciated. Thank you so much!": "Your support means the world to me! If you'd like to help me improve this project, a donation would be greatly appreciated. Thank you so much!",
   "BKW Mode": "BKW Mode",
   "Enable BKW Mode": "Enable BKW Mode",
@@ -47,5 +47,5 @@
   "Set the feed-in power in watts.": "Set the feed-in power in watts.",
   "MaxxiCharge 'baseLoad' Default (Adjust Output in Watt)": "MaxxiCharge 'baseLoad' Default (Adjust Output in Watt)",
   "Adjust the feed-in offset (baseLoad) in watts for MaxxiCharge.": "Adjust the feed-in offset (baseLoad) in watts for MaxxiCharge.",
-  "Wenn aktiviert, versucht das System, die angegebene Leistung ins Netz einzuspeisen, jedoch nur, wenn der Ladezustand 97% oder mehr beträgt.": "Wenn aktiviert, versucht das System, die angegebene Leistung ins Netz einzuspeisen, jedoch nur, wenn der Ladezustand 97% oder mehr beträgt."
+  "Additionally, the 'Zero Feed-In Mode' must be set to 100%. Afterward, the system returns to the 'normal' operation mode.": "???'?????'????? 100%?????????'??'?????"
 }
