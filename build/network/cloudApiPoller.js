@@ -3,161 +3,211 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const constants_1 = require("../constants");
 const helpers_1 = require("../utils/helpers");
 class CloudApiPoller {
-    adapter;
-    config;
-    scheduler;
-    stateManager;
-    deviceRegistry;
-    commandService;
-    requestClient;
-    onDeviceSeen;
-    infoIntervalHandle = null;
-    ccuIntervalHandle = null;
-    infoStartHandle = null;
-    ccuStartHandle = null;
-    infoRequestInFlight = false;
-    ccuRequestInFlight = false;
-    started = false;
-    constructor(adapter, config, scheduler, stateManager, deviceRegistry, commandService, requestClient, onDeviceSeen) {
-        this.adapter = adapter;
-        this.config = config;
-        this.scheduler = scheduler;
-        this.stateManager = stateManager;
-        this.deviceRegistry = deviceRegistry;
-        this.commandService = commandService;
-        this.requestClient = requestClient;
-        this.onDeviceSeen = onDeviceSeen;
+  adapter;
+  config;
+  scheduler;
+  stateManager;
+  deviceRegistry;
+  commandService;
+  requestClient;
+  onDeviceSeen;
+  infoIntervalHandle = null;
+  ccuIntervalHandle = null;
+  infoStartHandle = null;
+  ccuStartHandle = null;
+  infoRequestInFlight = false;
+  ccuRequestInFlight = false;
+  started = false;
+  constructor(
+    adapter,
+    config,
+    scheduler,
+    stateManager,
+    deviceRegistry,
+    commandService,
+    requestClient,
+    onDeviceSeen,
+  ) {
+    this.adapter = adapter;
+    this.config = config;
+    this.scheduler = scheduler;
+    this.stateManager = stateManager;
+    this.deviceRegistry = deviceRegistry;
+    this.commandService = commandService;
+    this.requestClient = requestClient;
+    this.onDeviceSeen = onDeviceSeen;
+  }
+  start() {
+    if (this.started) {
+      return Promise.resolve();
     }
-    start() {
-        if (this.started) {
-            return Promise.resolve();
-        }
-        if (!this.config.ccuName) {
-            this.adapter.log.warn("Cloud API mode is enabled but no CCU name is configured.");
-            return Promise.resolve();
-        }
-        this.started = true;
-        const infoStartDelay = Math.floor(Math.random() * constants_1.CLOUD_INFO_INTERVAL_MS);
-        this.infoStartHandle = this.scheduler.setTimeout(async () => {
+    if (!this.config.ccuName) {
+      this.adapter.log.warn(
+        "Cloud API mode is enabled but no CCU name is configured.",
+      );
+      return Promise.resolve();
+    }
+    this.started = true;
+    const infoStartDelay = Math.floor(
+      Math.random() * constants_1.CLOUD_INFO_INTERVAL_MS,
+    );
+    this.infoStartHandle = this.scheduler.setTimeout(
+      async () => {
+        await this.pollInfo();
+        this.infoIntervalHandle = this.scheduler.setInterval(
+          async () => {
             await this.pollInfo();
-            this.infoIntervalHandle = this.scheduler.setInterval(async () => {
-                await this.pollInfo();
-            }, constants_1.CLOUD_INFO_INTERVAL_MS, "cloud-info-poll");
-        }, infoStartDelay, "cloud-info-start");
-        this.ccuStartHandle = this.scheduler.setTimeout(async () => {
+          },
+          constants_1.CLOUD_INFO_INTERVAL_MS,
+          "cloud-info-poll",
+        );
+      },
+      infoStartDelay,
+      "cloud-info-start",
+    );
+    this.ccuStartHandle = this.scheduler.setTimeout(
+      async () => {
+        await this.pollCcu();
+        this.ccuIntervalHandle = this.scheduler.setInterval(
+          async () => {
             await this.pollCcu();
-            this.ccuIntervalHandle = this.scheduler.setInterval(async () => {
-                await this.pollCcu();
-            }, this.config.ccuIntervalMs, "cloud-ccu-poll");
-        }, constants_1.CLOUD_CCU_INITIAL_DELAY_MS, "cloud-ccu-start");
-        return Promise.resolve();
+          },
+          this.config.ccuIntervalMs,
+          "cloud-ccu-poll",
+        );
+      },
+      constants_1.CLOUD_CCU_INITIAL_DELAY_MS,
+      "cloud-ccu-start",
+    );
+    return Promise.resolve();
+  }
+  dispose() {
+    this.started = false;
+    this.scheduler.clearTimeout(this.infoStartHandle);
+    this.scheduler.clearTimeout(this.ccuStartHandle);
+    this.scheduler.clearInterval(this.infoIntervalHandle);
+    this.scheduler.clearInterval(this.ccuIntervalHandle);
+    this.infoStartHandle = null;
+    this.ccuStartHandle = null;
+    this.infoIntervalHandle = null;
+    this.ccuIntervalHandle = null;
+    this.infoRequestInFlight = false;
+    this.ccuRequestInFlight = false;
+    return Promise.resolve();
+  }
+  async pollInfo() {
+    if (!this.started) {
+      return;
     }
-    dispose() {
-        this.started = false;
-        this.scheduler.clearTimeout(this.infoStartHandle);
-        this.scheduler.clearTimeout(this.ccuStartHandle);
-        this.scheduler.clearInterval(this.infoIntervalHandle);
-        this.scheduler.clearInterval(this.ccuIntervalHandle);
-        this.infoStartHandle = null;
-        this.ccuStartHandle = null;
-        this.infoIntervalHandle = null;
-        this.ccuIntervalHandle = null;
-        this.infoRequestInFlight = false;
-        this.ccuRequestInFlight = false;
-        return Promise.resolve();
+    if (this.infoRequestInFlight) {
+      this.adapter.log.debug(
+        "Cloud API info polling skipped because a request is still in flight.",
+      );
+      return;
     }
-    async pollInfo() {
-        if (!this.started) {
-            return;
-        }
-        if (this.infoRequestInFlight) {
-            this.adapter.log.debug("Cloud API info polling skipped because a request is still in flight.");
-            return;
-        }
-        this.infoRequestInFlight = true;
-        try {
-            const payload = await this.fetchWithRetry("info", async () => {
-                const response = await this.requestClient.get(`${constants_1.CLOUD_API_BASE_URL}?info=${encodeURIComponent(this.config.ccuName)}`, {
-                    timeoutMs: constants_1.REQUEST_TIMEOUT_MS,
-                    label: `Cloud info request for ${this.config.ccuName}`,
-                });
-                return response.data;
-            });
-            if (!(0, helpers_1.isRecord)(payload) || !this.started) {
-                return;
-            }
-            const deviceId = typeof payload.deviceId === "string"
-                ? (0, helpers_1.normalizeDeviceId)(payload.deviceId)
-                : "";
-            if (!deviceId) {
-                this.adapter.log.warn("Cloud API info response does not contain a valid deviceId.");
-                return;
-            }
-            await this.stateManager.syncSettingsPayload(deviceId, payload);
-        }
-        finally {
-            this.infoRequestInFlight = false;
-        }
+    this.infoRequestInFlight = true;
+    try {
+      const payload = await this.fetchWithRetry("info", async () => {
+        const response = await this.requestClient.get(
+          `${constants_1.CLOUD_API_BASE_URL}?info=${encodeURIComponent(this.config.ccuName)}`,
+          {
+            timeoutMs: constants_1.REQUEST_TIMEOUT_MS,
+            label: `Cloud info request for ${this.config.ccuName}`,
+          },
+        );
+        return response.data;
+      });
+      if (!(0, helpers_1.isRecord)(payload) || !this.started) {
+        return;
+      }
+      const deviceId =
+        typeof payload.deviceId === "string"
+          ? (0, helpers_1.normalizeDeviceId)(payload.deviceId)
+          : "";
+      if (!deviceId) {
+        this.adapter.log.warn(
+          "Cloud API info response does not contain a valid deviceId.",
+        );
+        return;
+      }
+      await this.stateManager.syncSettingsPayload(deviceId, payload);
+    } finally {
+      this.infoRequestInFlight = false;
     }
-    async pollCcu() {
-        if (!this.started) {
-            return;
-        }
-        if (this.ccuRequestInFlight) {
-            this.adapter.log.debug("Cloud API CCU polling skipped because a request is still in flight.");
-            return;
-        }
-        this.ccuRequestInFlight = true;
-        try {
-            const payload = await this.fetchWithRetry("ccu", async () => {
-                const response = await this.requestClient.get(`${constants_1.CLOUD_API_BASE_URL}?ccu=${encodeURIComponent(this.config.ccuName)}`, {
-                    timeoutMs: constants_1.REQUEST_TIMEOUT_MS,
-                    label: `Cloud CCU request for ${this.config.ccuName}`,
-                });
-                return response.data;
-            });
-            if (!(0, helpers_1.isRecord)(payload) || !this.started) {
-                return;
-            }
-            const deviceId = typeof payload.deviceId === "string"
-                ? (0, helpers_1.normalizeDeviceId)(payload.deviceId)
-                : "";
-            if (!deviceId) {
-                this.adapter.log.warn("Cloud API CCU response does not contain a valid deviceId.");
-                return;
-            }
-            await this.stateManager.syncDevicePayload(deviceId, payload);
-            await this.commandService.ensureDeviceStates(deviceId);
-            const deviceTouchResult = await this.deviceRegistry.touch(deviceId);
-            await this.onDeviceSeen(deviceTouchResult);
-        }
-        finally {
-            this.ccuRequestInFlight = false;
-        }
+  }
+  async pollCcu() {
+    if (!this.started) {
+      return;
     }
-    async fetchWithRetry(label, callback) {
-        for (let attempt = 1; attempt <= constants_1.CLOUD_RETRY_COUNT + 1; attempt++) {
-            if (!this.started) {
-                return null;
-            }
-            try {
-                return await callback();
-            }
-            catch (error) {
-                if (!this.started) {
-                    return null;
-                }
-                if (attempt <= constants_1.CLOUD_RETRY_COUNT) {
-                    this.adapter.log.warn(`Cloud API ${label} request failed. Retrying ${attempt}/${constants_1.CLOUD_RETRY_COUNT}.`);
-                    await (0, helpers_1.sleep)(constants_1.CLOUD_RETRY_DELAY_MS);
-                    continue;
-                }
-                this.adapter.log.error(`Cloud API ${label} request failed after retries: ${error instanceof Error ? error.message : String(error)}`);
-                return null;
-            }
-        }
+    if (this.ccuRequestInFlight) {
+      this.adapter.log.debug(
+        "Cloud API CCU polling skipped because a request is still in flight.",
+      );
+      return;
+    }
+    this.ccuRequestInFlight = true;
+    try {
+      const payload = await this.fetchWithRetry("ccu", async () => {
+        const response = await this.requestClient.get(
+          `${constants_1.CLOUD_API_BASE_URL}?ccu=${encodeURIComponent(this.config.ccuName)}`,
+          {
+            timeoutMs: constants_1.REQUEST_TIMEOUT_MS,
+            label: `Cloud CCU request for ${this.config.ccuName}`,
+          },
+        );
+        return response.data;
+      });
+      if (!(0, helpers_1.isRecord)(payload) || !this.started) {
+        return;
+      }
+      const deviceId =
+        typeof payload.deviceId === "string"
+          ? (0, helpers_1.normalizeDeviceId)(payload.deviceId)
+          : "";
+      if (!deviceId) {
+        this.adapter.log.warn(
+          "Cloud API CCU response does not contain a valid deviceId.",
+        );
+        return;
+      }
+      await this.stateManager.syncDevicePayload(deviceId, payload);
+      await this.commandService.ensureDeviceStates(deviceId);
+      const deviceTouchResult = await this.deviceRegistry.touch(deviceId);
+      await this.onDeviceSeen(deviceTouchResult);
+    } finally {
+      this.ccuRequestInFlight = false;
+    }
+  }
+  async fetchWithRetry(label, callback) {
+    for (
+      let attempt = 1;
+      attempt <= constants_1.CLOUD_RETRY_COUNT + 1;
+      attempt++
+    ) {
+      if (!this.started) {
         return null;
+      }
+      try {
+        return await callback();
+      } catch (error) {
+        if (!this.started) {
+          return null;
+        }
+        if (attempt <= constants_1.CLOUD_RETRY_COUNT) {
+          this.adapter.log.warn(
+            `Cloud API ${label} request failed. Retrying ${attempt}/${constants_1.CLOUD_RETRY_COUNT}.`,
+          );
+          await (0, helpers_1.sleep)(constants_1.CLOUD_RETRY_DELAY_MS);
+          continue;
+        }
+        this.adapter.log.error(
+          `Cloud API ${label} request failed after retries: ${error instanceof Error ? error.message : String(error)}`,
+        );
+        return null;
+      }
     }
+    return null;
+  }
 }
 exports.default = CloudApiPoller;
 //# sourceMappingURL=cloudApiPoller.js.map
