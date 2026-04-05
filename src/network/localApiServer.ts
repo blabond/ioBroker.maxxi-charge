@@ -21,6 +21,8 @@ import type DeviceRegistry from "../core/deviceRegistry";
 import type StateManager from "../core/stateManager";
 import type RequestClient from "./requestClient";
 
+const ABORTED_PEER_WARNING_THROTTLE_MS = 15 * 60_000;
+
 function sendJson(
   response: ServerResponse<IncomingMessage>,
   statusCode: number,
@@ -127,6 +129,8 @@ export default class LocalApiServer {
   private readonly openSockets = new Set<Socket>();
 
   private lastCloudMirrorErrorLogTs = 0;
+  private lastAbortedPeerWarningLogTs = 0;
+  private suppressedAbortedPeerWarnings = 0;
 
   public constructor(
     private readonly adapter: AdapterInstance,
@@ -292,11 +296,34 @@ export default class LocalApiServer {
     } catch (error) {
       const statusCode = getErrorStatusCode(error) ?? 500;
       const message = error instanceof Error ? error.message : String(error);
+      const now = Date.now();
 
       if (statusCode >= 500) {
         this.adapter.log.error(`Local API request failed: ${message}`);
       } else {
-        this.adapter.log.warn(`Local API request failed: ${message}`);
+        if (message === "Request aborted by peer.") {
+          if (
+            now - this.lastAbortedPeerWarningLogTs <
+            ABORTED_PEER_WARNING_THROTTLE_MS
+          ) {
+            this.suppressedAbortedPeerWarnings += 1;
+          } else {
+            const suppressedCount = this.suppressedAbortedPeerWarnings;
+            this.suppressedAbortedPeerWarnings = 0;
+            this.lastAbortedPeerWarningLogTs = now;
+
+            const suppressedSuffix =
+              suppressedCount > 0
+                ? ` Suppressed ${suppressedCount} similar warnings in the last 15 minutes.`
+                : "";
+
+            this.adapter.log.warn(
+              `Local API request failed: ${message}${suppressedSuffix}`,
+            );
+          }
+        } else {
+          this.adapter.log.warn(`Local API request failed: ${message}`);
+        }
       }
 
       if (!response.writableEnded) {
