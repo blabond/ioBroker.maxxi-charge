@@ -20,11 +20,11 @@
 
 ## Requirements
 
-| Component           | Description                                             |
-| ------------------- | ------------------------------------------------------- |
-| **MaxxiCharge CCU** | Supported device with network connection.               |
-| **ioBroker**        | Installed ioBroker instance.                            |
-| **Node.js**         | Current version of Node.js (see ioBroker requirements). |
+| Component           | Description                               |
+| ------------------- | ----------------------------------------- |
+| **MaxxiCharge CCU** | Supported device with network connection. |
+| **ioBroker**        | Installed ioBroker instance.              |
+| **Node.js**         | Node.js 22.x or newer.                    |
 
 ## Installation
 

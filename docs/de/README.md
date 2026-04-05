@@ -20,11 +20,11 @@
 
 ## Anforderungen
 
-| Komponente          | Beschreibung                                                 |
-| ------------------- | ------------------------------------------------------------ |
-| **MaxxiCharge CCU** | Unterstütztes Gerät mit Netzwerkverbindung.                  |
-| **ioBroker**        | Installierte ioBroker-Instanz.                               |
-| **Node.js**         | Aktuelle Version von Node.js (siehe ioBroker-Anforderungen). |
+| Komponente          | Beschreibung                                |
+| ------------------- | ------------------------------------------- |
+| **MaxxiCharge CCU** | Unterstütztes Gerät mit Netzwerkverbindung. |
+| **ioBroker**        | Installierte ioBroker-Instanz.              |
+| **Node.js**         | Mindestens Node.js 22.x.                    |
 
 ## Installation
 

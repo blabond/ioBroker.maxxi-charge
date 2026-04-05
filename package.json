@@ -64,7 +64,7 @@
     "prepublishOnly": "npm run build && npm run check && npm run lint && npm test"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "bugs": {
     "url": "https://github.com/blabond/ioBroker.maxxi-charge/issues"
