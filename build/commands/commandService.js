@@ -87,21 +87,6 @@ const COMMAND_DEFINITIONS = [
     max: 100,
     unit: "%",
   },
-  {
-    id: "autoCalibration",
-    name: {
-      en: "Auto calibration",
-      de: "Automatische Kalibrierung",
-    },
-    type: "number",
-    role: "level",
-    min: 0,
-    max: 1,
-    states: {
-      0: "Off",
-      1: "On",
-    },
-  },
 ];
 class CommandService {
   adapter;

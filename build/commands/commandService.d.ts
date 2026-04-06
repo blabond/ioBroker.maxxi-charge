@@ -8,8 +8,7 @@ export type CommandId =
   | "offlineOutput"
   | "threshold"
   | "minSOC"
-  | "maxSOC"
-  | "autoCalibration";
+  | "maxSOC";
 export default class CommandService {
   private readonly adapter;
   private readonly stateManager;

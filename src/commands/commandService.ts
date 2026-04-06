@@ -20,8 +20,7 @@ export type CommandId =
   | "offlineOutput"
   | "threshold"
   | "minSOC"
-  | "maxSOC"
-  | "autoCalibration";
+  | "maxSOC";
 
 interface CommandDefinition {
   id: CommandId;
@@ -118,21 +117,6 @@ const COMMAND_DEFINITIONS: readonly CommandDefinition[] = [
     min: 20,
     max: 100,
     unit: "%",
-  },
-  {
-    id: "autoCalibration",
-    name: {
-      en: "Auto calibration",
-      de: "Automatische Kalibrierung",
-    },
-    type: "number",
-    role: "level",
-    min: 0,
-    max: 1,
-    states: {
-      0: "Off",
-      1: "On",
-    },
   },
 ];
 
