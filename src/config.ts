@@ -27,6 +27,6 @@ export function normalizeConfig(rawConfig: AdapterConfig): RuntimeConfig {
     feedInMode: Math.min(Math.max(feedInMode, 20), 100),
     bkwEnabled: parseBoolean(rawConfig.bkw_enable),
     bkwPowerTarget: Math.min(Math.max(bkwPowerTarget, 0), 2300),
-    bkwAdjustment: Math.min(Math.max(bkwAdjustment, -1200), 600),
+    bkwAdjustment: Math.min(Math.max(bkwAdjustment, -2300), 600),
   };
 }

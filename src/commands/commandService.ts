@@ -66,7 +66,7 @@ const COMMAND_DEFINITIONS: readonly CommandDefinition[] = [
     },
     type: "number",
     role: "level",
-    min: -1200,
+    min: -2300,
     max: 600,
     unit: "W",
   },
