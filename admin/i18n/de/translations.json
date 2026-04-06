@@ -45,6 +45,5 @@
   "BKW Feed-In Power (Watt)": "BKW Einspeisung (Watt)",
   "Set the feed-in power in watts.": "Einspeiseleistung in Watt festlegen.",
   "MaxxiCharge 'baseLoad' Default (Adjust Output in Watt)": "MaxxiCharge 'baseLoad' (Ausgabe anpassen in Watt)",
-  "Adjust the feed-in offset (baseLoad) in watts for MaxxiCharge.": "Die Einspeiseabweichung (baseLoad) für MaxxiCharge in Watt anpassen.",
-  "Additionally, the 'Zero Feed-In Mode' must be set to 100%. Afterward, the system returns to the 'normal' operation mode.": "Zus?tzlich muss der 'Nulleinspeisungsmodus' auf 100% eingestellt sein. Anschlie?end kehrt das System in den 'normalen' Betriebsmodus zur?ck."
+  "Adjust the feed-in offset (baseLoad) in watts for MaxxiCharge.": "Die Einspeiseabweichung (baseLoad) für MaxxiCharge in Watt anpassen."
 }
