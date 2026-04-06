@@ -46,7 +46,7 @@ http://www.maxxisun.de
 
 ## Changelog
 
-### 2.0.0-Beta.5 (2026-04-04)
+### 2.0.0-Alpha.6 (2026-04-04)
 
 - Adapter requires node.js >= 22 now.
 - Javascript migration to Typescript
