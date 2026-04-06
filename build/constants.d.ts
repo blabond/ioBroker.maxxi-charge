@@ -10,8 +10,7 @@ export declare const REQUEST_TIMEOUT_MS = 7500;
 export declare const COMMAND_REQUEST_TIMEOUT_MS = 15000;
 export declare const LOCAL_API_BODY_LIMIT_BYTES: number;
 export declare const LOCAL_API_SHUTDOWN_TIMEOUT_MS = 5000;
-export declare const LOCAL_API_CLOUD_MIRROR_URL =
-  "http://maxxisun.app:3001/text";
+export declare const LOCAL_API_CLOUD_MIRROR_URL = "http://maxxisun.app:3001/text";
 export declare const CLOUD_API_BASE_URL = "http://maxxicharge.mr-bond.de:3301/";
 export declare const BKW_SOC_THRESHOLD = 97;
 //# sourceMappingURL=constants.d.ts.map
