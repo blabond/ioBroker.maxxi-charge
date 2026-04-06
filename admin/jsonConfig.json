@@ -322,7 +322,7 @@
           "type": "number",
           "label": "MaxxiCharge 'baseLoad' Default (Adjust Output in Watt)",
           "default": -35,
-          "min": -2300,
+          "min": -800,
           "max": 600,
           "help": "Adjust the feed-in offset (baseLoad) in watts for MaxxiCharge.",
           "xl": 4,

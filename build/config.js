@@ -23,7 +23,7 @@ function normalizeConfig(rawConfig) {
         feedInMode: Math.min(Math.max(feedInMode, 20), 100),
         bkwEnabled: (0, helpers_1.parseBoolean)(rawConfig.bkw_enable),
         bkwPowerTarget: Math.min(Math.max(bkwPowerTarget, 0), 2300),
-        bkwAdjustment: Math.min(Math.max(bkwAdjustment, -2300), 600),
+        bkwAdjustment: Math.min(Math.max(bkwAdjustment, -1000), 600),
     };
 }
 //# sourceMappingURL=config.js.map

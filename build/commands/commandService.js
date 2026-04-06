@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const constants_1 = require("../constants");
 const helpers_1 = require("../utils/helpers");
+const SENDCOMMAND_INITIALIZED_STATE_SUFFIX = "_sendcommandInitialized";
+const SENDCOMMAND_INITIALIZED_CODE = "260406";
 const COMMAND_DEFINITIONS = [
     {
         id: "maxOutputPower",
@@ -35,7 +37,7 @@ const COMMAND_DEFINITIONS = [
         },
         type: "number",
         role: "level",
-        min: -2300,
+        min: -1000,
         max: 600,
         unit: "W",
     },
@@ -128,6 +130,27 @@ class CommandService {
             }
         }
     }
+    async syncDeviceCommandConfiguration(deviceId) {
+        const normalizedDeviceId = (0, helpers_1.normalizeDeviceId)(deviceId);
+        if (!normalizedDeviceId) {
+            return;
+        }
+        await this.stateManager.ensureDevice(normalizedDeviceId);
+        await this.ensureSendcommandInitializedState(normalizedDeviceId);
+        const stateId = this.getSendcommandInitializedStateId(normalizedDeviceId);
+        const currentState = await this.adapter.getStateAsync(stateId);
+        const currentCode = currentState?.val === null || typeof currentState?.val === "undefined"
+            ? ""
+            : String(currentState.val);
+        if (currentCode !== SENDCOMMAND_INITIALIZED_CODE) {
+            await this.resetSendcommandFolder(normalizedDeviceId);
+            await this.adapter.setStateAsync(stateId, {
+                val: SENDCOMMAND_INITIALIZED_CODE,
+                ack: true,
+            });
+        }
+        await this.ensureDeviceStates(normalizedDeviceId);
+    }
     async handleStateChange(id, state) {
         if (!state || state.ack) {
             return false;
@@ -172,6 +195,40 @@ class CommandService {
         }
         this.subscribedStateIds.clear();
         return Promise.resolve();
+    }
+    async ensureSendcommandInitializedState(deviceId) {
+        const stateId = this.getSendcommandInitializedStateId(deviceId);
+        await this.stateManager.ensureStateObject(stateId, {
+            name: {
+                en: "Sendcommand configuration initialized",
+                de: "Sendcommand-Konfiguration initialisiert",
+            },
+            type: "string",
+            role: "text",
+            read: true,
+            write: false,
+            expert: true,
+            hidden: true,
+            def: "",
+        });
+    }
+    getSendcommandInitializedStateId(deviceId) {
+        return `${deviceId}.${SENDCOMMAND_INITIALIZED_STATE_SUFFIX}`;
+    }
+    async resetSendcommandFolder(deviceId) {
+        const channelId = `${deviceId}.sendcommand`;
+        const channelObject = await this.adapter.getObjectAsync(channelId);
+        if (!channelObject) {
+            return;
+        }
+        for (const fullId of [...this.subscribedStateIds]) {
+            if (!fullId.startsWith(`${this.adapter.namespace}.${channelId}.`)) {
+                continue;
+            }
+            this.adapter.unsubscribeStates(fullId);
+            this.subscribedStateIds.delete(fullId);
+        }
+        await this.adapter.delObjectAsync(channelId, { recursive: true });
     }
     async sendCommandWithRetry(ipAddress, commandId, value, deviceId) {
         const url = `http://${ipAddress}/config`;

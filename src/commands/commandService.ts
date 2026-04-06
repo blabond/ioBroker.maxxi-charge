@@ -33,6 +33,9 @@ interface CommandDefinition {
   states?: Record<number, string>;
 }
 
+const SENDCOMMAND_INITIALIZED_STATE_SUFFIX = "_sendcommandInitialized";
+const SENDCOMMAND_INITIALIZED_CODE = "260406";
+
 const COMMAND_DEFINITIONS: readonly CommandDefinition[] = [
   {
     id: "maxOutputPower",
@@ -66,7 +69,7 @@ const COMMAND_DEFINITIONS: readonly CommandDefinition[] = [
     },
     type: "number",
     role: "level",
-    min: -2300,
+    min: -1000,
     max: 600,
     unit: "W",
   },
@@ -167,6 +170,33 @@ export default class CommandService {
     }
   }
 
+  public async syncDeviceCommandConfiguration(deviceId: string): Promise<void> {
+    const normalizedDeviceId = normalizeDeviceId(deviceId);
+    if (!normalizedDeviceId) {
+      return;
+    }
+
+    await this.stateManager.ensureDevice(normalizedDeviceId);
+    await this.ensureSendcommandInitializedState(normalizedDeviceId);
+
+    const stateId = this.getSendcommandInitializedStateId(normalizedDeviceId);
+    const currentState = await this.adapter.getStateAsync(stateId);
+    const currentCode =
+      currentState?.val === null || typeof currentState?.val === "undefined"
+        ? ""
+        : String(currentState.val);
+
+    if (currentCode !== SENDCOMMAND_INITIALIZED_CODE) {
+      await this.resetSendcommandFolder(normalizedDeviceId);
+      await this.adapter.setStateAsync(stateId, {
+        val: SENDCOMMAND_INITIALIZED_CODE,
+        ack: true,
+      });
+    }
+
+    await this.ensureDeviceStates(normalizedDeviceId);
+  }
+
   public async handleStateChange(
     id: string,
     state: StateChange,
@@ -252,6 +282,49 @@ export default class CommandService {
 
     this.subscribedStateIds.clear();
     return Promise.resolve();
+  }
+
+  private async ensureSendcommandInitializedState(
+    deviceId: string,
+  ): Promise<void> {
+    const stateId = this.getSendcommandInitializedStateId(deviceId);
+
+    await this.stateManager.ensureStateObject(stateId, {
+      name: {
+        en: "Sendcommand configuration initialized",
+        de: "Sendcommand-Konfiguration initialisiert",
+      },
+      type: "string",
+      role: "text",
+      read: true,
+      write: false,
+      expert: true,
+      hidden: true,
+      def: "",
+    });
+  }
+
+  private getSendcommandInitializedStateId(deviceId: string): string {
+    return `${deviceId}.${SENDCOMMAND_INITIALIZED_STATE_SUFFIX}`;
+  }
+
+  private async resetSendcommandFolder(deviceId: string): Promise<void> {
+    const channelId = `${deviceId}.sendcommand`;
+    const channelObject = await this.adapter.getObjectAsync(channelId);
+    if (!channelObject) {
+      return;
+    }
+
+    for (const fullId of [...this.subscribedStateIds]) {
+      if (!fullId.startsWith(`${this.adapter.namespace}.${channelId}.`)) {
+        continue;
+      }
+
+      this.adapter.unsubscribeStates(fullId);
+      this.subscribedStateIds.delete(fullId);
+    }
+
+    await this.adapter.delObjectAsync(channelId, { recursive: true });
   }
 
   private async sendCommandWithRetry(

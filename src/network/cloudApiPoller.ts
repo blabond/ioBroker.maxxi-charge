@@ -198,7 +198,6 @@ export default class CloudApiPoller {
       }
 
       await this.stateManager.syncDevicePayload(deviceId, payload);
-      await this.commandService.ensureDeviceStates(deviceId);
 
       const deviceTouchResult = await this.deviceRegistry.touch(deviceId);
       await this.onDeviceSeen(deviceTouchResult);

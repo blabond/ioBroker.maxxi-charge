@@ -287,7 +287,6 @@ export default class LocalApiServer {
       }
 
       await this.stateManager.syncDevicePayload(deviceId, mutablePayload);
-      await this.commandService.ensureDeviceStates(deviceId);
 
       const deviceTouchResult = await this.deviceRegistry.touch(deviceId);
       await this.onDeviceSeen(deviceTouchResult);

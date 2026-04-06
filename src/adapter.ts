@@ -207,6 +207,9 @@ export default class MaxxiChargeAdapter extends utils.Adapter {
     }
 
     try {
+      await this.commandService?.syncDeviceCommandConfiguration(
+        deviceEvent.deviceId,
+      );
       await this.ecoMode?.handleDeviceAvailable(deviceEvent.deviceId);
       await this.batteryMode?.handleDeviceAvailable(deviceEvent.deviceId);
       await this.bkwMode?.handleDeviceAvailable(deviceEvent.deviceId);

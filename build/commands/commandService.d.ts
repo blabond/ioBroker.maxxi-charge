@@ -10,11 +10,15 @@ export default class CommandService {
     private readonly subscribedStateIds;
     constructor(adapter: AdapterInstance, stateManager: StateManager, requestClient: RequestClient);
     ensureDeviceStates(deviceId: string): Promise<void>;
+    syncDeviceCommandConfiguration(deviceId: string): Promise<void>;
     handleStateChange(id: string, state: StateChange): Promise<boolean>;
     applyDeviceSetting(deviceId: string, commandId: CommandId, rawValue: unknown, _options?: {
         source?: string;
     }): Promise<boolean>;
     dispose(): Promise<void>;
+    private ensureSendcommandInitializedState;
+    private getSendcommandInitializedStateId;
+    private resetSendcommandFolder;
     private sendCommandWithRetry;
     private normalizeValue;
     private parseCommandStateId;

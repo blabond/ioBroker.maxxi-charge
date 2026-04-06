@@ -214,6 +214,7 @@ export default class BkwModeService {
       role: "indicator",
       read: true,
       write: false,
+      expert: true,
       hidden: true,
       def: false,
     });

@@ -2,7 +2,7 @@ describe("CommandService", () => {
   const CommandService = require("../build/commands/commandService").default;
 
   function createEnvironment({
-    schemaVersionState,
+    initializedState,
     withSendcommandChannel = true,
   } = {}) {
     const states = new Map();
@@ -15,8 +15,8 @@ describe("CommandService", () => {
       objects.add("ccu1.sendcommand");
     }
 
-    if (typeof schemaVersionState !== "undefined") {
-      states.set("ccu1._sendcommandSchemaVersion", schemaVersionState);
+    if (typeof initializedState !== "undefined") {
+      states.set("ccu1._sendcommandInitialized", initializedState);
     }
 
     const adapter = {
@@ -86,46 +86,54 @@ describe("CommandService", () => {
     });
 
     const firstService = environment.createService();
-    await firstService.ensureDeviceStates("ccu1");
+    await firstService.syncDeviceCommandConfiguration("ccu1");
 
     environment.deletedObjects.should.deep.equal([
       ["ccu1.sendcommand", { recursive: true }],
     ]);
-    environment.states.get("ccu1._sendcommandSchemaVersion").should.equal(4);
-    environment.subscribeCalls.should.have.length(8);
+    environment.states
+      .get("ccu1._sendcommandInitialized")
+      .should.equal("260406");
+    environment.subscribeCalls.should.have.length(7);
 
     const secondService = environment.createService();
-    await secondService.ensureDeviceStates("ccu1");
+    await secondService.syncDeviceCommandConfiguration("ccu1");
 
     environment.deletedObjects.should.have.length(1);
     environment.unsubscribeCalls.should.have.length(0);
-    environment.states.get("ccu1._sendcommandSchemaVersion").should.equal(4);
+    environment.states
+      .get("ccu1._sendcommandInitialized")
+      .should.equal("260406");
   });
 
-  it("resets sendcommand again when the internal schema version is older than 4", async () => {
+  it("resets sendcommand again when the internal initialized code differs", async () => {
     const environment = createEnvironment({
-      schemaVersionState: 3,
+      initializedState: "250101",
       withSendcommandChannel: true,
     });
 
     const service = environment.createService();
-    await service.ensureDeviceStates("ccu1");
+    await service.syncDeviceCommandConfiguration("ccu1");
 
     environment.deletedObjects.should.deep.equal([
       ["ccu1.sendcommand", { recursive: true }],
     ]);
-    environment.states.get("ccu1._sendcommandSchemaVersion").should.equal(4);
+    environment.states
+      .get("ccu1._sendcommandInitialized")
+      .should.equal("260406");
   });
 
-  it("sets the internal schema version to 4 without deleting anything on a fresh install", async () => {
+  it("sets the initialized code without deleting anything on a fresh install", async () => {
     const environment = createEnvironment({
       withSendcommandChannel: false,
     });
 
     const service = environment.createService();
-    await service.ensureDeviceStates("ccu1");
+    await service.syncDeviceCommandConfiguration("ccu1");
 
     environment.deletedObjects.should.deep.equal([]);
-    environment.states.get("ccu1._sendcommandSchemaVersion").should.equal(4);
+    environment.states
+      .get("ccu1._sendcommandInitialized")
+      .should.equal("260406");
   });
 });
