@@ -5,7 +5,7 @@ import { parseBoolean, parseInteger, validateInterval } from "./utils/helpers";
 export function normalizeConfig(rawConfig: AdapterConfig): RuntimeConfig {
   const ccuIntervalSeconds = parseInteger(rawConfig.ccuinterval, 10);
   const port = parseInteger(rawConfig.port, 5501);
-  const feedInMode = parseInteger(rawConfig.feedInMode, 97);
+  const feedInMode = parseInteger(rawConfig.feedInMode, 95);
   const bkwPowerTarget = parseInteger(rawConfig.bkw_powerTarget, 600);
   const bkwAdjustment = parseInteger(rawConfig.bkw_adjustment, -35);
 

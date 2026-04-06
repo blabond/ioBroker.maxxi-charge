@@ -149,7 +149,7 @@
     "winterto": "07.02",
     "batterycalibration": false,
     "calibrationProgress": "down",
-    "feedInMode": 97,
+    "feedInMode": 90,
     "bkw_enable": false,
     "bkw_powerTarget": 600,
     "bkw_adjustment": -35

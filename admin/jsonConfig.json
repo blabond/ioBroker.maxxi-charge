@@ -262,7 +262,6 @@
           "options": [
             { "label": "90% - Feed-In enabled", "value": 90 },
             { "label": "95% - Feed-In enabled", "value": 95 },
-            { "label": "97% - Feed-In enabled", "value": 97 },
             { "label": "100% - Feed-In disabled", "value": 100 }
           ],
           "default": "enabled",
@@ -271,7 +270,7 @@
           "md": 12,
           "sm": 12,
           "xs": 12,
-          "help": "At 90% / 95% / 97%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.",
+          "help": "At 90% / 95%, excess energy is fed into the grid when the battery exceeds this SOC. At 100%, no energy is fed into the grid.",
           "style": {
             "margin": "10px auto",
             "width": "50%",
