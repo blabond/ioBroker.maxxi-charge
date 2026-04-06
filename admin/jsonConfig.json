@@ -306,9 +306,9 @@
         "bkw_powerTarget": {
           "type": "slider",
           "label": "BKW Feed-In Power (Watt)",
-          "default": 600,
+          "default": 800,
           "min": 200,
-          "max": 800,
+          "max": 2300,
           "step": 25,
           "help": "Set the feed-in power in watts.",
           "xl": 4,
