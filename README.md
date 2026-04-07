@@ -32,12 +32,12 @@ http://www.maxxisun.de
 |  0.36 - 0.40  |    ❌     |    ✅     |
 | 0.41 or newer |    ✅     |    ✅     |
 
-|     CCU V2     | Local API | Cloud API |
-| :------------: | :-------: | :-------: |
-| 2.0.0 or newer |    ❌     |    ❌     |
-|  Comming Soon  |    ❓     |    ❓     |
+- <i>MaxxiSun can deactivate cloud services at any time. Local mode is always more secure for CCU 1.</i>
 
-<i>MaxxiSun can deactivate cloud services at any time. Local mode is always more secure.</i>
+|    CCU V2    | Local API | Cloud API |
+| :----------: | :-------: | :-------: |
+|  <= 2.10.1   |    ❌     |    ❌     |
+| Comming Soon |    ❓     |    ❓     |
 
 🔹 **Legend**:  
 ✅ - Compatible  
@@ -52,9 +52,9 @@ http://www.maxxisun.de
 - Javascript migration to Typescript
 - FIX BKWMode after deactivating
 
-Coming Soon:
+ToDo:
 
-- Adding CCU V2 Local API
+- Adding CCU V2 Support
 
 ### 1.4.48 (2026-04-02)
 
