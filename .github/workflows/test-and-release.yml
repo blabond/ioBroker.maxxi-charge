@@ -12,9 +12,9 @@ on:
       - "v[0-9]+.[0-9]+.[0-9]+-**"
   pull_request: {}
 
-  # Force all JavaScript-based GitHub Actions to run on Node.js 24
-  env:
-    FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+# Force all JavaScript-based GitHub Actions to run on Node.js 24
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 # Cancel previous PR/branch runs when a new commit is pushed
 concurrency:
@@ -22,21 +22,78 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Performs quick checks before the expensive test runs
+  autofix:
+    name: Auto-fix ESLint/Prettier
+    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24.x'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Apply ESLint auto-fixes
+        run: npx eslint -c eslint.config.mjs . --fix
+
+      - name: Apply Prettier formatting
+        run: npx prettier . --write --ignore-path .prettierignore
+
+      - name: Commit and push fixes if needed
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "chore(ci): apply eslint/prettier auto-fixes"
+            git push origin "HEAD:${{ github.head_ref }}"
+          else
+            echo "No formatting/lint fixes needed."
+          fi
+
+  # Performs quick checks before the expensive matrix test runs
   check-and-lint:
     if: contains(github.event.head_commit.message, '[skip ci]') == false
 
     runs-on: ubuntu-latest
 
     steps:
-      - uses: ioBroker/testing-action-check@v1
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
         with:
           node-version: '24.x'
-          # Uncomment the following line if your adapter cannot be installed using 'npm ci'
-          # install-command: 'npm install'
-          lint: true
+          cache: npm
 
-  # Runs adapter tests on all supported node versions and OSes
+      - name: Install dependencies
+        run: npm install
+
+      - name: Type check
+        run: npm run check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit/package tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Security audit (prod deps)
+        run: npm audit --omit=dev
+
+  # Runs tests on all supported node versions and OSes
   adapter-tests:
     needs: [check-and-lint]
     if: contains(github.event.head_commit.message, '[skip ci]') == false
@@ -48,12 +105,18 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-      - uses: ioBroker/testing-action-adapter@v1
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-          os: ${{ matrix.os }}
-          # Uncomment the following line if your adapter cannot be installed using 'npm ci'
-          # install-command: 'npm install'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run test suite
+        run: npm test
 
   deploy:
     needs: [adapter-tests]
