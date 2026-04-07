@@ -132,7 +132,7 @@ class LocalApiServer {
             server.once("error", handleError);
             server.listen(this.config.localPort);
         });
-        this.adapter.log.info(`Local API listening on port ${this.config.localPort}.`);
+        this.adapter.log.debug(`Local API listening on port ${this.config.localPort}.`);
     }
     async dispose() {
         if (!this.server) {

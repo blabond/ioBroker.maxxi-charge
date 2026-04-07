@@ -195,7 +195,7 @@ export default class LocalApiServer {
       server.listen(this.config.localPort);
     });
 
-    this.adapter.log.info(
+    this.adapter.log.debug(
       `Local API listening on port ${this.config.localPort}.`,
     );
   }
