@@ -25,7 +25,7 @@ class BkwModeService {
         }
     }
     async handleDeviceAvailable(deviceId) {
-        const normalizedDeviceId = deviceId.trim();
+        const normalizedDeviceId = (0, helpers_1.normalizeDeviceId)(deviceId);
         if (!normalizedDeviceId) {
             return;
         }
@@ -42,6 +42,13 @@ class BkwModeService {
         if (handled) {
             this.initializedDeviceIds.add(normalizedDeviceId);
         }
+    }
+    handleDeviceInactive(deviceId) {
+        const normalizedDeviceId = (0, helpers_1.normalizeDeviceId)(deviceId);
+        if (!normalizedDeviceId) {
+            return;
+        }
+        this.clearDeviceState(normalizedDeviceId);
     }
     handleConnectionLost() {
         this.lastStateByDevice.clear();
@@ -91,6 +98,11 @@ class BkwModeService {
         this.initializedDeviceIds.clear();
         this.maxSocForcedDeviceIds.clear();
         return Promise.resolve();
+    }
+    clearDeviceState(deviceId) {
+        this.lastStateByDevice.delete(deviceId);
+        this.initializedDeviceIds.delete(deviceId);
+        this.maxSocForcedDeviceIds.delete(deviceId);
     }
     extractDeviceId(fullId) {
         const relativeId = (0, helpers_1.extractRelativeId)(this.adapter.namespace, fullId);

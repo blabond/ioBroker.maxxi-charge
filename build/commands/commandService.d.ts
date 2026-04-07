@@ -7,6 +7,7 @@ export default class CommandService {
     private readonly stateManager;
     private readonly requestClient;
     private readonly commandDefinitions;
+    private readonly confirmedCommandValueCache;
     private readonly subscribedStateIds;
     constructor(adapter: AdapterInstance, stateManager: StateManager, requestClient: RequestClient);
     ensureDeviceStates(deviceId: string): Promise<void>;
@@ -16,6 +17,7 @@ export default class CommandService {
         source?: string;
     }): Promise<boolean>;
     dispose(): Promise<void>;
+    handleDeviceInactive(deviceId: string): void;
     private ensureSendcommandInitializedState;
     private getSendcommandInitializedStateId;
     private resetSendcommandFolder;
@@ -23,5 +25,8 @@ export default class CommandService {
     private normalizeValue;
     private parseCommandStateId;
     private resolveDeviceIp;
+    private getCommandStateId;
+    private getConfirmedCommandValueCacheKey;
+    private hasConfirmedCommandValue;
 }
 //# sourceMappingURL=commandService.d.ts.map

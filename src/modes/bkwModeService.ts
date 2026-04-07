@@ -4,7 +4,7 @@ import type {
   RuntimeConfig,
   StateChange,
 } from "../types/shared";
-import { extractRelativeId } from "../utils/helpers";
+import { extractRelativeId, normalizeDeviceId } from "../utils/helpers";
 import type CommandService from "../commands/commandService";
 import type DeviceRegistry from "../core/deviceRegistry";
 import type StateManager from "../core/stateManager";
@@ -33,7 +33,7 @@ export default class BkwModeService {
   }
 
   public async handleDeviceAvailable(deviceId: string): Promise<void> {
-    const normalizedDeviceId = deviceId.trim();
+    const normalizedDeviceId = normalizeDeviceId(deviceId);
     if (!normalizedDeviceId) {
       return;
     }
@@ -56,6 +56,15 @@ export default class BkwModeService {
     if (handled) {
       this.initializedDeviceIds.add(normalizedDeviceId);
     }
+  }
+
+  public handleDeviceInactive(deviceId: string): void {
+    const normalizedDeviceId = normalizeDeviceId(deviceId);
+    if (!normalizedDeviceId) {
+      return;
+    }
+
+    this.clearDeviceState(normalizedDeviceId);
   }
 
   public handleConnectionLost(): void {
@@ -125,6 +134,12 @@ export default class BkwModeService {
     this.initializedDeviceIds.clear();
     this.maxSocForcedDeviceIds.clear();
     return Promise.resolve();
+  }
+
+  private clearDeviceState(deviceId: string): void {
+    this.lastStateByDevice.delete(deviceId);
+    this.initializedDeviceIds.delete(deviceId);
+    this.maxSocForcedDeviceIds.delete(deviceId);
   }
 
   private extractDeviceId(fullId: string): string | null {

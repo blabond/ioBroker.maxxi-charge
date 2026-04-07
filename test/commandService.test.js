@@ -4,12 +4,14 @@ describe("CommandService", () => {
   function createEnvironment({
     initializedState,
     withSendcommandChannel = true,
+    existingStates = {},
   } = {}) {
     const states = new Map();
     const objects = new Set(["ccu1"]);
     const deletedObjects = [];
     const subscribeCalls = [];
     const unsubscribeCalls = [];
+    const requestCalls = [];
 
     if (withSendcommandChannel) {
       objects.add("ccu1.sendcommand");
@@ -17,6 +19,10 @@ describe("CommandService", () => {
 
     if (typeof initializedState !== "undefined") {
       states.set("ccu1._sendcommandInitialized", initializedState);
+    }
+
+    for (const [id, state] of Object.entries(existingStates)) {
+      states.set(id, state);
     }
 
     const adapter = {
@@ -32,9 +38,15 @@ describe("CommandService", () => {
           ? { _id: id, type: id.endsWith("sendcommand") ? "channel" : "state" }
           : null,
       getStateAsync: async (id) =>
-        states.has(id) ? { val: states.get(id), ack: true } : null,
+        states.has(id)
+          ? typeof states.get(id) === "object" &&
+            states.get(id) !== null &&
+            "val" in states.get(id)
+            ? states.get(id)
+            : { val: states.get(id), ack: true }
+          : null,
       setStateAsync: async (id, state) => {
-        states.set(id, state.val);
+        states.set(id, state);
       },
       delObjectAsync: async (id, options) => {
         deletedObjects.push([id, options]);
@@ -67,7 +79,9 @@ describe("CommandService", () => {
     };
 
     const requestClient = {
-      post: async () => {},
+      post: async (...args) => {
+        requestCalls.push(args);
+      },
     };
 
     return {
@@ -77,6 +91,7 @@ describe("CommandService", () => {
       states,
       subscribeCalls,
       unsubscribeCalls,
+      requestCalls,
     };
   }
 
@@ -93,7 +108,7 @@ describe("CommandService", () => {
     ]);
     environment.states
       .get("ccu1._sendcommandInitialized")
-      .should.equal("260406");
+      .should.deep.equal({ val: "260406", ack: true });
     environment.subscribeCalls.should.have.length(7);
 
     const secondService = environment.createService();
@@ -103,7 +118,7 @@ describe("CommandService", () => {
     environment.unsubscribeCalls.should.have.length(0);
     environment.states
       .get("ccu1._sendcommandInitialized")
-      .should.equal("260406");
+      .should.deep.equal({ val: "260406", ack: true });
   });
 
   it("resets sendcommand again when the internal initialized code differs", async () => {
@@ -120,7 +135,7 @@ describe("CommandService", () => {
     ]);
     environment.states
       .get("ccu1._sendcommandInitialized")
-      .should.equal("260406");
+      .should.deep.equal({ val: "260406", ack: true });
   });
 
   it("sets the initialized code without deleting anything on a fresh install", async () => {
@@ -134,6 +149,39 @@ describe("CommandService", () => {
     environment.deletedObjects.should.deep.equal([]);
     environment.states
       .get("ccu1._sendcommandInitialized")
-      .should.equal("260406");
+      .should.deep.equal({ val: "260406", ack: true });
+  });
+
+  it("releases per-device subscriptions when a device becomes inactive", async () => {
+    const environment = createEnvironment({
+      withSendcommandChannel: true,
+    });
+
+    const service = environment.createService();
+    await service.syncDeviceCommandConfiguration("ccu1");
+
+    service.handleDeviceInactive("ccu1");
+
+    environment.unsubscribeCalls.should.have.length(7);
+    environment.subscribeCalls.should.have.length(7);
+  });
+
+  it("skips redundant HTTP commands when the target value is already confirmed", async () => {
+    const environment = createEnvironment({
+      existingStates: {
+        "ccu1.ip_addr": { val: "192.168.1.10", ack: true },
+        "ccu1.sendcommand.maxSOC": { val: 95, ack: true },
+      },
+    });
+
+    const service = environment.createService();
+    const result = await service.applyDeviceSetting("ccu1", "maxSOC", 95);
+
+    result.should.equal(true);
+    environment.requestCalls.should.have.length(0);
+    environment.states.get("ccu1.sendcommand.maxSOC").should.deep.equal({
+      val: 95,
+      ack: true,
+    });
   });
 });

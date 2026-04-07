@@ -14,9 +14,11 @@ export default class BkwModeService {
     constructor(adapter: AdapterInstance, config: RuntimeConfig, commandService: CommandService, deviceRegistry: DeviceRegistry, stateManager: StateManager);
     start(): Promise<void>;
     handleDeviceAvailable(deviceId: string): Promise<void>;
+    handleDeviceInactive(deviceId: string): void;
     handleConnectionLost(): void;
     handleSocChange(id: string, state: StateChange): Promise<void>;
     dispose(): Promise<void>;
+    private clearDeviceState;
     private extractDeviceId;
     private markRestorePending;
     private restoreConfiguredBaseLoad;

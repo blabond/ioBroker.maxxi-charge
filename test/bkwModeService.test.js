@@ -216,4 +216,41 @@ describe("BkwModeService", () => {
       ["ccu1._bkwModeRestorePending", true, true],
     ]);
   });
+
+  it("reinitializes a device after it was cleaned up as inactive", async () => {
+    const commandCalls = [];
+    const setStateCalls = [];
+    const { service, stateManager, adapter } = createService({
+      bkwEnabled: true,
+      primaryDeviceId: null,
+      activeDeviceIds: [],
+      socStates: {
+        ccu1: 99,
+      },
+      applyDeviceSetting: async (...args) => {
+        commandCalls.push(args);
+        return true;
+      },
+    });
+
+    stateManager.setStateIfChanged = async (...args) => {
+      setStateCalls.push(args);
+      await adapter.setStateAsync(args[0], { val: args[1], ack: args[2] });
+      return true;
+    };
+
+    await service.handleDeviceAvailable("ccu1");
+    service.handleDeviceInactive("ccu1");
+    await service.handleDeviceAvailable("ccu1");
+
+    commandCalls.should.deep.equal([
+      ["ccu1", "maxSOC", 100, { source: "bkwMode:activate" }],
+      ["ccu1", "baseLoad", -800, { source: "bkwMode" }],
+      ["ccu1", "maxSOC", 100, { source: "bkwMode:activate" }],
+      ["ccu1", "baseLoad", -800, { source: "bkwMode" }],
+    ]);
+    setStateCalls.should.deep.equal([
+      ["ccu1._bkwModeRestorePending", true, true],
+    ]);
+  });
 });

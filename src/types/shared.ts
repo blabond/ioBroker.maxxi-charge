@@ -59,10 +59,38 @@ export type StateChange = ioBroker.State | null | undefined;
 
 export type AdapterInstance = IoBrokerAdapterInstance;
 
-export interface ObjectDefinition {
-  type: ioBroker.ObjectType;
-  common: Record<string, unknown>;
+export type ManagedStateCommon = ioBroker.StateCommon & {
+  hidden?: boolean;
+};
+
+export interface DeviceObjectDefinition {
+  type: "device";
+  common: ioBroker.DeviceCommon;
   native: Record<string, unknown>;
 }
+
+export interface ChannelObjectDefinition {
+  type: "channel";
+  common: ioBroker.ChannelCommon;
+  native: Record<string, unknown>;
+}
+
+export interface FolderObjectDefinition {
+  type: "folder";
+  common: ioBroker.OtherCommon;
+  native: Record<string, unknown>;
+}
+
+export interface StateObjectDefinition {
+  type: "state";
+  common: ManagedStateCommon;
+  native: Record<string, unknown>;
+}
+
+export type ObjectDefinition =
+  | DeviceObjectDefinition
+  | ChannelObjectDefinition
+  | FolderObjectDefinition
+  | StateObjectDefinition;
 
 export type LogLevel = "debug" | "info" | "warn" | "error";

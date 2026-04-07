@@ -140,13 +140,17 @@ class StateManager {
         this.stateValueCache.clear();
     }
     async ensureObject(id, definition) {
-        const fingerprint = (0, helpers_1.buildComparableObjectDefinition)(definition);
+        const fingerprint = (0, helpers_1.buildComparableObjectDefinition)({
+            type: definition.type,
+            common: definition.common,
+            native: definition.native,
+        });
         if (this.objectDefinitionCache.get(id) === fingerprint) {
             return;
         }
         const existingObject = await this.adapter.getObjectAsync(id);
         if (!existingObject) {
-            await this.adapter.setObjectNotExistsAsync(id, definition);
+            await this.adapter.setObjectNotExistsAsync(id, this.toSettableObject(definition));
             this.objectDefinitionCache.set(id, fingerprint);
             return;
         }
@@ -156,8 +160,7 @@ class StateManager {
                 this.adapter.log.warn(`StateManager: Object ${id} exists with unexpected type ${existingObject.type}; expected ${definition.type}.`);
             }
             await this.adapter.extendObjectAsync(id, {
-                common: definition.common,
-                native: definition.native,
+                ...this.toPartialObject(definition),
             });
         }
         this.objectDefinitionCache.set(id, fingerprint);
@@ -206,6 +209,36 @@ class StateManager {
             return value;
         }
         return undefined;
+    }
+    toSettableObject(definition) {
+        switch (definition.type) {
+            case "device":
+                return definition;
+            case "channel":
+                return definition;
+            case "folder":
+                return definition;
+            case "state":
+                return {
+                    ...definition,
+                    common: definition.common,
+                };
+        }
+    }
+    toPartialObject(definition) {
+        switch (definition.type) {
+            case "device":
+                return definition;
+            case "channel":
+                return definition;
+            case "folder":
+                return definition;
+            case "state":
+                return {
+                    ...definition,
+                    common: definition.common,
+                };
+        }
     }
 }
 exports.default = StateManager;

@@ -1,9 +1,10 @@
 import { type RuntimeConfig, type AdapterConfig } from "./types/shared";
+import { CLOUD_CCU_MIN_INTERVAL_MS } from "./constants";
 import { parseDayMonth } from "./utils/date";
 import { parseBoolean, parseInteger, validateInterval } from "./utils/helpers";
 
 export function normalizeConfig(rawConfig: AdapterConfig): RuntimeConfig {
-  const ccuIntervalSeconds = parseInteger(rawConfig.ccuinterval, 10);
+  const ccuIntervalSeconds = parseInteger(rawConfig.ccuinterval, 5);
   const port = parseInteger(rawConfig.port, 5501);
   const feedInMode = parseInteger(rawConfig.feedInMode, 95);
   const bkwPowerTarget = parseInteger(rawConfig.bkw_powerTarget, 600);
@@ -14,7 +15,7 @@ export function normalizeConfig(rawConfig: AdapterConfig): RuntimeConfig {
     ccuName: String(rawConfig.maxxiccuname ?? "").trim(),
     ccuIntervalMs: validateInterval(
       ccuIntervalSeconds * 1_000,
-      10_000,
+      CLOUD_CCU_MIN_INTERVAL_MS,
       3_600_000,
     ),
     localPort: Math.min(Math.max(port, 1), 65_535),

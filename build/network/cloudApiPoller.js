@@ -8,7 +8,6 @@ class CloudApiPoller {
     scheduler;
     stateManager;
     deviceRegistry;
-    commandService;
     requestClient;
     onDeviceSeen;
     infoIntervalHandle = null;
@@ -18,13 +17,13 @@ class CloudApiPoller {
     infoRequestInFlight = false;
     ccuRequestInFlight = false;
     started = false;
-    constructor(adapter, config, scheduler, stateManager, deviceRegistry, commandService, requestClient, onDeviceSeen) {
+    failureLogStateByKey = new Map();
+    constructor(adapter, config, scheduler, stateManager, deviceRegistry, requestClient, onDeviceSeen) {
         this.adapter = adapter;
         this.config = config;
         this.scheduler = scheduler;
         this.stateManager = stateManager;
         this.deviceRegistry = deviceRegistry;
-        this.commandService = commandService;
         this.requestClient = requestClient;
         this.onDeviceSeen = onDeviceSeen;
     }
@@ -64,6 +63,7 @@ class CloudApiPoller {
         this.ccuIntervalHandle = null;
         this.infoRequestInFlight = false;
         this.ccuRequestInFlight = false;
+        this.failureLogStateByKey.clear();
         return Promise.resolve();
     }
     async pollInfo() {
@@ -140,22 +140,45 @@ class CloudApiPoller {
                 return null;
             }
             try {
-                return await callback();
+                const result = await callback();
+                this.clearFailureLogState(label);
+                return result;
             }
             catch (error) {
                 if (!this.started) {
                     return null;
                 }
                 if (attempt <= constants_1.CLOUD_RETRY_COUNT) {
-                    this.adapter.log.warn(`Cloud API ${label} request failed. Retrying ${attempt}/${constants_1.CLOUD_RETRY_COUNT}.`);
+                    this.logThrottledFailure(`${label}:retry`, "warn", `Cloud API ${label} request failed. Retrying ${attempt}/${constants_1.CLOUD_RETRY_COUNT}.`);
                     await (0, helpers_1.sleep)(constants_1.CLOUD_RETRY_DELAY_MS);
                     continue;
                 }
-                this.adapter.log.error(`Cloud API ${label} request failed after retries: ${error instanceof Error ? error.message : String(error)}`);
+                this.logThrottledFailure(`${label}:final`, "error", `Cloud API ${label} request failed after retries: ${error instanceof Error ? error.message : String(error)}`);
                 return null;
             }
         }
         return null;
+    }
+    clearFailureLogState(label) {
+        this.failureLogStateByKey.delete(`${label}:retry`);
+        this.failureLogStateByKey.delete(`${label}:final`);
+    }
+    logThrottledFailure(key, level, message) {
+        const now = Date.now();
+        const existing = this.failureLogStateByKey.get(key);
+        if (existing && now - existing.lastLogTs < constants_1.CLOUD_FAILURE_LOG_THROTTLE_MS) {
+            existing.suppressed += 1;
+            return;
+        }
+        const suppressedCount = existing?.suppressed ?? 0;
+        this.failureLogStateByKey.set(key, {
+            lastLogTs: now,
+            suppressed: 0,
+        });
+        const suppressedSuffix = suppressedCount > 0
+            ? ` Suppressed ${suppressedCount} similar messages in the last ${Math.round(constants_1.CLOUD_FAILURE_LOG_THROTTLE_MS / 60_000)} minutes.`
+            : "";
+        this.adapter.log[level](`${message}${suppressedSuffix}`);
     }
 }
 exports.default = CloudApiPoller;

@@ -63,6 +63,7 @@ class MaxxiChargeAdapter extends utils.Adapter {
     localApi = null;
     cloudApi = null;
     cleanupIntervalHandle = null;
+    disposePromise = null;
     shuttingDown = false;
     constructor(options = {}) {
         super({
@@ -87,11 +88,11 @@ class MaxxiChargeAdapter extends utils.Adapter {
             await this.stateManager.ensureInfoStructure();
             await this.stateManager.resetInfoStates();
             if (this.runtimeConfig.apiMode === "local") {
-                this.localApi = new localApiServer_1.default(this, this.runtimeConfig, this.stateManager, this.deviceRegistry, this.commandService, this.requestClient, this.handleDeviceSeen.bind(this));
+                this.localApi = new localApiServer_1.default(this, this.runtimeConfig, this.stateManager, this.deviceRegistry, this.requestClient, this.handleDeviceSeen.bind(this));
                 await this.localApi.start();
             }
             else {
-                this.cloudApi = new cloudApiPoller_1.default(this, this.runtimeConfig, this.scheduler, this.stateManager, this.deviceRegistry, this.commandService, this.requestClient, this.handleDeviceSeen.bind(this));
+                this.cloudApi = new cloudApiPoller_1.default(this, this.runtimeConfig, this.scheduler, this.stateManager, this.deviceRegistry, this.requestClient, this.handleDeviceSeen.bind(this));
                 await this.cloudApi.start();
             }
             await this.ecoMode.start();
@@ -99,14 +100,16 @@ class MaxxiChargeAdapter extends utils.Adapter {
             await this.bkwMode.start();
             this.cleanupIntervalHandle = this.scheduler.setInterval(async () => {
                 const cleanupResult = await this.deviceRegistry?.cleanupInactiveDevices();
+                for (const deviceId of cleanupResult?.removedDeviceIds ?? []) {
+                    this.handleDeviceInactive(deviceId);
+                }
                 if (cleanupResult?.connectionLost) {
                     this.handleConnectionLost();
                 }
             }, constants_1.ACTIVE_DEVICE_CLEANUP_INTERVAL_MS, "active-device-cleanup");
         }
         catch (error) {
-            this.log.error(`Fatal error during initialization: ${error instanceof Error ? error.message : String(error)}`);
-            await this.dispose();
+            await this.failInitialization(error);
         }
     }
     async onStateChange(id, state) {
@@ -146,6 +149,12 @@ class MaxxiChargeAdapter extends utils.Adapter {
         this.batteryMode?.handleConnectionLost();
         this.bkwMode?.handleConnectionLost();
     }
+    handleDeviceInactive(deviceId) {
+        this.commandService?.handleDeviceInactive(deviceId);
+        this.ecoMode?.handleDeviceInactive(deviceId);
+        this.batteryMode?.handleDeviceInactive(deviceId);
+        this.bkwMode?.handleDeviceInactive(deviceId);
+    }
     async handleDeviceSeen(deviceEvent) {
         if (!deviceEvent.deviceId) {
             return;
@@ -168,42 +177,86 @@ class MaxxiChargeAdapter extends utils.Adapter {
         return Boolean(relativeId && relativeId.endsWith(".SOC"));
     }
     async dispose() {
+        if (this.disposePromise) {
+            await this.disposePromise;
+            return;
+        }
+        this.disposePromise = this.performDispose();
+        try {
+            await this.disposePromise;
+        }
+        finally {
+            this.disposePromise = null;
+        }
+    }
+    async performDispose() {
         const disposals = [];
-        if (this.cleanupIntervalHandle && this.scheduler) {
-            this.scheduler.clearInterval(this.cleanupIntervalHandle);
+        const scheduler = this.scheduler;
+        const stateManager = this.stateManager;
+        const deviceRegistry = this.deviceRegistry;
+        const localApi = this.localApi;
+        const cloudApi = this.cloudApi;
+        const ecoMode = this.ecoMode;
+        const batteryMode = this.batteryMode;
+        const bkwMode = this.bkwMode;
+        const commandService = this.commandService;
+        if (this.cleanupIntervalHandle && scheduler) {
+            scheduler.clearInterval(this.cleanupIntervalHandle);
             this.cleanupIntervalHandle = null;
         }
-        if (this.localApi) {
-            disposals.push(this.localApi.dispose());
-            this.localApi = null;
+        this.localApi = null;
+        this.cloudApi = null;
+        this.ecoMode = null;
+        this.batteryMode = null;
+        this.bkwMode = null;
+        this.commandService = null;
+        this.scheduler = null;
+        this.deviceRegistry = null;
+        this.stateManager = null;
+        this.requestClient = null;
+        this.runtimeConfig = null;
+        if (localApi) {
+            disposals.push(localApi.dispose());
         }
-        if (this.cloudApi) {
-            disposals.push(this.cloudApi.dispose());
-            this.cloudApi = null;
+        if (cloudApi) {
+            disposals.push(cloudApi.dispose());
         }
-        if (this.ecoMode) {
-            disposals.push(this.ecoMode.dispose());
+        if (ecoMode) {
+            disposals.push(ecoMode.dispose());
         }
-        if (this.batteryMode) {
-            disposals.push(this.batteryMode.dispose());
+        if (batteryMode) {
+            disposals.push(batteryMode.dispose());
         }
-        if (this.bkwMode) {
-            disposals.push(this.bkwMode.dispose());
+        if (bkwMode) {
+            disposals.push(bkwMode.dispose());
         }
-        if (this.commandService) {
-            disposals.push(this.commandService.dispose());
+        if (commandService) {
+            disposals.push(commandService.dispose());
         }
         await Promise.allSettled(disposals);
-        if (this.scheduler) {
-            await this.scheduler.dispose();
+        if (scheduler) {
+            await scheduler.dispose();
         }
-        if (this.deviceRegistry) {
-            await this.deviceRegistry.reset();
+        if (deviceRegistry) {
+            await deviceRegistry.reset();
         }
         else {
-            await this.stateManager?.resetInfoStates();
+            await stateManager?.resetInfoStates();
         }
-        this.stateManager?.clearCaches();
+        stateManager?.clearCaches();
+    }
+    async failInitialization(error) {
+        this.shuttingDown = true;
+        this.log.error(`Fatal error during initialization: ${error instanceof Error ? error.message : String(error)}`);
+        try {
+            await this.dispose();
+        }
+        catch (disposeError) {
+            this.log.error(`Error during fatal initialization cleanup: ${disposeError instanceof Error
+                ? disposeError.message
+                : String(disposeError)}`);
+        }
+        this.terminate("Initialization failed", utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
     }
 }
 exports.default = MaxxiChargeAdapter;

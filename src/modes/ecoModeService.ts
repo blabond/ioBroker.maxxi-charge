@@ -3,6 +3,12 @@ import type {
   RuntimeConfig,
   StateChange,
 } from "../types/shared";
+import {
+  ECO_SOC_TRIGGER_THRESHOLD,
+  ECO_SUMMER_MIN_SOC,
+  ECO_WINTER_MIN_SOC,
+  ECO_WINTER_RELAXED_MIN_SOC,
+} from "../constants";
 import { getDateValue, isInWrappedRange } from "../utils/date";
 import { extractRelativeId } from "../utils/helpers";
 import type CommandService from "../commands/commandService";
@@ -12,7 +18,7 @@ import type Scheduler from "../core/scheduler";
 export default class EcoModeService {
   private dailyJob: { cancel(reschedule?: boolean): boolean } | null = null;
 
-  private minSocSetToday = false;
+  private readonly minSocSetTodayByDevice = new Map<string, boolean>();
 
   private started = false;
 
@@ -47,16 +53,12 @@ export default class EcoModeService {
       `${this.adapter.namespace}-eco-evaluation`,
       "0 8 * * *",
       async () => {
-        await this.evaluateSeason();
+        await this.evaluateActiveDevices();
       },
     );
 
     this.started = true;
-
-    const activeDeviceId = this.deviceRegistry.getPrimaryDeviceId();
-    if (activeDeviceId) {
-      await this.evaluateSeason(activeDeviceId);
-    }
+    await this.evaluateActiveDevices();
   }
 
   public async handleDeviceAvailable(deviceId: string): Promise<void> {
@@ -64,25 +66,34 @@ export default class EcoModeService {
       return;
     }
 
-    await this.evaluateSeason(deviceId);
+    const normalizedDeviceId = deviceId.trim();
+    if (!normalizedDeviceId) {
+      return;
+    }
+
+    await this.evaluateSeason(normalizedDeviceId);
+  }
+
+  public handleDeviceInactive(deviceId: string): void {
+    const normalizedDeviceId = deviceId.trim();
+    if (!normalizedDeviceId) {
+      return;
+    }
+
+    this.minSocSetTodayByDevice.delete(normalizedDeviceId);
   }
 
   public handleConnectionLost(): void {
-    this.minSocSetToday = false;
+    this.minSocSetTodayByDevice.clear();
   }
 
   public async handleSocChange(id: string, state: StateChange): Promise<void> {
-    if (
-      !this.started ||
-      !state?.ack ||
-      typeof state.val !== "number" ||
-      this.minSocSetToday
-    ) {
+    if (!this.started || !state?.ack || typeof state.val !== "number") {
       return;
     }
 
     const deviceId = this.extractDeviceId(id);
-    if (!deviceId) {
+    if (!deviceId || this.minSocSetTodayByDevice.get(deviceId)) {
       return;
     }
 
@@ -101,22 +112,22 @@ export default class EcoModeService {
       return;
     }
 
-    if (state.val >= 55) {
+    if (state.val >= ECO_SOC_TRIGGER_THRESHOLD) {
       const updated = await this.commandService.applyDeviceSetting(
         deviceId,
         "minSOC",
-        40,
+        ECO_WINTER_RELAXED_MIN_SOC,
         { source: "ecoMode:socTrigger" },
       );
 
       if (updated) {
-        this.minSocSetToday = true;
+        this.minSocSetTodayByDevice.set(deviceId, true);
       }
     }
   }
 
   public dispose(): Promise<void> {
-    this.minSocSetToday = false;
+    this.minSocSetTodayByDevice.clear();
 
     if (this.dailyJob) {
       this.scheduler.cancelJob(this.dailyJob);
@@ -127,13 +138,22 @@ export default class EcoModeService {
     return Promise.resolve();
   }
 
-  private async evaluateSeason(preferredDeviceId?: string): Promise<void> {
-    const deviceId =
-      preferredDeviceId ?? this.deviceRegistry.getPrimaryDeviceId();
-    if (!deviceId) {
+  private async evaluateActiveDevices(): Promise<void> {
+    const activeDeviceIds = this.deviceRegistry.getActiveDeviceIds();
+    if (activeDeviceIds.length === 0) {
       this.adapter.log.debug(
         "EcoMode: No active device available for evaluation.",
       );
+      return;
+    }
+
+    for (const deviceId of activeDeviceIds) {
+      await this.evaluateSeason(deviceId);
+    }
+  }
+
+  private async evaluateSeason(deviceId: string): Promise<void> {
+    if (!deviceId) {
       return;
     }
 
@@ -144,7 +164,7 @@ export default class EcoModeService {
     if (todayValue === winterToValue) {
       const updated = await this.applySummerSettings(deviceId);
       if (updated) {
-        this.minSocSetToday = true;
+        this.minSocSetTodayByDevice.set(deviceId, true);
       }
       return;
     }
@@ -153,7 +173,7 @@ export default class EcoModeService {
       const minSocUpdated = await this.commandService.applyDeviceSetting(
         deviceId,
         "minSOC",
-        60,
+        ECO_WINTER_MIN_SOC,
         { source: "ecoMode:winter" },
       );
       const maxSocUpdated = await this.commandService.applyDeviceSetting(
@@ -163,14 +183,14 @@ export default class EcoModeService {
         { source: "ecoMode:winter" },
       );
       if (minSocUpdated && maxSocUpdated) {
-        this.minSocSetToday = false;
+        this.minSocSetTodayByDevice.set(deviceId, false);
       }
       return;
     }
 
     const updated = await this.applySummerSettings(deviceId);
     if (updated) {
-      this.minSocSetToday = true;
+      this.minSocSetTodayByDevice.set(deviceId, true);
     }
   }
 
@@ -178,7 +198,7 @@ export default class EcoModeService {
     const minSocUpdated = await this.commandService.applyDeviceSetting(
       deviceId,
       "minSOC",
-      10,
+      ECO_SUMMER_MIN_SOC,
       { source: "ecoMode:summer" },
     );
     const maxSocUpdated = await this.commandService.applyDeviceSetting(

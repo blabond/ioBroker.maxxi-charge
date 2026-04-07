@@ -95,6 +95,7 @@ class CommandService {
     stateManager;
     requestClient;
     commandDefinitions = new Map(COMMAND_DEFINITIONS.map((definition) => [definition.id, definition]));
+    confirmedCommandValueCache = new Map();
     subscribedStateIds = new Set();
     constructor(adapter, stateManager, requestClient) {
         this.adapter = adapter;
@@ -113,17 +114,20 @@ class CommandService {
         for (const definition of this.commandDefinitions.values()) {
             const relativeId = `${normalizedDeviceId}.sendcommand.${definition.id}`;
             const fullId = `${this.adapter.namespace}.${relativeId}`;
-            await this.stateManager.ensureStateObject(relativeId, {
+            const stateCommon = {
                 name: definition.name,
                 type: definition.type,
                 role: definition.role,
                 read: true,
                 write: true,
-                min: definition.min,
-                max: definition.max,
-                unit: definition.unit,
-                states: definition.states,
-            });
+                ...(typeof definition.min === "number" ? { min: definition.min } : {}),
+                ...(typeof definition.max === "number" ? { max: definition.max } : {}),
+                ...(typeof definition.unit === "string"
+                    ? { unit: definition.unit }
+                    : {}),
+                ...(definition.states ? { states: definition.states } : {}),
+            };
+            await this.stateManager.ensureStateObject(relativeId, stateCommon);
             if (!this.subscribedStateIds.has(fullId)) {
                 this.adapter.subscribeStates(fullId);
                 this.subscribedStateIds.add(fullId);
@@ -177,6 +181,11 @@ class CommandService {
             return false;
         }
         await this.ensureDeviceStates(normalizedDeviceId);
+        const stateId = this.getCommandStateId(normalizedDeviceId, commandId);
+        if (await this.hasConfirmedCommandValue(stateId, normalizedDeviceId, commandId, normalizedValue)) {
+            await this.stateManager.setStateIfChanged(stateId, normalizedValue, true);
+            return true;
+        }
         const ipAddress = await this.resolveDeviceIp(normalizedDeviceId);
         if (!ipAddress) {
             this.adapter.log.debug(`CommandService: No IP address found for device ${normalizedDeviceId}.`);
@@ -186,7 +195,8 @@ class CommandService {
         if (!sendSucceeded) {
             return false;
         }
-        await this.stateManager.setStateIfChanged(`${normalizedDeviceId}.sendcommand.${commandId}`, normalizedValue, true);
+        this.confirmedCommandValueCache.set(this.getConfirmedCommandValueCacheKey(normalizedDeviceId, commandId), normalizedValue);
+        await this.stateManager.setStateIfChanged(stateId, normalizedValue, true);
         return true;
     }
     dispose() {
@@ -194,7 +204,25 @@ class CommandService {
             this.adapter.unsubscribeStates(fullId);
         }
         this.subscribedStateIds.clear();
+        this.confirmedCommandValueCache.clear();
         return Promise.resolve();
+    }
+    handleDeviceInactive(deviceId) {
+        const normalizedDeviceId = (0, helpers_1.normalizeDeviceId)(deviceId);
+        if (!normalizedDeviceId) {
+            return;
+        }
+        const fullIdPrefix = `${this.adapter.namespace}.${normalizedDeviceId}.sendcommand.`;
+        for (const fullId of [...this.subscribedStateIds]) {
+            if (!fullId.startsWith(fullIdPrefix)) {
+                continue;
+            }
+            this.adapter.unsubscribeStates(fullId);
+            this.subscribedStateIds.delete(fullId);
+        }
+        for (const commandId of this.commandDefinitions.keys()) {
+            this.confirmedCommandValueCache.delete(this.getConfirmedCommandValueCacheKey(normalizedDeviceId, commandId));
+        }
     }
     async ensureSendcommandInitializedState(deviceId) {
         const stateId = this.getSendcommandInitializedStateId(deviceId);
@@ -227,6 +255,9 @@ class CommandService {
             }
             this.adapter.unsubscribeStates(fullId);
             this.subscribedStateIds.delete(fullId);
+        }
+        for (const commandId of this.commandDefinitions.keys()) {
+            this.confirmedCommandValueCache.delete(this.getConfirmedCommandValueCacheKey(deviceId, commandId));
         }
         await this.adapter.delObjectAsync(channelId, { recursive: true });
     }
@@ -296,6 +327,27 @@ class CommandService {
         const ipState = await this.adapter.getStateAsync(`${deviceId}.ip_addr`);
         const ipAddress = typeof ipState?.val === "string" ? ipState.val.trim() : "";
         return ipAddress || null;
+    }
+    getCommandStateId(deviceId, commandId) {
+        return `${deviceId}.sendcommand.${commandId}`;
+    }
+    getConfirmedCommandValueCacheKey(deviceId, commandId) {
+        return `${deviceId}:${commandId}`;
+    }
+    async hasConfirmedCommandValue(stateId, deviceId, commandId, targetValue) {
+        const cacheKey = this.getConfirmedCommandValueCacheKey(deviceId, commandId);
+        const cachedValue = this.confirmedCommandValueCache.get(cacheKey);
+        if (cachedValue === targetValue) {
+            return true;
+        }
+        const state = await this.adapter.getStateAsync(stateId);
+        const currentValue = Number(state?.val);
+        if (state?.ack === true && Number.isFinite(currentValue)) {
+            const normalizedCurrentValue = Math.round(currentValue);
+            this.confirmedCommandValueCache.set(cacheKey, normalizedCurrentValue);
+            return normalizedCurrentValue === targetValue;
+        }
+        return false;
     }
 }
 exports.default = CommandService;

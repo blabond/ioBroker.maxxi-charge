@@ -44,6 +44,8 @@ export default class MaxxiChargeAdapter extends utils.Adapter {
 
   private cleanupIntervalHandle: ioBroker.Interval = null;
 
+  private disposePromise: Promise<void> | null = null;
+
   private shuttingDown = false;
 
   public constructor(options: Partial<utils.AdapterOptions> = {}) {
@@ -99,7 +101,6 @@ export default class MaxxiChargeAdapter extends utils.Adapter {
           this.runtimeConfig,
           this.stateManager,
           this.deviceRegistry,
-          this.commandService,
           this.requestClient,
           this.handleDeviceSeen.bind(this),
         );
@@ -111,7 +112,6 @@ export default class MaxxiChargeAdapter extends utils.Adapter {
           this.scheduler,
           this.stateManager,
           this.deviceRegistry,
-          this.commandService,
           this.requestClient,
           this.handleDeviceSeen.bind(this),
         );
@@ -126,6 +126,9 @@ export default class MaxxiChargeAdapter extends utils.Adapter {
         async () => {
           const cleanupResult =
             await this.deviceRegistry?.cleanupInactiveDevices();
+          for (const deviceId of cleanupResult?.removedDeviceIds ?? []) {
+            this.handleDeviceInactive(deviceId);
+          }
           if (cleanupResult?.connectionLost) {
             this.handleConnectionLost();
           }
@@ -134,12 +137,7 @@ export default class MaxxiChargeAdapter extends utils.Adapter {
         "active-device-cleanup",
       );
     } catch (error) {
-      this.log.error(
-        `Fatal error during initialization: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
-      await this.dispose();
+      await this.failInitialization(error);
     }
   }
 
@@ -197,6 +195,13 @@ export default class MaxxiChargeAdapter extends utils.Adapter {
     this.bkwMode?.handleConnectionLost();
   }
 
+  private handleDeviceInactive(deviceId: string): void {
+    this.commandService?.handleDeviceInactive(deviceId);
+    this.ecoMode?.handleDeviceInactive(deviceId);
+    this.batteryMode?.handleDeviceInactive(deviceId);
+    this.bkwMode?.handleDeviceInactive(deviceId);
+  }
+
   private async handleDeviceSeen(deviceEvent: DeviceTouchEvent): Promise<void> {
     if (!deviceEvent.deviceId) {
       return;
@@ -228,51 +233,113 @@ export default class MaxxiChargeAdapter extends utils.Adapter {
   }
 
   private async dispose(): Promise<void> {
+    if (this.disposePromise) {
+      await this.disposePromise;
+      return;
+    }
+
+    this.disposePromise = this.performDispose();
+
+    try {
+      await this.disposePromise;
+    } finally {
+      this.disposePromise = null;
+    }
+  }
+
+  private async performDispose(): Promise<void> {
     const disposals: Promise<void>[] = [];
 
-    if (this.cleanupIntervalHandle && this.scheduler) {
-      this.scheduler.clearInterval(this.cleanupIntervalHandle);
+    const scheduler = this.scheduler;
+    const stateManager = this.stateManager;
+    const deviceRegistry = this.deviceRegistry;
+    const localApi = this.localApi;
+    const cloudApi = this.cloudApi;
+    const ecoMode = this.ecoMode;
+    const batteryMode = this.batteryMode;
+    const bkwMode = this.bkwMode;
+    const commandService = this.commandService;
+
+    if (this.cleanupIntervalHandle && scheduler) {
+      scheduler.clearInterval(this.cleanupIntervalHandle);
       this.cleanupIntervalHandle = null;
     }
 
-    if (this.localApi) {
-      disposals.push(this.localApi.dispose());
-      this.localApi = null;
+    this.localApi = null;
+    this.cloudApi = null;
+    this.ecoMode = null;
+    this.batteryMode = null;
+    this.bkwMode = null;
+    this.commandService = null;
+    this.scheduler = null;
+    this.deviceRegistry = null;
+    this.stateManager = null;
+    this.requestClient = null;
+    this.runtimeConfig = null;
+
+    if (localApi) {
+      disposals.push(localApi.dispose());
     }
 
-    if (this.cloudApi) {
-      disposals.push(this.cloudApi.dispose());
-      this.cloudApi = null;
+    if (cloudApi) {
+      disposals.push(cloudApi.dispose());
     }
 
-    if (this.ecoMode) {
-      disposals.push(this.ecoMode.dispose());
+    if (ecoMode) {
+      disposals.push(ecoMode.dispose());
     }
 
-    if (this.batteryMode) {
-      disposals.push(this.batteryMode.dispose());
+    if (batteryMode) {
+      disposals.push(batteryMode.dispose());
     }
 
-    if (this.bkwMode) {
-      disposals.push(this.bkwMode.dispose());
+    if (bkwMode) {
+      disposals.push(bkwMode.dispose());
     }
 
-    if (this.commandService) {
-      disposals.push(this.commandService.dispose());
+    if (commandService) {
+      disposals.push(commandService.dispose());
     }
 
     await Promise.allSettled(disposals);
 
-    if (this.scheduler) {
-      await this.scheduler.dispose();
+    if (scheduler) {
+      await scheduler.dispose();
     }
 
-    if (this.deviceRegistry) {
-      await this.deviceRegistry.reset();
+    if (deviceRegistry) {
+      await deviceRegistry.reset();
     } else {
-      await this.stateManager?.resetInfoStates();
+      await stateManager?.resetInfoStates();
     }
 
-    this.stateManager?.clearCaches();
+    stateManager?.clearCaches();
+  }
+
+  private async failInitialization(error: unknown): Promise<never> {
+    this.shuttingDown = true;
+
+    this.log.error(
+      `Fatal error during initialization: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+
+    try {
+      await this.dispose();
+    } catch (disposeError) {
+      this.log.error(
+        `Error during fatal initialization cleanup: ${
+          disposeError instanceof Error
+            ? disposeError.message
+            : String(disposeError)
+        }`,
+      );
+    }
+
+    this.terminate(
+      "Initialization failed",
+      utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION,
+    );
   }
 }

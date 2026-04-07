@@ -1,6 +1,7 @@
 import type {
   AdapterInstance,
   JsonValue,
+  ManagedStateCommon,
   ObjectDefinition,
 } from "../types/shared";
 import {
@@ -118,7 +119,7 @@ export default class StateManager {
 
   public async ensureChannel(
     id: string,
-    common: Record<string, unknown>,
+    common: ioBroker.ChannelCommon,
   ): Promise<void> {
     await this.ensureObject(id, {
       type: "channel",
@@ -129,7 +130,7 @@ export default class StateManager {
 
   public async ensureFolder(
     id: string,
-    common: Record<string, unknown>,
+    common: ioBroker.OtherCommon,
   ): Promise<void> {
     await this.ensureObject(id, {
       type: "folder",
@@ -140,7 +141,7 @@ export default class StateManager {
 
   public async ensureStateObject(
     id: string,
-    common: Record<string, unknown>,
+    common: ManagedStateCommon,
   ): Promise<void> {
     await this.ensureObject(id, {
       type: "state",
@@ -219,7 +220,11 @@ export default class StateManager {
     id: string,
     definition: ObjectDefinition,
   ): Promise<void> {
-    const fingerprint = buildComparableObjectDefinition(definition);
+    const fingerprint = buildComparableObjectDefinition({
+      type: definition.type,
+      common: definition.common as Record<string, unknown>,
+      native: definition.native,
+    });
     if (this.objectDefinitionCache.get(id) === fingerprint) {
       return;
     }
@@ -228,7 +233,7 @@ export default class StateManager {
     if (!existingObject) {
       await this.adapter.setObjectNotExistsAsync(
         id,
-        definition as ioBroker.SettableObject,
+        this.toSettableObject(definition),
       );
       this.objectDefinitionCache.set(id, fingerprint);
       return;
@@ -247,8 +252,7 @@ export default class StateManager {
       }
 
       await this.adapter.extendObjectAsync(id, {
-        common: definition.common as unknown as ioBroker.ObjectCommon,
-        native: definition.native,
+        ...this.toPartialObject(definition),
       });
     }
 
@@ -314,5 +318,41 @@ export default class StateManager {
     }
 
     return undefined;
+  }
+
+  private toSettableObject(
+    definition: ObjectDefinition,
+  ): ioBroker.SettableObject {
+    switch (definition.type) {
+      case "device":
+        return definition;
+      case "channel":
+        return definition;
+      case "folder":
+        return definition;
+      case "state":
+        return {
+          ...definition,
+          common: definition.common as ioBroker.StateCommon,
+        };
+    }
+  }
+
+  private toPartialObject(
+    definition: ObjectDefinition,
+  ): ioBroker.PartialObject {
+    switch (definition.type) {
+      case "device":
+        return definition;
+      case "channel":
+        return definition;
+      case "folder":
+        return definition;
+      case "state":
+        return {
+          ...definition,
+          common: definition.common as ioBroker.StateCommon,
+        };
+    }
   }
 }

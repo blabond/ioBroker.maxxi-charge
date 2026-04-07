@@ -1,12 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const constants_1 = require("../constants");
 const adapterConfigStore_1 = require("../utils/adapterConfigStore");
+const helpers_1 = require("../utils/helpers");
 class BatteryModeService {
     adapter;
     config;
     commandService;
     deviceRegistry;
-    calibrationAppliedForConnection = false;
+    calibrationAppliedDeviceIds = new Set();
     constructor(adapter, config, commandService, deviceRegistry) {
         this.adapter = adapter;
         this.config = config;
@@ -17,41 +19,73 @@ class BatteryModeService {
         if (!this.config.batteryCalibrationEnabled) {
             return;
         }
-        const activeDeviceId = this.deviceRegistry.getPrimaryDeviceId();
-        if (activeDeviceId) {
-            await this.handleDeviceAvailable(activeDeviceId);
-        }
+        await this.applyCalibrationToDevices(this.deviceRegistry.getActiveDeviceIds());
     }
     async handleDeviceAvailable(deviceId) {
-        if (!this.config.batteryCalibrationEnabled ||
-            this.calibrationAppliedForConnection) {
+        const normalizedDeviceId = deviceId.trim();
+        if (!normalizedDeviceId ||
+            !this.config.batteryCalibrationEnabled ||
+            this.calibrationAppliedDeviceIds.has(normalizedDeviceId)) {
             return;
         }
-        const applied = await this.applyCalibration(deviceId);
+        const applied = await this.applyCalibration(normalizedDeviceId);
         if (applied) {
-            this.calibrationAppliedForConnection = true;
+            this.calibrationAppliedDeviceIds.add(normalizedDeviceId);
         }
     }
-    handleConnectionLost() {
-        this.calibrationAppliedForConnection = false;
+    handleDeviceInactive(deviceId) {
+        const normalizedDeviceId = deviceId.trim();
+        if (!normalizedDeviceId) {
+            return;
+        }
+        this.calibrationAppliedDeviceIds.delete(normalizedDeviceId);
     }
-    async handleSocChange(_id, state) {
+    handleConnectionLost() {
+        this.calibrationAppliedDeviceIds.clear();
+    }
+    async handleSocChange(id, state) {
         if (!this.config.batteryCalibrationEnabled ||
             !state?.ack ||
             typeof state.val !== "number") {
             return;
         }
-        if (this.config.calibrationProgress === "down" && state.val <= 10) {
-            await this.updateCalibrationState(true, "up");
+        const deviceId = this.extractDeviceId(id);
+        if (!deviceId) {
             return;
         }
-        if (this.config.calibrationProgress === "up" && state.val >= 98) {
-            await this.updateCalibrationState(false, "down");
+        if (this.config.calibrationProgress === "down" &&
+            state.val <= constants_1.BATTERY_CALIBRATION_EMPTY_SOC) {
+            const changed = await this.updateCalibrationState(true, "up");
+            if (changed) {
+                this.calibrationAppliedDeviceIds.clear();
+                await this.applyCalibrationToDevices(this.deviceRegistry.getActiveDeviceIds());
+            }
+            return;
+        }
+        if (this.config.calibrationProgress === "up" &&
+            state.val >= constants_1.BATTERY_CALIBRATION_FULL_SOC) {
+            const changed = await this.updateCalibrationState(false, "down");
+            if (changed) {
+                this.calibrationAppliedDeviceIds.clear();
+                this.calibrationAppliedDeviceIds.delete(deviceId);
+            }
         }
     }
     dispose() {
-        this.calibrationAppliedForConnection = false;
+        this.calibrationAppliedDeviceIds.clear();
         return Promise.resolve();
+    }
+    async applyCalibrationToDevices(deviceIds) {
+        for (const deviceId of deviceIds) {
+            await this.handleDeviceAvailable(deviceId);
+        }
+    }
+    extractDeviceId(fullId) {
+        const relativeId = (0, helpers_1.extractRelativeId)(this.adapter.namespace, fullId);
+        if (!relativeId) {
+            return "";
+        }
+        return relativeId.split(".")[0] ?? "";
     }
     async applyCalibration(deviceId) {
         try {
@@ -73,6 +107,10 @@ class BatteryModeService {
         }
     }
     async updateCalibrationState(enabled, progress) {
+        if (this.config.batteryCalibrationEnabled === enabled &&
+            this.config.calibrationProgress === progress) {
+            return false;
+        }
         try {
             await (0, adapterConfigStore_1.updateAdapterNativeConfig)(this.adapter, {
                 batterycalibration: enabled,
@@ -81,12 +119,14 @@ class BatteryModeService {
             this.config.batteryCalibrationEnabled = enabled;
             this.config.calibrationProgress = progress;
             if (!enabled) {
-                this.calibrationAppliedForConnection = false;
+                this.calibrationAppliedDeviceIds.clear();
             }
             this.adapter.log.debug(`BatteryMode: Updated calibration state to enabled=${enabled}, progress=${progress}.`);
+            return true;
         }
         catch (error) {
             this.adapter.log.error(`BatteryMode: Failed to update adapter config: ${error instanceof Error ? error.message : String(error)}`);
+            return false;
         }
     }
 }

@@ -46,11 +46,11 @@ http://www.maxxisun.de
 
 ## Changelog
 
-### 2.0.0-Alpha.6 (2026-04-04)
+### 2.0.0-Alpha.8 (2026-04-07)
 
 - Adapter requires node.js >= 22 now.
 - Javascript migration to Typescript
-- - FIX BKWMode after deactivating
+- FIX BKWMode after deactivating
 
 Coming Soon:
 
@@ -95,7 +95,7 @@ Coming Soon:
 - **Summer/Winter mode** added:
   - Dynamic adjustment of charging parameters based on seasons.
   - Configurable with start and end dates.
-- **Cloud API query interval**: Interval for CCU queries in cloud mode is now configurable via a slider between 10 and 60 seconds.
+- **Cloud API query interval**: Interval for CCU queries in cloud mode is now configurable with a minimum of 5 seconds.
 
 ## License
 

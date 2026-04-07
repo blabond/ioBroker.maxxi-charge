@@ -77,7 +77,6 @@ class LocalApiServer {
     config;
     stateManager;
     deviceRegistry;
-    commandService;
     requestClient;
     onDeviceSeen;
     server = null;
@@ -85,12 +84,11 @@ class LocalApiServer {
     lastCloudMirrorErrorLogTs = 0;
     lastAbortedPeerWarningLogTs = 0;
     suppressedAbortedPeerWarnings = 0;
-    constructor(adapter, config, stateManager, deviceRegistry, commandService, requestClient, onDeviceSeen) {
+    constructor(adapter, config, stateManager, deviceRegistry, requestClient, onDeviceSeen) {
         this.adapter = adapter;
         this.config = config;
         this.stateManager = stateManager;
         this.deviceRegistry = deviceRegistry;
-        this.commandService = commandService;
         this.requestClient = requestClient;
         this.onDeviceSeen = onDeviceSeen;
     }
@@ -190,8 +188,11 @@ class LocalApiServer {
                 mutablePayload.ip_addr = remoteIp;
             }
             const rawDeviceId = typeof mutablePayload.deviceId === "string"
-                ? mutablePayload.deviceId
-                : "UnknownDevice";
+                ? mutablePayload.deviceId.trim()
+                : "";
+            if (!rawDeviceId) {
+                throw createHttpError("Invalid or missing deviceId.", 400);
+            }
             const deviceId = (0, helpers_1.normalizeDeviceId)(rawDeviceId);
             if (!deviceId) {
                 throw createHttpError("Invalid or missing deviceId.", 400);

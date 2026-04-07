@@ -12,14 +12,18 @@ export default class MaxxiChargeAdapter extends utils.Adapter {
     private localApi;
     private cloudApi;
     private cleanupIntervalHandle;
+    private disposePromise;
     private shuttingDown;
     constructor(options?: Partial<utils.AdapterOptions>);
     private onReady;
     private onStateChange;
     private onUnload;
     private handleConnectionLost;
+    private handleDeviceInactive;
     private handleDeviceSeen;
     private isSocStateId;
     private dispose;
+    private performDispose;
+    private failInitialization;
 }
 //# sourceMappingURL=adapter.d.ts.map

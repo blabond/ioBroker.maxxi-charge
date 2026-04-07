@@ -16,7 +16,6 @@ import {
   normalizeDeviceId,
   normalizeIpAddress,
 } from "../utils/helpers";
-import type CommandService from "../commands/commandService";
 import type DeviceRegistry from "../core/deviceRegistry";
 import type StateManager from "../core/stateManager";
 import type RequestClient from "./requestClient";
@@ -140,7 +139,6 @@ export default class LocalApiServer {
     },
     private readonly stateManager: StateManager,
     private readonly deviceRegistry: DeviceRegistry,
-    private readonly commandService: CommandService,
     private readonly requestClient: RequestClient,
     private readonly onDeviceSeen: (
       deviceEvent: DeviceTouchEvent,
@@ -271,7 +269,7 @@ export default class LocalApiServer {
         );
       }
 
-      const mutablePayload = payload;
+      const mutablePayload: Record<string, unknown> = payload;
       const remoteIp = normalizeIpAddress(request.socket.remoteAddress);
       if (!mutablePayload.ip_addr && remoteIp) {
         mutablePayload.ip_addr = remoteIp;
@@ -279,8 +277,12 @@ export default class LocalApiServer {
 
       const rawDeviceId =
         typeof mutablePayload.deviceId === "string"
-          ? mutablePayload.deviceId
-          : "UnknownDevice";
+          ? mutablePayload.deviceId.trim()
+          : "";
+      if (!rawDeviceId) {
+        throw createHttpError("Invalid or missing deviceId.", 400);
+      }
+
       const deviceId = normalizeDeviceId(rawDeviceId);
       if (!deviceId) {
         throw createHttpError("Invalid or missing deviceId.", 400);

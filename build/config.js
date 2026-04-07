@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.normalizeConfig = normalizeConfig;
+const constants_1 = require("./constants");
 const date_1 = require("./utils/date");
 const helpers_1 = require("./utils/helpers");
 function normalizeConfig(rawConfig) {
-    const ccuIntervalSeconds = (0, helpers_1.parseInteger)(rawConfig.ccuinterval, 10);
+    const ccuIntervalSeconds = (0, helpers_1.parseInteger)(rawConfig.ccuinterval, 5);
     const port = (0, helpers_1.parseInteger)(rawConfig.port, 5501);
     const feedInMode = (0, helpers_1.parseInteger)(rawConfig.feedInMode, 95);
     const bkwPowerTarget = (0, helpers_1.parseInteger)(rawConfig.bkw_powerTarget, 600);
@@ -12,7 +13,7 @@ function normalizeConfig(rawConfig) {
     return {
         apiMode: rawConfig.apimode === "cloud" ? "cloud" : "local",
         ccuName: String(rawConfig.maxxiccuname ?? "").trim(),
-        ccuIntervalMs: (0, helpers_1.validateInterval)(ccuIntervalSeconds * 1_000, 10_000, 3_600_000),
+        ccuIntervalMs: (0, helpers_1.validateInterval)(ccuIntervalSeconds * 1_000, constants_1.CLOUD_CCU_MIN_INTERVAL_MS, 3_600_000),
         localPort: Math.min(Math.max(port, 1), 65_535),
         localCloudMirrorEnabled: (0, helpers_1.parseBoolean)(rawConfig.localCloudMirror),
         seasonModeEnabled: (0, helpers_1.parseBoolean)(rawConfig.enableseasonmode),
