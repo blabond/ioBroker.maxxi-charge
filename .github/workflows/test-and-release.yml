@@ -138,7 +138,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - uses: ioBroker/testing-action-deploy@v1
+      - uses: actions/setup-node@v6
         with:
           node-version: "24.x"
           github-token: ${{ secrets.GITHUB_TOKEN }}
