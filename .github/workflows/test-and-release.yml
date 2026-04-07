@@ -47,7 +47,7 @@ jobs:
         run: npx eslint -c eslint.config.mjs . --fix
 
       - name: Apply Prettier formatting
-        run: npx prettier . --write
+        run: npx prettier . --write --ignore-path .prettierignore
 
       - name: Commit and push fixes if needed
         run: |
