@@ -16,7 +16,7 @@
 - **Steuerbefehle**:
   - Dynamische Datenpunkte (`<deviceId>.sendcommand`) zum Senden von Befehlen an die CCU.
 - **Abfrageintervall (Cloud-Modus)**:
-  - Das Abfrageintervall der CCU-Daten beträgt 5 Sekunden.
+  - Das Abfrageintervall der CCU-Daten ist fest auf 5 Sekunden gesetzt.
 
 ## Anforderungen
 
@@ -39,7 +39,7 @@
 | Einstellung               | Beschreibung                                                                                                                                                                                                                     |
 | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Maxxi CCU Name**        | Name oder IP-Adresse der Maxxi CCU.                                                                                                                                                                                              |
-| **CCU Abfrageintervall**  | Intervall (mindestens 5 Sekunden) für die Abfrage der CCU-Daten im Cloud-Modus.                                                                                                                                                  |
+| **CCU Abfrageintervall**  | Legacy-Einstellung. Im Cloud-Modus ist das CCU-Abfrageintervall fest auf 5 Sekunden gesetzt und nicht konfigurierbar.                                                                                                            |
 | **Sommer/Winter-Betrieb** | Automatische Anpassung der Ladeparameter basierend auf definierten Winter-Daten.                                                                                                                                                 |
 | **Port für Local-API**    | Definiert den Port, auf dem die Local-API lauscht.                                                                                                                                                                               |
 | **Einspeisungssteuerung** | Konfiguration zur Aktivierung oder Deaktivierung der Einspeisung.                                                                                                                                                                |

@@ -15,8 +15,8 @@
   - **Feed-in Control**: Configures maximum charge to enable or disable energy feed-in to the grid.
 - **Control Commands**:
   - Dynamic datapoints (`<deviceId>.sendcommand`) are used to send commands to the CCU.
-- **Flexible Query Interval (Cloud Mode)**:
-  - The polling interval of the CCU data is 5 seconds.
+- **Fixed Query Interval (Cloud Mode)**:
+  - The polling interval of the CCU data is fixed to 5 seconds.
 
 ## Requirements
 
@@ -39,7 +39,7 @@
 | Setting                 | Description                                                                                                                                                                                                    |
 | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Maxxi CCU Name**      | Name or IP address of the Maxxi CCU.                                                                                                                                                                           |
-| **CCU Query Interval**  | Interval (minimum 5 seconds) for querying CCU data in Cloud Mode.                                                                                                                                              |
+| **CCU Query Interval**  | Legacy setting. In Cloud Mode, the CCU polling interval is fixed to 5 seconds and is not configurable.                                                                                                         |
 | **Summer/Winter Mode**  | Automatically adjusts charging parameters based on defined winter dates.                                                                                                                                       |
 | **Port for Local-API**  | Defines the port on which the Local-API listens.                                                                                                                                                               |
 | **Feed-in Control**     | Configures whether excess energy is fed into the grid.                                                                                                                                                         |

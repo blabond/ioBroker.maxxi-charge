@@ -1,6 +1,7 @@
 import {
   CLOUD_API_BASE_URL,
   CLOUD_CCU_INITIAL_DELAY_MS,
+  CLOUD_CCU_REQUEST_TIMEOUT_MS,
   CLOUD_FAILURE_LOG_THROTTLE_MS,
   CLOUD_INFO_INTERVAL_MS,
   CLOUD_RETRY_COUNT,
@@ -176,16 +177,20 @@ export default class CloudApiPoller {
     this.ccuRequestInFlight = true;
 
     try {
-      const payload = await this.fetchWithRetry("ccu", async () => {
-        const response = await this.requestClient.get(
-          `${CLOUD_API_BASE_URL}?ccu=${encodeURIComponent(this.config.ccuName)}`,
-          {
-            timeoutMs: REQUEST_TIMEOUT_MS,
-            label: `Cloud CCU request for ${this.config.ccuName}`,
-          },
-        );
-        return response.data;
-      });
+      const payload = await this.fetchWithRetry(
+        "ccu",
+        async () => {
+          const response = await this.requestClient.get(
+            `${CLOUD_API_BASE_URL}?ccu=${encodeURIComponent(this.config.ccuName)}`,
+            {
+              timeoutMs: CLOUD_CCU_REQUEST_TIMEOUT_MS,
+              label: `Cloud CCU request for ${this.config.ccuName}`,
+            },
+          );
+          return response.data;
+        },
+        { retryCount: 0 },
+      );
 
       if (!isRecord(payload) || !this.started) {
         return;
@@ -214,8 +219,12 @@ export default class CloudApiPoller {
   private async fetchWithRetry<T>(
     label: string,
     callback: () => Promise<T>,
+    options: { retryCount?: number; retryDelayMs?: number } = {},
   ): Promise<T | null> {
-    for (let attempt = 1; attempt <= CLOUD_RETRY_COUNT + 1; attempt++) {
+    const retryCount = options.retryCount ?? CLOUD_RETRY_COUNT;
+    const retryDelayMs = options.retryDelayMs ?? CLOUD_RETRY_DELAY_MS;
+
+    for (let attempt = 1; attempt <= retryCount + 1; attempt++) {
       if (!this.started) {
         return null;
       }
@@ -229,13 +238,13 @@ export default class CloudApiPoller {
           return null;
         }
 
-        if (attempt <= CLOUD_RETRY_COUNT) {
+        if (attempt <= retryCount) {
           this.logThrottledFailure(
             `${label}:retry`,
             "warn",
-            `Cloud API ${label} request failed. Retrying ${attempt}/${CLOUD_RETRY_COUNT}.`,
+            `Cloud API ${label} request failed. Retrying ${attempt}/${retryCount}.`,
           );
-          await sleep(CLOUD_RETRY_DELAY_MS);
+          await sleep(retryDelayMs);
           continue;
         }
 

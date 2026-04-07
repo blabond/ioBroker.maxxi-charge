@@ -10,6 +10,7 @@ export interface JsonObject {
 
 export interface AdapterConfig {
   maxxiccuname?: string;
+  // Legacy setting: ignored in cloud mode, still parsed for local-mode compatibility.
   ccuinterval?: string | number;
   port?: string | number;
   apimode?: string;

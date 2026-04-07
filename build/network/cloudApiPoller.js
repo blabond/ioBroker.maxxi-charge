@@ -111,11 +111,11 @@ class CloudApiPoller {
         try {
             const payload = await this.fetchWithRetry("ccu", async () => {
                 const response = await this.requestClient.get(`${constants_1.CLOUD_API_BASE_URL}?ccu=${encodeURIComponent(this.config.ccuName)}`, {
-                    timeoutMs: constants_1.REQUEST_TIMEOUT_MS,
+                    timeoutMs: constants_1.CLOUD_CCU_REQUEST_TIMEOUT_MS,
                     label: `Cloud CCU request for ${this.config.ccuName}`,
                 });
                 return response.data;
-            });
+            }, { retryCount: 0 });
             if (!(0, helpers_1.isRecord)(payload) || !this.started) {
                 return;
             }
@@ -134,8 +134,10 @@ class CloudApiPoller {
             this.ccuRequestInFlight = false;
         }
     }
-    async fetchWithRetry(label, callback) {
-        for (let attempt = 1; attempt <= constants_1.CLOUD_RETRY_COUNT + 1; attempt++) {
+    async fetchWithRetry(label, callback, options = {}) {
+        const retryCount = options.retryCount ?? constants_1.CLOUD_RETRY_COUNT;
+        const retryDelayMs = options.retryDelayMs ?? constants_1.CLOUD_RETRY_DELAY_MS;
+        for (let attempt = 1; attempt <= retryCount + 1; attempt++) {
             if (!this.started) {
                 return null;
             }
@@ -148,9 +150,9 @@ class CloudApiPoller {
                 if (!this.started) {
                     return null;
                 }
-                if (attempt <= constants_1.CLOUD_RETRY_COUNT) {
-                    this.logThrottledFailure(`${label}:retry`, "warn", `Cloud API ${label} request failed. Retrying ${attempt}/${constants_1.CLOUD_RETRY_COUNT}.`);
-                    await (0, helpers_1.sleep)(constants_1.CLOUD_RETRY_DELAY_MS);
+                if (attempt <= retryCount) {
+                    this.logThrottledFailure(`${label}:retry`, "warn", `Cloud API ${label} request failed. Retrying ${attempt}/${retryCount}.`);
+                    await (0, helpers_1.sleep)(retryDelayMs);
                     continue;
                 }
                 this.logThrottledFailure(`${label}:final`, "error", `Cloud API ${label} request failed after retries: ${error instanceof Error ? error.message : String(error)}`);
