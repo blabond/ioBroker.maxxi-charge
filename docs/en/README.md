@@ -16,7 +16,7 @@
 - **Control Commands**:
   - Dynamic datapoints (`<deviceId>.sendcommand`) are used to send commands to the CCU.
 - **Flexible Query Interval (Cloud Mode)**:
-  - Users can adjust the CCU data query interval between 10 and 90 seconds.
+  - The polling interval of the CCU data is 5 seconds.
 
 ## Requirements
 
@@ -33,8 +33,6 @@
      - **Cloud**:
        - Enter the **CCU name** (e.g., `maxxi-XXXXXX-YYY`).
      - **Local:** Enter the ioBroker address on the MaxxiCharge webpage (`maxxi.local`) under `Api-Route`: `http://"ioBroker IP":"PORT"`.
-2. **Important Update Note**:
-   - Delete the `.sendcommand` folder and restart the adapter if updating from an older version. (< 1.4.0)
 
 ## Configuration Options
 
@@ -57,7 +55,7 @@ The Summer/Winter Mode dynamically adjusts the charging parameters:
   - If the SOC (State of Charge) ≥ 55%, the minimum charge is reduced to 40%.
 - **Summer Mode**:
   - Minimum charge is set to 10%.
-  - Maximum charge is capped at 97%.
+  - Maximum charge is capped at 95%.
 - Activation occurs through a checkbox in the adapter settings, and the timeframes are defined by the winter start and end dates.
 
 ## BKW Mode
@@ -69,8 +67,6 @@ This is useful if a balcony power system (BKW) has been officially registered an
 
 If the battery SOC drops below 97%, BKW mode is automatically deactivated, and the additional grid feed-in is reduced or stopped.
 The process runs fully automatically and requires no further user interaction.
-
-Note: BKW mode is only activated if Enable BKW mode is selected in the adapter settings and battery calibration mode (batterycalibration) is disabled.
 
 ## Battery Calibration
 

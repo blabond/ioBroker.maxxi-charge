@@ -15,8 +15,8 @@
   - **Einspeisungssteuerung**: Konfiguration der maximalen Ladung zur Aktivierung oder Deaktivierung der Einspeisung.
 - **Steuerbefehle**:
   - Dynamische Datenpunkte (`<deviceId>.sendcommand`) zum Senden von Befehlen an die CCU.
-- **Flexibles Abfrageintervall (Cloud-Modus)**:
-  - Der Nutzer kann das Abfrageintervall der CCU-Daten zwischen 10 und 90 Sekunden anpassen.
+- **Abfrageintervall (Cloud-Modus)**:
+  - Das Abfrageintervall der CCU-Daten beträgt 5 Sekunden.
 
 ## Anforderungen
 
@@ -33,8 +33,6 @@
      - **Cloud**:
        - Tragen Sie den **CCU-Namen** ein (z. B. `maxxi-XXXXXX-YYY`).
      - **Local:** Adresse von ioBroker auf der MaxxiCharge-Webseite (`maxxi.local`) unter `Api-Route` eintragen: `http://"ioBroker IP":"PORT"`.
-2. **Wichtiger Hinweis beim Update**:
-   - Löschen Sie den Ordner `.sendcommand` und starten Sie den Adapter neu, wenn Sie von einer früheren Version aktualisieren. (< 1.4.0)
 
 ## Konfigurationsmöglichkeiten
 
@@ -57,7 +55,7 @@ Der Sommer/Winter-Betrieb bietet eine dynamische Anpassung der Ladeparameter:
   - Falls der SOC (State of Charge) ≥ 55% beträgt, wird die Mindestladung auf 40% reduziert.
 - **Sommermodus**:
   - Mindestladung wird auf 10% gesetzt.
-  - Maximale Ladung wird auf 97% begrenzt.
+  - Maximale Ladung wird auf 95% begrenzt.
 - Die Aktivierung erfolgt durch eine Checkbox in den Adapter-Einstellungen, die Zeiträume werden durch Winter-Start- und -Enddatum festgelegt.
 
 ## Batteriekalibrierung
@@ -91,8 +89,6 @@ Dies kann sinnvoll sein, wenn ein Balkonkraftwerk (BKW) ordnungsgemäß angemeld
 
 Sinkt der Ladezustand des Akkus wieder unter 97 %, deaktiviert sich der BKW-Modus automatisch und die Einspeisung wird reduziert oder beendet.
 Der Prozess läuft vollständig automatisch und benötigt keine weitere Benutzerinteraktion.
-
-Hinweis: Die Aktivierung des BKW-Modus erfolgt nur, wenn in den Adaptereinstellungen BKW-Modus aktivieren gewählt und der Batteriekalibrierungsmodus (batterycalibration) deaktiviert ist.
 
 ## Datenpunkte
 
