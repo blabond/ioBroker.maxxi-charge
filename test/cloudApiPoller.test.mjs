@@ -1,10 +1,10 @@
-describe("CloudApiPoller", () => {
-  const CloudApiPoller = require("../build/network/cloudApiPoller").default;
-  const {
-    CLOUD_CCU_INTERVAL_MS,
-    CLOUD_CCU_REQUEST_TIMEOUT_MS,
-  } = require("../build/constants");
+import cloudApiPollerModule from "../build/network/cloudApiPoller.js";
+import constantsModule from "../build/constants.js";
 
+const { default: CloudApiPoller } = cloudApiPollerModule;
+const { CLOUD_CCU_INTERVAL_MS, CLOUD_CCU_REQUEST_TIMEOUT_MS } = constantsModule;
+
+describe("CloudApiPoller", () => {
   function createPoller({ requestClient } = {}) {
     const adapter = {
       log: {

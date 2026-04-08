@@ -1,6 +1,8 @@
-describe("EcoModeService", () => {
-  const EcoModeService = require("../build/modes/ecoModeService").default;
+import ecoModeServiceModule from "../build/modes/ecoModeService.js";
 
+const { default: EcoModeService } = ecoModeServiceModule;
+
+describe("EcoModeService", () => {
   function buildWinterWindow() {
     const winterFrom = new Date();
     winterFrom.setDate(winterFrom.getDate() - 1);

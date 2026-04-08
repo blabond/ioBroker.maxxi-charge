@@ -4,10 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const adapter_1 = __importDefault(require("./adapter"));
-if (module.parent) {
-    module.exports = (options) => new adapter_1.default(options);
+const createAdapter = (options) => new adapter_1.default(options);
+if (require.main !== module) {
+    module.exports = createAdapter;
 }
 else {
-    (() => new adapter_1.default())();
+    createAdapter();
 }
 //# sourceMappingURL=main.js.map

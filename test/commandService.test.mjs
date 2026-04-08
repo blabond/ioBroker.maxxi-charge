@@ -1,6 +1,8 @@
-describe("CommandService", () => {
-  const CommandService = require("../build/commands/commandService").default;
+import commandServiceModule from "../build/commands/commandService.js";
 
+const { default: CommandService } = commandServiceModule;
+
+describe("CommandService", () => {
   function createEnvironment({
     initializedState,
     withSendcommandChannel = true,

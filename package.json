@@ -50,12 +50,12 @@
     "io-package.json"
   ],
   "scripts": {
-    "clean": "node -e \"require('fs').rmSync('build', { recursive: true, force: true })\"",
+    "clean": "node ./scripts/clean.mjs",
     "build": "npm run clean && tsc -p tsconfig.build.json",
     "watch": "tsc -p tsconfig.build.json --watch",
-    "test:js": "mocha --config test/mocharc.custom.json \"{!(node_modules|test)/**/*.test.js,*.test.js,test/**/*.test.js,test/**/test!(PackageFiles|Startup).js}\"",
-    "test:package": "mocha test/package --exit",
-    "test:integration": "npm run build && mocha test/integration --exit",
+    "test:js": "mocha --config test/mocharc.custom.json \"test/**/*.test.mjs\"",
+    "test:package": "mocha test/package.mjs --exit",
+    "test:integration": "npm run build && mocha test/integration.mjs --exit",
     "test": "npm run build && npm run test:js && npm run test:package",
     "check": "tsc --noEmit -p tsconfig.check.json",
     "release": "release-script",

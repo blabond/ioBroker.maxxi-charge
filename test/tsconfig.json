@@ -1,13 +1,14 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    "allowJs": true,
     "noImplicitAny": false
   },
   "include": [
     "eslint.config.mjs",
     "prettier.config.mjs",
-    "./*.js",
-    "./**/*.js",
+    "./*.mjs",
+    "./**/*.mjs",
     "./**/*.ts"
   ]
 }

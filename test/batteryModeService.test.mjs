@@ -1,7 +1,8 @@
-describe("BatteryModeService", () => {
-  const BatteryModeService =
-    require("../build/modes/batteryModeService").default;
+import batteryModeServiceModule from "../build/modes/batteryModeService.js";
 
+const { default: BatteryModeService } = batteryModeServiceModule;
+
+describe("BatteryModeService", () => {
   function createService({
     activeDeviceIds = ["ccu1"],
     batteryCalibrationEnabled = true,

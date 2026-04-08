@@ -1,6 +1,8 @@
-describe("normalizeConfig", () => {
-  const { normalizeConfig } = require("../build/config");
+import configModule from "../build/config.js";
 
+const { normalizeConfig } = configModule;
+
+describe("normalizeConfig", () => {
   it("uses a fixed 5 second interval in cloud mode", () => {
     const config = normalizeConfig({
       apimode: "cloud",

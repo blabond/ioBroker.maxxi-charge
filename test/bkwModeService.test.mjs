@@ -1,6 +1,8 @@
-describe("BkwModeService", () => {
-  const BkwModeService = require("../build/modes/bkwModeService").default;
+import bkwModeServiceModule from "../build/modes/bkwModeService.js";
 
+const { default: BkwModeService } = bkwModeServiceModule;
+
+describe("BkwModeService", () => {
   function createService({
     bkwEnabled = true,
     bkwAdjustment = -35,
