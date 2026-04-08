@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const constants_1 = require("../constants");
 const helpers_1 = require("../utils/helpers");
 const SENDCOMMAND_INITIALIZED_STATE_SUFFIX = "_sendcommandInitialized";
-const SENDCOMMAND_INITIALIZED_CODE = "260406";
+const SENDCOMMAND_INITIALIZED_CODE = "260408";
 const COMMAND_DEFINITIONS = [
     {
         id: "maxOutputPower",
@@ -42,16 +42,19 @@ const COMMAND_DEFINITIONS = [
         unit: "W",
     },
     {
-        id: "offlineOutput",
+        id: "offlineMode",
         name: {
-            en: "Offline output (W)",
-            de: "Offline-Ausgang (W)",
+            en: "Cloudservice",
+            de: "Cloudservice",
         },
         type: "number",
-        role: "level",
-        min: 50,
-        max: 600,
-        unit: "W",
+        role: "value",
+        min: 1,
+        max: 2,
+        states: {
+            1: "Cloud mode aktiv",
+            2: "Lokal mode aktiv",
+        },
     },
     {
         id: "threshold",
