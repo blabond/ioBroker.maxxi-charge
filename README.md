@@ -46,11 +46,12 @@ http://www.maxxisun.de
 
 ## Changelog
 
-### 2.0.0-Alpha.9 (2026-04-07)
+### 2.0.0-alpha.10 (2026-04-08)
 
-- Adapter requires node.js >= 22 now.
-- Javascript migration to Typescript
-- FIX BKWMode after deactivating
+- Requires Node.js >= 22
+- Migrated from JavaScript to TypeScript
+- Replaced Axios with native fetch
+- Fixed BKW mode after deactivation
 
 ToDo:
 
