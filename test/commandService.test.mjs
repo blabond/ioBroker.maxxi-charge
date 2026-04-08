@@ -14,6 +14,12 @@ describe("CommandService", () => {
     const subscribeCalls = [];
     const unsubscribeCalls = [];
     const requestCalls = [];
+    const logCalls = {
+      debug: [],
+      info: [],
+      warn: [],
+      error: [],
+    };
 
     if (withSendcommandChannel) {
       objects.add("ccu1.sendcommand");
@@ -30,10 +36,18 @@ describe("CommandService", () => {
     const adapter = {
       namespace: "maxxi-charge.0",
       log: {
-        debug: () => {},
-        info: () => {},
-        warn: () => {},
-        error: () => {},
+        debug: (message) => {
+          logCalls.debug.push(message);
+        },
+        info: (message) => {
+          logCalls.info.push(message);
+        },
+        warn: (message) => {
+          logCalls.warn.push(message);
+        },
+        error: (message) => {
+          logCalls.error.push(message);
+        },
       },
       getObjectAsync: async (id) =>
         objects.has(id)
@@ -83,6 +97,7 @@ describe("CommandService", () => {
     const requestClient = {
       post: async (...args) => {
         requestCalls.push(args);
+        return { status: 200, data: "ok" };
       },
     };
 
@@ -94,6 +109,7 @@ describe("CommandService", () => {
       subscribeCalls,
       unsubscribeCalls,
       requestCalls,
+      logCalls,
     };
   }
 
@@ -181,9 +197,35 @@ describe("CommandService", () => {
 
     result.should.equal(true);
     environment.requestCalls.should.have.length(0);
+    environment.logCalls.debug[0].should.contain("Skipping maxSOC=95");
     environment.states.get("ccu1.sendcommand.maxSOC").should.deep.equal({
       val: 95,
       ack: true,
     });
+  });
+
+  it("sends commands as form-urlencoded node transport requests", async () => {
+    const environment = createEnvironment({
+      existingStates: {
+        "ccu1.ip_addr": { val: "192.168.1.10", ack: true },
+      },
+    });
+
+    const service = environment.createService();
+    const result = await service.applyDeviceSetting("ccu1", "maxSOC", 96);
+
+    result.should.equal(true);
+    environment.requestCalls.should.have.length(1);
+
+    const [url, payload, options] = environment.requestCalls[0];
+    url.should.equal("http://192.168.1.10/config");
+    payload.should.equal("maxSOC=96");
+    options.headers.should.deep.equal({
+      "Content-Type": "application/x-www-form-urlencoded",
+    });
+    options.responseType.should.equal("text");
+    options.transport.should.equal("node");
+    environment.logCalls.debug[0].should.contain("Sending maxSOC=96");
+    environment.logCalls.debug[1].should.contain("Sent maxSOC=96");
   });
 });

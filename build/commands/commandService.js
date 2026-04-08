@@ -113,7 +113,6 @@ class CommandService {
         });
         for (const definition of this.commandDefinitions.values()) {
             const relativeId = `${normalizedDeviceId}.sendcommand.${definition.id}`;
-            const fullId = `${this.adapter.namespace}.${relativeId}`;
             const stateCommon = {
                 name: definition.name,
                 type: definition.type,
@@ -128,9 +127,9 @@ class CommandService {
                 ...(definition.states ? { states: definition.states } : {}),
             };
             await this.stateManager.ensureStateObject(relativeId, stateCommon);
-            if (!this.subscribedStateIds.has(fullId)) {
-                this.adapter.subscribeStates(fullId);
-                this.subscribedStateIds.add(fullId);
+            if (!this.subscribedStateIds.has(relativeId)) {
+                this.adapter.subscribeStates(relativeId);
+                this.subscribedStateIds.add(relativeId);
             }
         }
     }
@@ -183,6 +182,7 @@ class CommandService {
         await this.ensureDeviceStates(normalizedDeviceId);
         const stateId = this.getCommandStateId(normalizedDeviceId, commandId);
         if (await this.hasConfirmedCommandValue(stateId, normalizedDeviceId, commandId, normalizedValue)) {
+            this.adapter.log.debug(`CommandService: Skipping ${commandId}=${normalizedValue} for ${normalizedDeviceId} because the value is already confirmed.`);
             await this.stateManager.setStateIfChanged(stateId, normalizedValue, true);
             return true;
         }
@@ -200,8 +200,8 @@ class CommandService {
         return true;
     }
     dispose() {
-        for (const fullId of this.subscribedStateIds) {
-            this.adapter.unsubscribeStates(fullId);
+        for (const relativeId of this.subscribedStateIds) {
+            this.adapter.unsubscribeStates(relativeId);
         }
         this.subscribedStateIds.clear();
         this.confirmedCommandValueCache.clear();
@@ -212,13 +212,13 @@ class CommandService {
         if (!normalizedDeviceId) {
             return;
         }
-        const fullIdPrefix = `${this.adapter.namespace}.${normalizedDeviceId}.sendcommand.`;
-        for (const fullId of [...this.subscribedStateIds]) {
-            if (!fullId.startsWith(fullIdPrefix)) {
+        const relativeIdPrefix = `${normalizedDeviceId}.sendcommand.`;
+        for (const relativeId of [...this.subscribedStateIds]) {
+            if (!relativeId.startsWith(relativeIdPrefix)) {
                 continue;
             }
-            this.adapter.unsubscribeStates(fullId);
-            this.subscribedStateIds.delete(fullId);
+            this.adapter.unsubscribeStates(relativeId);
+            this.subscribedStateIds.delete(relativeId);
         }
         for (const commandId of this.commandDefinitions.keys()) {
             this.confirmedCommandValueCache.delete(this.getConfirmedCommandValueCacheKey(normalizedDeviceId, commandId));
@@ -249,12 +249,12 @@ class CommandService {
         if (!channelObject) {
             return;
         }
-        for (const fullId of [...this.subscribedStateIds]) {
-            if (!fullId.startsWith(`${this.adapter.namespace}.${channelId}.`)) {
+        for (const relativeId of [...this.subscribedStateIds]) {
+            if (!relativeId.startsWith(`${channelId}.`)) {
                 continue;
             }
-            this.adapter.unsubscribeStates(fullId);
-            this.subscribedStateIds.delete(fullId);
+            this.adapter.unsubscribeStates(relativeId);
+            this.subscribedStateIds.delete(relativeId);
         }
         for (const commandId of this.commandDefinitions.keys()) {
             this.confirmedCommandValueCache.delete(this.getConfirmedCommandValueCacheKey(deviceId, commandId));
@@ -268,13 +268,17 @@ class CommandService {
         }).toString();
         for (let attempt = 1; attempt <= constants_1.COMMAND_RETRY_COUNT + 1; attempt++) {
             try {
-                await this.requestClient.post(url, payload, {
+                this.adapter.log.debug(`CommandService: Sending ${commandId}=${value} to ${deviceId} via ${url} (attempt ${attempt}/${constants_1.COMMAND_RETRY_COUNT + 1}).`);
+                const response = await this.requestClient.post(url, payload, {
                     headers: {
                         "Content-Type": "application/x-www-form-urlencoded",
                     },
                     timeoutMs: constants_1.COMMAND_REQUEST_TIMEOUT_MS,
                     label: `Command ${commandId} for ${deviceId}`,
+                    responseType: "text",
+                    transport: "node",
                 });
+                this.adapter.log.debug(`CommandService: Sent ${commandId}=${value} to ${deviceId} (status=${response.status}).`);
                 return true;
             }
             catch (error) {

@@ -1,5 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const node_http_1 = __importDefault(require("node:http"));
+const node_https_1 = __importDefault(require("node:https"));
 const constants_1 = require("../constants");
 class RequestClientError extends Error {
     code;
@@ -57,6 +62,37 @@ function stringifyResponseData(data) {
         return "";
     }
 }
+function mergeHeaders(...sources) {
+    const result = {};
+    for (const source of sources) {
+        if (!source) {
+            continue;
+        }
+        if (source instanceof Headers) {
+            for (const [key, value] of source.entries()) {
+                result[key] = value;
+            }
+            continue;
+        }
+        if (Array.isArray(source)) {
+            for (const [key, value] of source) {
+                result[key] = value;
+            }
+            continue;
+        }
+        Object.assign(result, source);
+    }
+    return result;
+}
+function findHeaderKey(headers, name) {
+    const normalizedName = name.toLowerCase();
+    for (const key of Object.keys(headers)) {
+        if (key.toLowerCase() === normalizedName) {
+            return key;
+        }
+    }
+    return null;
+}
 function isBodyInit(value) {
     if (typeof value === "string" ||
         value instanceof URLSearchParams ||
@@ -83,8 +119,8 @@ function buildRequestBody(data, headers) {
     if (isBodyInit(data)) {
         return data;
     }
-    if (!headers.has("Content-Type")) {
-        headers.set("Content-Type", "application/json");
+    if (!findHeaderKey(headers, "Content-Type")) {
+        headers["Content-Type"] = "application/json";
     }
     return JSON.stringify(data);
 }
@@ -120,9 +156,28 @@ async function parseResponseData(response, responseType) {
         return rawText;
     }
 }
+function parseResponseText(rawText, status, contentType, responseType) {
+    if (!rawText) {
+        return undefined;
+    }
+    if (responseType === "text") {
+        return rawText;
+    }
+    try {
+        return JSON.parse(rawText);
+    }
+    catch (error) {
+        if (responseType === "json" || isJsonContentType(contentType)) {
+            throw new InvalidJsonResponseError(status, rawText, error);
+        }
+        return rawText;
+    }
+}
 class RequestClient {
     adapter;
     fetchImpl;
+    keepAliveHttpAgent = new node_http_1.default.Agent({ keepAlive: true });
+    keepAliveHttpsAgent = new node_https_1.default.Agent({ keepAlive: true });
     constructor(adapter, fetchImpl = fetch) {
         this.adapter = adapter;
         this.fetchImpl = fetchImpl;
@@ -142,15 +197,25 @@ class RequestClient {
     }
     async request(config, options = {}) {
         const timeoutMs = options.timeoutMs ?? constants_1.REQUEST_TIMEOUT_MS;
-        const controller = new AbortController();
-        const headers = new Headers(options.headers);
-        const configHeaders = new Headers(config.headers);
+        const headers = mergeHeaders(options.headers, config.headers);
         const requestData = typeof config.body !== "undefined" ? config.body : config.data;
-        let timedOut = false;
-        for (const [key, value] of configHeaders.entries()) {
-            headers.set(key, value);
-        }
         const requestBody = buildRequestBody(requestData, headers);
+        try {
+            const responseType = options.responseType ?? config.responseType ?? "auto";
+            const transport = options.transport ?? "fetch";
+            if (transport === "node") {
+                return await this.requestWithNodeTransport(config, headers, requestBody, timeoutMs, responseType);
+            }
+            return await this.requestWithFetchTransport(config, headers, requestBody, timeoutMs, responseType);
+        }
+        catch (error) {
+            this.logRequestError(options.label ?? config.url, error, options.logLevel);
+            throw error;
+        }
+    }
+    async requestWithFetchTransport(config, headers, requestBody, timeoutMs, responseType) {
+        const controller = new AbortController();
+        let timedOut = false;
         const timeoutHandle = setTimeout(() => {
             timedOut = true;
             controller.abort();
@@ -158,14 +223,14 @@ class RequestClient {
         try {
             const requestInit = {
                 method: config.method.toUpperCase(),
-                headers,
+                headers: new Headers(headers),
                 signal: controller.signal,
             };
             if (typeof requestBody !== "undefined") {
                 requestInit.body = requestBody;
             }
             const response = await this.fetchImpl(config.url, requestInit);
-            const data = await parseResponseData(response, options.responseType ?? config.responseType ?? "auto");
+            const data = await parseResponseData(response, responseType);
             if (!response.ok) {
                 throw new HttpStatusError(response.status, response.statusText, data);
             }
@@ -178,15 +243,98 @@ class RequestClient {
             };
         }
         catch (error) {
-            const normalizedError = timedOut
-                ? new TimeoutRequestError(timeoutMs)
-                : error;
-            this.logRequestError(options.label ?? config.url, normalizedError, options.logLevel);
-            throw normalizedError;
+            if (timedOut) {
+                throw new TimeoutRequestError(timeoutMs);
+            }
+            throw error;
         }
         finally {
             clearTimeout(timeoutHandle);
         }
+    }
+    async requestWithNodeTransport(config, headers, requestBody, timeoutMs, responseType) {
+        if (typeof requestBody !== "undefined" &&
+            typeof requestBody !== "string" &&
+            !(requestBody instanceof URLSearchParams)) {
+            throw new RequestClientError("Node transport only supports string request bodies", {
+                code: "ERR_UNSUPPORTED_BODY",
+            });
+        }
+        const url = new URL(config.url);
+        const isHttps = url.protocol === "https:";
+        const requestModule = isHttps ? node_https_1.default : node_http_1.default;
+        const requestBodyText = typeof requestBody === "undefined"
+            ? undefined
+            : typeof requestBody === "string"
+                ? requestBody
+                : requestBody.toString();
+        const nodeHeaders = { ...headers };
+        if (!findHeaderKey(nodeHeaders, "Accept")) {
+            nodeHeaders.Accept = "application/json, text/plain, */*";
+        }
+        if (!findHeaderKey(nodeHeaders, "User-Agent")) {
+            nodeHeaders["User-Agent"] = "axios/1.13.6";
+        }
+        if (!findHeaderKey(nodeHeaders, "Accept-Encoding")) {
+            nodeHeaders["Accept-Encoding"] = "gzip, compress, deflate, br";
+        }
+        if (typeof requestBodyText !== "undefined" &&
+            !findHeaderKey(nodeHeaders, "Content-Length")) {
+            nodeHeaders["Content-Length"] = String(Buffer.byteLength(requestBodyText, "utf8"));
+        }
+        return await new Promise((resolve, reject) => {
+            let timedOut = false;
+            const request = requestModule.request({
+                protocol: url.protocol,
+                hostname: url.hostname,
+                port: url.port || undefined,
+                path: `${url.pathname}${url.search}`,
+                method: config.method.toUpperCase(),
+                headers: nodeHeaders,
+                agent: isHttps ? this.keepAliveHttpsAgent : this.keepAliveHttpAgent,
+            }, (response) => {
+                const chunks = [];
+                response.on("data", (chunk) => {
+                    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+                });
+                response.on("end", () => {
+                    const rawText = Buffer.concat(chunks).toString("utf8");
+                    const data = parseResponseText(rawText, response.statusCode ?? 0, typeof response.headers["content-type"] === "string"
+                        ? response.headers["content-type"]
+                        : null, responseType);
+                    if (typeof response.statusCode !== "number" ||
+                        response.statusCode < 200 ||
+                        response.statusCode >= 300) {
+                        reject(new HttpStatusError(response.statusCode ?? 0, response.statusMessage ?? "", data));
+                        return;
+                    }
+                    resolve({
+                        data: data,
+                        status: response.statusCode,
+                        statusText: response.statusMessage ?? "",
+                        headers: new Headers(Object.entries(response.headers)
+                            .filter(([, value]) => typeof value === "string")
+                            .map(([key, value]) => [key, value])),
+                        url: config.url,
+                    });
+                });
+            });
+            request.setTimeout(timeoutMs, () => {
+                timedOut = true;
+                request.destroy(new TimeoutRequestError(timeoutMs));
+            });
+            request.on("error", (error) => {
+                if (timedOut && !(error instanceof RequestClientError)) {
+                    reject(new TimeoutRequestError(timeoutMs));
+                    return;
+                }
+                reject(error);
+            });
+            if (typeof requestBodyText !== "undefined") {
+                request.write(requestBodyText);
+            }
+            request.end();
+        });
     }
     logRequestError(label, error, level = "debug") {
         const logMethod = typeof this.adapter.log[level] === "function" ? level : "debug";

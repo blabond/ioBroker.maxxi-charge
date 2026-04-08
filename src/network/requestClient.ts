@@ -1,7 +1,10 @@
+import http from "node:http";
+import https from "node:https";
 import { REQUEST_TIMEOUT_MS } from "../constants";
 import type { AdapterInstance, LogLevel } from "../types/shared";
 
 type ResponseType = "auto" | "json" | "text" | "none";
+type RequestTransport = "fetch" | "node";
 type RequestHeaders =
   | Headers
   | Record<string, string>
@@ -30,6 +33,7 @@ interface RequestOptions {
   label?: string;
   logLevel?: LogLevel;
   responseType?: ResponseType;
+  transport?: RequestTransport;
 }
 
 export interface RequestClientResponse<T = unknown> {
@@ -117,6 +121,51 @@ function stringifyResponseData(data: unknown): string {
   }
 }
 
+function mergeHeaders(
+  ...sources: Array<RequestHeaders | undefined>
+): Record<string, string> {
+  const result: Record<string, string> = {};
+
+  for (const source of sources) {
+    if (!source) {
+      continue;
+    }
+
+    if (source instanceof Headers) {
+      for (const [key, value] of source.entries()) {
+        result[key] = value;
+      }
+      continue;
+    }
+
+    if (Array.isArray(source)) {
+      for (const [key, value] of source) {
+        result[key] = value;
+      }
+      continue;
+    }
+
+    Object.assign(result, source);
+  }
+
+  return result;
+}
+
+function findHeaderKey(
+  headers: Record<string, string>,
+  name: string,
+): string | null {
+  const normalizedName = name.toLowerCase();
+
+  for (const key of Object.keys(headers)) {
+    if (key.toLowerCase() === normalizedName) {
+      return key;
+    }
+  }
+
+  return null;
+}
+
 function isBodyInit(value: unknown): value is RequestBody {
   if (
     typeof value === "string" ||
@@ -147,7 +196,7 @@ function isBodyInit(value: unknown): value is RequestBody {
 
 function buildRequestBody(
   data: unknown,
-  headers: Headers,
+  headers: Record<string, string>,
 ): RequestBody | undefined {
   if (typeof data === "undefined") {
     return undefined;
@@ -157,8 +206,8 @@ function buildRequestBody(
     return data;
   }
 
-  if (!headers.has("Content-Type")) {
-    headers.set("Content-Type", "application/json");
+  if (!findHeaderKey(headers, "Content-Type")) {
+    headers["Content-Type"] = "application/json";
   }
 
   return JSON.stringify(data);
@@ -211,7 +260,35 @@ async function parseResponseData(
   }
 }
 
+function parseResponseText(
+  rawText: string,
+  status: number,
+  contentType: string | null,
+  responseType: ResponseType,
+): unknown {
+  if (!rawText) {
+    return undefined;
+  }
+
+  if (responseType === "text") {
+    return rawText;
+  }
+
+  try {
+    return JSON.parse(rawText);
+  } catch (error) {
+    if (responseType === "json" || isJsonContentType(contentType)) {
+      throw new InvalidJsonResponseError(status, rawText, error);
+    }
+
+    return rawText;
+  }
+}
+
 export default class RequestClient {
+  private readonly keepAliveHttpAgent = new http.Agent({ keepAlive: true });
+  private readonly keepAliveHttpsAgent = new https.Agent({ keepAlive: true });
+
   public constructor(
     private readonly adapter: AdapterInstance,
     private readonly fetchImpl: typeof fetch = fetch,
@@ -250,18 +327,52 @@ export default class RequestClient {
     options: RequestOptions = {},
   ): Promise<RequestClientResponse<T>> {
     const timeoutMs = options.timeoutMs ?? REQUEST_TIMEOUT_MS;
-    const controller = new AbortController();
-    const headers = new Headers(options.headers);
-    const configHeaders = new Headers(config.headers);
+    const headers = mergeHeaders(options.headers, config.headers);
     const requestData =
       typeof config.body !== "undefined" ? config.body : config.data;
-    let timedOut = false;
-
-    for (const [key, value] of configHeaders.entries()) {
-      headers.set(key, value);
-    }
-
     const requestBody = buildRequestBody(requestData, headers);
+
+    try {
+      const responseType =
+        options.responseType ?? config.responseType ?? "auto";
+      const transport = options.transport ?? "fetch";
+
+      if (transport === "node") {
+        return await this.requestWithNodeTransport<T>(
+          config,
+          headers,
+          requestBody,
+          timeoutMs,
+          responseType,
+        );
+      }
+
+      return await this.requestWithFetchTransport<T>(
+        config,
+        headers,
+        requestBody,
+        timeoutMs,
+        responseType,
+      );
+    } catch (error) {
+      this.logRequestError(
+        options.label ?? config.url,
+        error,
+        options.logLevel,
+      );
+      throw error;
+    }
+  }
+
+  private async requestWithFetchTransport<T>(
+    config: RequestConfig,
+    headers: Record<string, string>,
+    requestBody: RequestBody | undefined,
+    timeoutMs: number,
+    responseType: ResponseType,
+  ): Promise<RequestClientResponse<T>> {
+    const controller = new AbortController();
+    let timedOut = false;
 
     const timeoutHandle = setTimeout(() => {
       timedOut = true;
@@ -271,7 +382,7 @@ export default class RequestClient {
     try {
       const requestInit: RequestInit = {
         method: config.method.toUpperCase(),
-        headers,
+        headers: new Headers(headers),
         signal: controller.signal,
       };
 
@@ -281,10 +392,7 @@ export default class RequestClient {
 
       const response = await this.fetchImpl(config.url, requestInit);
 
-      const data = await parseResponseData(
-        response,
-        options.responseType ?? config.responseType ?? "auto",
-      );
+      const data = await parseResponseData(response, responseType);
 
       if (!response.ok) {
         throw new HttpStatusError(response.status, response.statusText, data);
@@ -298,19 +406,149 @@ export default class RequestClient {
         url: response.url,
       };
     } catch (error) {
-      const normalizedError = timedOut
-        ? new TimeoutRequestError(timeoutMs)
-        : error;
+      if (timedOut) {
+        throw new TimeoutRequestError(timeoutMs);
+      }
 
-      this.logRequestError(
-        options.label ?? config.url,
-        normalizedError,
-        options.logLevel,
-      );
-      throw normalizedError;
+      throw error;
     } finally {
       clearTimeout(timeoutHandle);
     }
+  }
+
+  private async requestWithNodeTransport<T>(
+    config: RequestConfig,
+    headers: Record<string, string>,
+    requestBody: RequestBody | undefined,
+    timeoutMs: number,
+    responseType: ResponseType,
+  ): Promise<RequestClientResponse<T>> {
+    if (
+      typeof requestBody !== "undefined" &&
+      typeof requestBody !== "string" &&
+      !(requestBody instanceof URLSearchParams)
+    ) {
+      throw new RequestClientError(
+        "Node transport only supports string request bodies",
+        {
+          code: "ERR_UNSUPPORTED_BODY",
+        },
+      );
+    }
+
+    const url = new URL(config.url);
+    const isHttps = url.protocol === "https:";
+    const requestModule = isHttps ? https : http;
+    const requestBodyText =
+      typeof requestBody === "undefined"
+        ? undefined
+        : typeof requestBody === "string"
+          ? requestBody
+          : requestBody.toString();
+    const nodeHeaders = { ...headers };
+
+    if (!findHeaderKey(nodeHeaders, "Accept")) {
+      nodeHeaders.Accept = "application/json, text/plain, */*";
+    }
+
+    if (!findHeaderKey(nodeHeaders, "User-Agent")) {
+      nodeHeaders["User-Agent"] = "axios/1.13.6";
+    }
+
+    if (!findHeaderKey(nodeHeaders, "Accept-Encoding")) {
+      nodeHeaders["Accept-Encoding"] = "gzip, compress, deflate, br";
+    }
+
+    if (
+      typeof requestBodyText !== "undefined" &&
+      !findHeaderKey(nodeHeaders, "Content-Length")
+    ) {
+      nodeHeaders["Content-Length"] = String(
+        Buffer.byteLength(requestBodyText, "utf8"),
+      );
+    }
+
+    return await new Promise<RequestClientResponse<T>>((resolve, reject) => {
+      let timedOut = false;
+
+      const request = requestModule.request(
+        {
+          protocol: url.protocol,
+          hostname: url.hostname,
+          port: url.port || undefined,
+          path: `${url.pathname}${url.search}`,
+          method: config.method.toUpperCase(),
+          headers: nodeHeaders,
+          agent: isHttps ? this.keepAliveHttpsAgent : this.keepAliveHttpAgent,
+        },
+        (response) => {
+          const chunks: Buffer[] = [];
+
+          response.on("data", (chunk) => {
+            chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+          });
+
+          response.on("end", () => {
+            const rawText = Buffer.concat(chunks).toString("utf8");
+            const data = parseResponseText(
+              rawText,
+              response.statusCode ?? 0,
+              typeof response.headers["content-type"] === "string"
+                ? response.headers["content-type"]
+                : null,
+              responseType,
+            );
+
+            if (
+              typeof response.statusCode !== "number" ||
+              response.statusCode < 200 ||
+              response.statusCode >= 300
+            ) {
+              reject(
+                new HttpStatusError(
+                  response.statusCode ?? 0,
+                  response.statusMessage ?? "",
+                  data,
+                ),
+              );
+              return;
+            }
+
+            resolve({
+              data: data as T,
+              status: response.statusCode,
+              statusText: response.statusMessage ?? "",
+              headers: new Headers(
+                Object.entries(response.headers)
+                  .filter(([, value]) => typeof value === "string")
+                  .map(([key, value]) => [key, value as string]),
+              ),
+              url: config.url,
+            });
+          });
+        },
+      );
+
+      request.setTimeout(timeoutMs, () => {
+        timedOut = true;
+        request.destroy(new TimeoutRequestError(timeoutMs));
+      });
+
+      request.on("error", (error) => {
+        if (timedOut && !(error instanceof RequestClientError)) {
+          reject(new TimeoutRequestError(timeoutMs));
+          return;
+        }
+
+        reject(error);
+      });
+
+      if (typeof requestBodyText !== "undefined") {
+        request.write(requestBodyText);
+      }
+
+      request.end();
+    });
   }
 
   private logRequestError(

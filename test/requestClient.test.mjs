@@ -1,4 +1,5 @@
 import requestClientModule from "../build/network/requestClient.js";
+import net from "node:net";
 
 const { default: RequestClient } = requestClientModule;
 
@@ -147,5 +148,58 @@ describe("RequestClient", () => {
     logCalls.debug.should.have.length(1);
     logCalls.debug[0].should.contain("(ERR_INVALID_JSON)");
     logCalls.debug[0].should.contain("status=200");
+  });
+
+  it("uses content-length instead of chunked encoding for node transport", async () => {
+    const logCalls = {
+      debug: [],
+      info: [],
+      warn: [],
+      error: [],
+    };
+
+    const rawRequest = await new Promise((resolve, reject) => {
+      const server = net.createServer((socket) => {
+        let data = "";
+
+        socket.on("data", (chunk) => {
+          data += chunk.toString("latin1");
+          if (!data.includes("\r\n\r\n")) {
+            return;
+          }
+
+          setTimeout(() => {
+            socket.write(
+              "HTTP/1.1 200 OK\r\nContent-Length: 2\r\nConnection: close\r\n\r\nok",
+            );
+            socket.end();
+            server.close();
+            resolve(data);
+          }, 20);
+        });
+      });
+
+      server.on("error", reject);
+      server.listen(0, "127.0.0.1", async () => {
+        const port = server.address().port;
+        const client = new RequestClient(createAdapter(logCalls));
+
+        try {
+          await client.post(`http://127.0.0.1:${port}/config`, "maxSOC=96", {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            responseType: "text",
+            transport: "node",
+          });
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+
+    rawRequest.should.contain("Content-Length: 9");
+    rawRequest.should.not.contain("Transfer-Encoding: chunked");
+    rawRequest.should.contain("maxSOC=96");
   });
 });

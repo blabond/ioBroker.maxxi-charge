@@ -1,5 +1,6 @@
 import type { AdapterInstance, LogLevel } from "../types/shared";
 type ResponseType = "auto" | "json" | "text" | "none";
+type RequestTransport = "fetch" | "node";
 type RequestHeaders = Headers | Record<string, string> | Array<[string, string]>;
 interface RequestConfig {
     method: string;
@@ -15,6 +16,7 @@ interface RequestOptions {
     label?: string;
     logLevel?: LogLevel;
     responseType?: ResponseType;
+    transport?: RequestTransport;
 }
 export interface RequestClientResponse<T = unknown> {
     data: T;
@@ -26,10 +28,14 @@ export interface RequestClientResponse<T = unknown> {
 export default class RequestClient {
     private readonly adapter;
     private readonly fetchImpl;
+    private readonly keepAliveHttpAgent;
+    private readonly keepAliveHttpsAgent;
     constructor(adapter: AdapterInstance, fetchImpl?: typeof fetch);
     get<T = unknown>(url: string, options?: RequestOptions): Promise<RequestClientResponse<T>>;
     post<T = unknown>(url: string, data: unknown, options?: RequestOptions): Promise<RequestClientResponse<T>>;
     request<T = unknown>(config: RequestConfig, options?: RequestOptions): Promise<RequestClientResponse<T>>;
+    private requestWithFetchTransport;
+    private requestWithNodeTransport;
     private logRequestError;
 }
 export {};

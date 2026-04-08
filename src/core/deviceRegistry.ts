@@ -91,24 +91,24 @@ export default class DeviceRegistry {
   }
 
   private subscribeSocState(deviceId: string): void {
-    const fullId = `${this.adapter.namespace}.${deviceId}.SOC`;
-    if (this.subscribedSocStates.has(fullId)) {
+    const relativeId = `${deviceId}.SOC`;
+    if (this.subscribedSocStates.has(relativeId)) {
       return;
     }
 
-    this.adapter.subscribeStates(fullId);
-    this.subscribedSocStates.add(fullId);
-    this.adapter.log.debug(`Subscribed to dynamic state ${fullId}.`);
+    this.adapter.subscribeStates(relativeId);
+    this.subscribedSocStates.add(relativeId);
+    this.adapter.log.debug(`Subscribed to dynamic state ${relativeId}.`);
   }
 
   private unsubscribeSocState(deviceId: string): void {
-    const fullId = `${this.adapter.namespace}.${deviceId}.SOC`;
-    if (!this.subscribedSocStates.has(fullId)) {
+    const relativeId = `${deviceId}.SOC`;
+    if (!this.subscribedSocStates.has(relativeId)) {
       return;
     }
 
-    this.adapter.unsubscribeStates(fullId);
-    this.subscribedSocStates.delete(fullId);
-    this.adapter.log.debug(`Unsubscribed from dynamic state ${fullId}.`);
+    this.adapter.unsubscribeStates(relativeId);
+    this.subscribedSocStates.delete(relativeId);
+    this.adapter.log.debug(`Unsubscribed from dynamic state ${relativeId}.`);
   }
 }

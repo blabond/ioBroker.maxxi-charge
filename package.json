@@ -37,11 +37,6 @@
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.58.0"
   },
-  "overrides": {
-    "protobufjs": "^7.4.0",
-    "google-gax": "^4.4.1",
-    "@google-cloud/translate": "^7.2.2"
-  },
   "main": "build/main.js",
   "files": [
     "admin",
