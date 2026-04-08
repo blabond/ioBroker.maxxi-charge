@@ -127,7 +127,7 @@ describe("CommandService", () => {
     environment.states
       .get("ccu1._sendcommandInitialized")
       .should.deep.equal({ val: "260408", ack: true });
-    environment.subscribeCalls.should.have.length(8);
+    environment.subscribeCalls.should.have.length(7);
 
     const secondService = environment.createService();
     await secondService.syncDeviceCommandConfiguration("ccu1");
@@ -180,8 +180,8 @@ describe("CommandService", () => {
 
     service.handleDeviceInactive("ccu1");
 
-    environment.unsubscribeCalls.should.have.length(8);
-    environment.subscribeCalls.should.have.length(8);
+    environment.unsubscribeCalls.should.have.length(7);
+    environment.subscribeCalls.should.have.length(7);
   });
 
   it("skips redundant HTTP commands when the target value is already confirmed", async () => {
