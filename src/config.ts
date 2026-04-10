@@ -31,7 +31,7 @@ export function normalizeConfig(rawConfig: AdapterConfig): RuntimeConfig {
     calibrationProgress: rawConfig.calibrationProgress === "up" ? "up" : "down",
     feedInMode: Math.min(Math.max(feedInMode, 20), 100),
     bkwEnabled: parseBoolean(rawConfig.bkw_enable),
-    bkwPowerTarget: Math.min(Math.max(bkwPowerTarget, 0), 2300),
+    bkwPowerTarget: Math.min(Math.max(bkwPowerTarget, 0), 1000),
     bkwAdjustment: Math.min(Math.max(bkwAdjustment, -1000), 600),
   };
 }

@@ -308,7 +308,7 @@
           "label": "BKW Feed-In Power (Watt)",
           "default": 800,
           "min": 200,
-          "max": 2300,
+          "max": 1000,
           "step": 25,
           "help": "Set the feed-in power in watts.",
           "xl": 4,
