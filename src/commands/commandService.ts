@@ -34,7 +34,7 @@ interface CommandDefinition {
 }
 
 const SENDCOMMAND_INITIALIZED_STATE_SUFFIX = "_sendcommandInitialized";
-const SENDCOMMAND_INITIALIZED_CODE = "260408";
+const SENDCOMMAND_INITIALIZED_CODE = "260410";
 
 const COMMAND_DEFINITIONS: readonly CommandDefinition[] = [
   {
@@ -46,7 +46,7 @@ const COMMAND_DEFINITIONS: readonly CommandDefinition[] = [
     type: "number",
     role: "level",
     min: 300,
-    max: 1000,
+    max: 2300,
     unit: "W",
   },
   {

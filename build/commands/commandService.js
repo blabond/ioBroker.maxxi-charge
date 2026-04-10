@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const constants_1 = require("../constants");
 const helpers_1 = require("../utils/helpers");
 const SENDCOMMAND_INITIALIZED_STATE_SUFFIX = "_sendcommandInitialized";
-const SENDCOMMAND_INITIALIZED_CODE = "260408";
+const SENDCOMMAND_INITIALIZED_CODE = "260410";
 const COMMAND_DEFINITIONS = [
     {
         id: "maxOutputPower",
@@ -14,7 +14,7 @@ const COMMAND_DEFINITIONS = [
         type: "number",
         role: "level",
         min: 300,
-        max: 1000,
+        max: 2300,
         unit: "W",
     },
     {

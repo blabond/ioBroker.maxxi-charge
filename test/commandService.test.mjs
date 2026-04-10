@@ -126,7 +126,7 @@ describe("CommandService", () => {
     ]);
     environment.states
       .get("ccu1._sendcommandInitialized")
-      .should.deep.equal({ val: "260408", ack: true });
+      .should.deep.equal({ val: "260410", ack: true });
     environment.subscribeCalls.should.have.length(7);
 
     const secondService = environment.createService();
@@ -136,7 +136,7 @@ describe("CommandService", () => {
     environment.unsubscribeCalls.should.have.length(0);
     environment.states
       .get("ccu1._sendcommandInitialized")
-      .should.deep.equal({ val: "260408", ack: true });
+      .should.deep.equal({ val: "260410", ack: true });
   });
 
   it("resets sendcommand again when the internal initialized code differs", async () => {
@@ -153,7 +153,7 @@ describe("CommandService", () => {
     ]);
     environment.states
       .get("ccu1._sendcommandInitialized")
-      .should.deep.equal({ val: "260408", ack: true });
+      .should.deep.equal({ val: "260410", ack: true });
   });
 
   it("sets the initialized code without deleting anything on a fresh install", async () => {
@@ -167,7 +167,7 @@ describe("CommandService", () => {
     environment.deletedObjects.should.deep.equal([]);
     environment.states
       .get("ccu1._sendcommandInitialized")
-      .should.deep.equal({ val: "260408", ack: true });
+      .should.deep.equal({ val: "260410", ack: true });
   });
 
   it("releases per-device subscriptions when a device becomes inactive", async () => {
