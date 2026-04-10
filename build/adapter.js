@@ -159,7 +159,12 @@ class MaxxiChargeAdapter extends utils.Adapter {
         if (!deviceEvent.deviceId) {
             return;
         }
-        if (!deviceEvent.isNewDevice && !deviceEvent.connectionBecameActive) {
+        if (deviceEvent.reconnectedAfterInactive) {
+            this.log.info(`Device ${deviceEvent.deviceId} connected again.`);
+        }
+        if (!deviceEvent.isNewDevice &&
+            !deviceEvent.connectionBecameActive &&
+            !deviceEvent.reconnectedAfterInactive) {
             return;
         }
         try {

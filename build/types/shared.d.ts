@@ -44,6 +44,7 @@ export interface DeviceTouchEvent {
     deviceId: string;
     isNewDevice: boolean;
     connectionBecameActive: boolean;
+    reconnectedAfterInactive: boolean;
 }
 export type PrimitiveStateValue = ioBroker.StateValue;
 export type StateChange = ioBroker.State | null | undefined;

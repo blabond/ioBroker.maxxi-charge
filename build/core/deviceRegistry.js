@@ -7,6 +7,7 @@ class DeviceRegistry {
     stateManager;
     inactiveAfterMs;
     activeDevices = new Map();
+    inactiveDevices = new Set();
     subscribedSocStates = new Set();
     constructor(adapter, stateManager, inactiveAfterMs = constants_1.ACTIVE_DEVICE_TTL_MS) {
         this.adapter = adapter;
@@ -26,10 +27,12 @@ class DeviceRegistry {
                 deviceId: "",
                 isNewDevice: false,
                 connectionBecameActive: false,
+                reconnectedAfterInactive: false,
             };
         }
         const wasConnected = this.activeDevices.size > 0;
         const isNewDevice = !this.activeDevices.has(normalizedDeviceId);
+        const reconnectedAfterInactive = this.inactiveDevices.delete(normalizedDeviceId);
         this.activeDevices.set(normalizedDeviceId, Date.now());
         if (isNewDevice) {
             this.subscribeSocState(normalizedDeviceId);
@@ -39,6 +42,7 @@ class DeviceRegistry {
             deviceId: normalizedDeviceId,
             isNewDevice,
             connectionBecameActive: !wasConnected && this.activeDevices.size > 0,
+            reconnectedAfterInactive,
         };
     }
     async cleanupInactiveDevices() {
@@ -51,6 +55,7 @@ class DeviceRegistry {
             }
             this.activeDevices.delete(deviceId);
             removedDeviceIds.push(deviceId);
+            this.inactiveDevices.add(deviceId);
             this.unsubscribeSocState(deviceId);
             this.adapter.log.warn(`Device ${deviceId} marked as inactive and removed.`);
         }
@@ -67,6 +72,7 @@ class DeviceRegistry {
             this.unsubscribeSocState(deviceId);
         }
         this.activeDevices.clear();
+        this.inactiveDevices.clear();
         await this.stateManager.resetInfoStates();
     }
     subscribeSocState(deviceId) {

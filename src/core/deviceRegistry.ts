@@ -6,6 +6,8 @@ import type StateManager from "./stateManager";
 export default class DeviceRegistry {
   private readonly activeDevices = new Map<string, number>();
 
+  private readonly inactiveDevices = new Set<string>();
+
   private readonly subscribedSocStates = new Set<string>();
 
   public constructor(
@@ -29,11 +31,14 @@ export default class DeviceRegistry {
         deviceId: "",
         isNewDevice: false,
         connectionBecameActive: false,
+        reconnectedAfterInactive: false,
       };
     }
 
     const wasConnected = this.activeDevices.size > 0;
     const isNewDevice = !this.activeDevices.has(normalizedDeviceId);
+    const reconnectedAfterInactive =
+      this.inactiveDevices.delete(normalizedDeviceId);
 
     this.activeDevices.set(normalizedDeviceId, Date.now());
 
@@ -47,6 +52,7 @@ export default class DeviceRegistry {
       deviceId: normalizedDeviceId,
       isNewDevice,
       connectionBecameActive: !wasConnected && this.activeDevices.size > 0,
+      reconnectedAfterInactive,
     };
   }
 
@@ -65,6 +71,7 @@ export default class DeviceRegistry {
 
       this.activeDevices.delete(deviceId);
       removedDeviceIds.push(deviceId);
+      this.inactiveDevices.add(deviceId);
       this.unsubscribeSocState(deviceId);
       this.adapter.log.warn(
         `Device ${deviceId} marked as inactive and removed.`,
@@ -87,6 +94,7 @@ export default class DeviceRegistry {
     }
 
     this.activeDevices.clear();
+    this.inactiveDevices.clear();
     await this.stateManager.resetInfoStates();
   }
 

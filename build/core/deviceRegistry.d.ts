@@ -5,6 +5,7 @@ export default class DeviceRegistry {
     private readonly stateManager;
     private readonly inactiveAfterMs;
     private readonly activeDevices;
+    private readonly inactiveDevices;
     private readonly subscribedSocStates;
     constructor(adapter: AdapterInstance, stateManager: StateManager, inactiveAfterMs?: number);
     getActiveDeviceIds(): string[];
