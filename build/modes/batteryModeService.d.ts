@@ -7,7 +7,12 @@ export default class BatteryModeService {
     private readonly commandService;
     private readonly deviceRegistry;
     private readonly calibrationAppliedDeviceIds;
-    constructor(adapter: AdapterInstance, config: RuntimeConfig, commandService: CommandService, deviceRegistry: DeviceRegistry);
+    constructor(
+        adapter: AdapterInstance,
+        config: RuntimeConfig,
+        commandService: CommandService,
+        deviceRegistry: DeviceRegistry,
+    );
     start(): Promise<void>;
     handleDeviceAvailable(deviceId: string): Promise<void>;
     handleDeviceInactive(deviceId: string): void;
