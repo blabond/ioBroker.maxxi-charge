@@ -1,11 +1,13 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const node_http_1 = __importDefault(require("node:http"));
-const constants_1 = require("../constants");
-const helpers_1 = require("../utils/helpers");
+'use strict';
+var __importDefault =
+    (this && this.__importDefault) ||
+    function (mod) {
+        return mod && mod.__esModule ? mod : { default: mod };
+    };
+Object.defineProperty(exports, '__esModule', { value: true });
+const node_http_1 = __importDefault(require('node:http'));
+const constants_1 = require('../constants');
+const helpers_1 = require('../utils/helpers');
 const ABORTED_PEER_WARNING_THROTTLE_MS = 15 * 60_000;
 function sendJson(response, statusCode, payload) {
     response.writeHead(statusCode, {
@@ -34,7 +36,7 @@ function readRequestBody(request, maxBytes) {
         let finished = false;
         let size = 0;
         let body = '';
-        const rejectOnce = (error) => {
+        const rejectOnce = error => {
             if (finished) {
                 return;
             }
@@ -48,7 +50,7 @@ function readRequestBody(request, maxBytes) {
         request.on('error', error => {
             rejectOnce(createHttpError(`Request stream error: ${error.message}`, 400));
         });
-        request.on('data', (chunk) => {
+        request.on('data', chunk => {
             if (finished) {
                 return;
             }
@@ -115,7 +117,7 @@ class LocalApiServer {
                 return;
             }
             let handleListening = null;
-            const handleError = (error) => {
+            const handleError = error => {
                 if (handleListening) {
                     server.off('listening', handleListening);
                 }
@@ -169,8 +171,7 @@ class LocalApiServer {
             let payload;
             try {
                 payload = JSON.parse(rawBody);
-            }
-            catch {
+            } catch {
                 throw createHttpError('Invalid JSON payload.', 400);
             }
             if (!(0, helpers_1.isRecord)(payload)) {
@@ -196,30 +197,27 @@ class LocalApiServer {
             const deviceTouchResult = await this.deviceRegistry.touch(deviceId);
             await this.onDeviceSeen(deviceTouchResult);
             sendJson(response, 200, { status: 'ok' });
-        }
-        catch (error) {
+        } catch (error) {
             const statusCode = getErrorStatusCode(error) ?? 500;
             const message = error instanceof Error ? error.message : String(error);
             const now = Date.now();
             if (statusCode >= 500) {
                 this.adapter.log.error(`Local API request failed: ${message}`);
-            }
-            else {
+            } else {
                 if (message === 'Request aborted by peer.') {
                     if (now - this.lastAbortedPeerWarningLogTs < ABORTED_PEER_WARNING_THROTTLE_MS) {
                         this.suppressedAbortedPeerWarnings += 1;
-                    }
-                    else {
+                    } else {
                         const suppressedCount = this.suppressedAbortedPeerWarnings;
                         this.suppressedAbortedPeerWarnings = 0;
                         this.lastAbortedPeerWarningLogTs = now;
-                        const suppressedSuffix = suppressedCount > 0
-                            ? ` Suppressed ${suppressedCount} similar warnings in the last 15 minutes.`
-                            : '';
+                        const suppressedSuffix =
+                            suppressedCount > 0
+                                ? ` Suppressed ${suppressedCount} similar warnings in the last 15 minutes.`
+                                : '';
                         this.adapter.log.warn(`Local API request failed: ${message}${suppressedSuffix}`);
                     }
-                }
-                else {
+                } else {
                     this.adapter.log.warn(`Local API request failed: ${message}`);
                 }
             }
@@ -238,14 +236,15 @@ class LocalApiServer {
                 label: 'Local API cloud mirror',
                 logLevel: 'debug',
             });
-        }
-        catch (error) {
+        } catch (error) {
             const now = Date.now();
             if (now - this.lastCloudMirrorErrorLogTs < 7 * 60_000) {
                 return;
             }
             this.lastCloudMirrorErrorLogTs = now;
-            this.adapter.log.warn(`Local API cloud mirror failed: ${error instanceof Error ? error.message : String(error)}. Repeated errors are suppressed for 7 minutes.`);
+            this.adapter.log.warn(
+                `Local API cloud mirror failed: ${error instanceof Error ? error.message : String(error)}. Repeated errors are suppressed for 7 minutes.`,
+            );
         }
     }
 }
