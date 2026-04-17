@@ -46,7 +46,7 @@ http://www.maxxisun.de
 
 ## Changelog
 
-### 2.0.0-alpha.11 (2026-04-08)
+### 2.0.0-alpha.12 (2026-04-08)
 
 - Requires Node.js >= 22
 - Migrated from JavaScript to TypeScript
