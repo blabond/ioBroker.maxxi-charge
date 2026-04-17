@@ -1,7 +1,7 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const helpers_1 = require('../utils/helpers');
-const roles_1 = require('../utils/roles');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const helpers_1 = require("../utils/helpers");
+const roles_1 = require("../utils/roles");
 const DYNAMIC_FOLDER_KEYS = new Set(['batteriesInfo', 'convertersInfo']);
 function getStateType(value) {
     if (value === null) {
@@ -155,9 +155,7 @@ class StateManager {
         const existingFingerprint = createComparableExistingObject(existingObject, definition);
         if (existingFingerprint !== fingerprint) {
             if (existingObject.type !== definition.type) {
-                this.adapter.log.warn(
-                    `StateManager: Object ${id} exists with unexpected type ${existingObject.type}; expected ${definition.type}.`,
-                );
+                this.adapter.log.warn(`StateManager: Object ${id} exists with unexpected type ${existingObject.type}; expected ${definition.type}.`);
             }
             await this.adapter.extendObjectAsync(id, {
                 ...this.toPartialObject(definition),
@@ -180,7 +178,8 @@ class StateManager {
                 const isFolder = Array.isArray(value) || DYNAMIC_FOLDER_KEYS.has(key);
                 if (isFolder) {
                     await this.ensureFolder(id, { name: key });
-                } else {
+                }
+                else {
                     await this.ensureChannel(id, { name: key });
                 }
                 await this.syncPayloadRecursive(id, value);
