@@ -37,7 +37,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils = __importStar(require("@iobroker/adapter-core"));
-const node_os_1 = require("node:os");
 const commandService_1 = __importDefault(require("./commands/commandService"));
 const config_1 = require("./config");
 const constants_1 = require("./constants");
@@ -73,7 +72,6 @@ class MaxxiChargeAdapter extends utils.Adapter {
         });
         this.on('ready', this.onReady.bind(this));
         this.on('stateChange', this.onStateChange.bind(this));
-        this.on('message', this.onMessage.bind(this));
         this.on('unload', this.onUnload.bind(this));
     }
     async onReady() {
@@ -136,16 +134,6 @@ class MaxxiChargeAdapter extends utils.Adapter {
             this.log.error(`Error while processing state ${id}: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
-    onMessage(obj) {
-        if (!obj?.callback || obj.command !== 'getLocalApiRoute') {
-            return;
-        }
-        const message = this.isRecord(obj.message) ? obj.message : {};
-        const port = this.extractLocalApiPort(message.port);
-        const preferredIp = typeof message.originIp === 'string' ? message.originIp.trim() : '';
-        const localApiRoute = this.buildLocalApiRoute(preferredIp, port);
-        this.sendTo(obj.from, obj.command, localApiRoute, obj.callback);
-    }
     async onUnload(callback) {
         this.shuttingDown = true;
         try {
@@ -190,43 +178,6 @@ class MaxxiChargeAdapter extends utils.Adapter {
     isSocStateId(fullId) {
         const relativeId = (0, helpers_1.extractRelativeId)(this.namespace, fullId);
         return Boolean(relativeId && relativeId.endsWith('.SOC'));
-    }
-    buildLocalApiRoute(preferredIp, port) {
-        const ipAddress = this.getPreferredIpv4Address(preferredIp);
-        return ipAddress
-            ? `http://${ipAddress}:${port}`
-            : `No local IPv4 address found for the ioBroker host (port ${port}).`;
-    }
-    getPreferredIpv4Address(preferredIp) {
-        const ipv4Addresses = this.getLocalIpv4Addresses();
-        if (preferredIp && ipv4Addresses.includes(preferredIp)) {
-            return preferredIp;
-        }
-        return ipv4Addresses[0] ?? null;
-    }
-    getLocalIpv4Addresses() {
-        const interfaces = (0, node_os_1.networkInterfaces)();
-        const ipv4Addresses = new Set();
-        for (const entries of Object.values(interfaces)) {
-            for (const entry of entries ?? []) {
-                if (entry.family !== 'IPv4' || entry.internal || !entry.address) {
-                    continue;
-                }
-                ipv4Addresses.add(entry.address);
-            }
-        }
-        return [...ipv4Addresses];
-    }
-    extractLocalApiPort(value) {
-        const normalizedValue = typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' ? value : 5501;
-        const numericPort = Number.parseInt(String(normalizedValue), 10);
-        if (!Number.isFinite(numericPort)) {
-            return 5501;
-        }
-        return Math.min(Math.max(numericPort, 1), 65_535);
-    }
-    isRecord(value) {
-        return typeof value === 'object' && value !== null;
     }
     async dispose() {
         if (this.disposePromise) {
