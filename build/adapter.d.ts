@@ -17,11 +17,17 @@ export default class MaxxiChargeAdapter extends utils.Adapter {
     constructor(options?: Partial<utils.AdapterOptions>);
     private onReady;
     private onStateChange;
+    private onMessage;
     private onUnload;
     private handleConnectionLost;
     private handleDeviceInactive;
     private handleDeviceSeen;
     private isSocStateId;
+    private buildLocalApiRoute;
+    private getPreferredIpv4Address;
+    private getLocalIpv4Addresses;
+    private extractLocalApiPort;
+    private isRecord;
     private dispose;
     private performDispose;
     private failInitialization;

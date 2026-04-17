@@ -1,4 +1,5 @@
 import * as utils from '@iobroker/adapter-core';
+import { networkInterfaces } from 'node:os';
 import CommandService from './commands/commandService';
 import { normalizeConfig } from './config';
 import { ACTIVE_DEVICE_CLEANUP_INTERVAL_MS } from './constants';
@@ -51,6 +52,7 @@ export default class MaxxiChargeAdapter extends utils.Adapter {
 
         this.on('ready', this.onReady.bind(this));
         this.on('stateChange', this.onStateChange.bind(this));
+        this.on('message', this.onMessage.bind(this));
         this.on('unload', this.onUnload.bind(this));
     }
 
@@ -158,6 +160,19 @@ export default class MaxxiChargeAdapter extends utils.Adapter {
         }
     }
 
+    private onMessage(obj: ioBroker.Message | undefined): void {
+        if (!obj?.callback || obj.command !== 'getLocalApiRoute') {
+            return;
+        }
+
+        const message = this.isRecord(obj.message) ? obj.message : {};
+        const port = this.extractLocalApiPort(message.port);
+        const preferredIp = typeof message.originIp === 'string' ? message.originIp.trim() : '';
+        const localApiRoute = this.buildLocalApiRoute(preferredIp, port);
+
+        this.sendTo(obj.from, obj.command, localApiRoute, obj.callback);
+    }
+
     private async onUnload(callback: () => void): Promise<void> {
         this.shuttingDown = true;
 
@@ -213,6 +228,54 @@ export default class MaxxiChargeAdapter extends utils.Adapter {
     private isSocStateId(fullId: string): boolean {
         const relativeId = extractRelativeId(this.namespace, fullId);
         return Boolean(relativeId && relativeId.endsWith('.SOC'));
+    }
+
+    private buildLocalApiRoute(preferredIp: string, port: number): string {
+        const ipAddress = this.getPreferredIpv4Address(preferredIp);
+        return ipAddress
+            ? `http://${ipAddress}:${port}`
+            : `No local IPv4 address found for the ioBroker host (port ${port}).`;
+    }
+
+    private getPreferredIpv4Address(preferredIp: string): string | null {
+        const ipv4Addresses = this.getLocalIpv4Addresses();
+        if (preferredIp && ipv4Addresses.includes(preferredIp)) {
+            return preferredIp;
+        }
+
+        return ipv4Addresses[0] ?? null;
+    }
+
+    private getLocalIpv4Addresses(): string[] {
+        const interfaces = networkInterfaces();
+        const ipv4Addresses = new Set<string>();
+
+        for (const entries of Object.values(interfaces)) {
+            for (const entry of entries ?? []) {
+                if (entry.family !== 'IPv4' || entry.internal || !entry.address) {
+                    continue;
+                }
+
+                ipv4Addresses.add(entry.address);
+            }
+        }
+
+        return [...ipv4Addresses];
+    }
+
+    private extractLocalApiPort(value: unknown): number {
+        const normalizedValue =
+            typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' ? value : 5501;
+        const numericPort = Number.parseInt(String(normalizedValue), 10);
+        if (!Number.isFinite(numericPort)) {
+            return 5501;
+        }
+
+        return Math.min(Math.max(numericPort, 1), 65_535);
+    }
+
+    private isRecord(value: unknown): value is Record<string, unknown> {
+        return typeof value === 'object' && value !== null;
     }
 
     private async dispose(): Promise<void> {

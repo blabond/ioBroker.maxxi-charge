@@ -79,6 +79,7 @@
         },
         "loglevel": "info",
         "materialize": false,
+        "messagebox": true,
         "adminUI": {
             "config": "json"
         },

@@ -61,8 +61,11 @@
                     }
                 },
                 "_localApiHintDetails": {
-                    "type": "staticText",
-                    "text": "http://{ioBrokerIP}:${data.port}",
+                    "type": "textSendTo",
+                    "command": "getLocalApiRoute",
+                    "jsonData": "{\"originIp\":\"${data._originIp}\",\"port\":\"${data.port}\"}",
+                    "alsoDependsOn": ["port"],
+                    "copyToClipboard": true,
                     "hidden": "data.apimode !== 'local'",
                     "newLine": true,
                     "xl": 12,
