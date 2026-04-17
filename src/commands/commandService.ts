@@ -378,7 +378,7 @@ export default class CommandService {
                     this.adapter.log.warn(
                         `CommandService: Retry ${attempt}/${COMMAND_RETRY_COUNT} for ${commandId} on ${deviceId}.`,
                     );
-                    await sleep(COMMAND_RETRY_DELAY_MS);
+                    await sleep(this.adapter, COMMAND_RETRY_DELAY_MS);
                     continue;
                 }
 

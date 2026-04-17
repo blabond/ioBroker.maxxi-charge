@@ -1,8 +1,9 @@
 .*/
-!.vscode/
 !.github/
 
 *.code-workspace
+.idea/
+.vscode/
 node_modules
 nbproject
 

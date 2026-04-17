@@ -275,7 +275,7 @@
                         { "label": "95% - Feed-In enabled", "value": 95 },
                         { "label": "100% - Feed-In disabled", "value": 100 }
                     ],
-                    "default": "enabled",
+                    "default": 90,
                     "xl": 12,
                     "lg": 12,
                     "md": 12,
@@ -376,7 +376,7 @@
                         { "label": "0% - unloaded", "value": "down" },
                         { "label": "100% - load", "value": "up" }
                     ],
-                    "default": 1,
+                    "default": "down",
                     "xl": 12,
                     "lg": 12,
                     "md": 12,

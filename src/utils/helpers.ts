@@ -60,8 +60,18 @@ export function parseBoolean(value: string | number | boolean | undefined): bool
     return false;
 }
 
-export function sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+export function sleep(
+    adapter: { setTimeout?(callback: () => void, timeout: number): ioBroker.Timeout | undefined },
+    ms: number,
+): Promise<void> {
+    return new Promise(resolve => {
+        if (typeof adapter.setTimeout === 'function') {
+            adapter.setTimeout(resolve, ms);
+            return;
+        }
+
+        setTimeout(resolve, ms);
+    });
 }
 
 export function isRecord(value: unknown): value is Record<string, unknown> {

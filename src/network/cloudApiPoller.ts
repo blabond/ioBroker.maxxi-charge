@@ -223,7 +223,7 @@ export default class CloudApiPoller {
                         'warn',
                         `Cloud API ${label} request failed. Retrying ${attempt}/${retryCount}.`,
                     );
-                    await sleep(retryDelayMs);
+                    await sleep(this.adapter, retryDelayMs);
                     continue;
                 }
 

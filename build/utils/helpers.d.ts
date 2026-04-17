@@ -4,7 +4,9 @@ export declare function validateInterval(value: number, min?: number, max?: numb
 export declare function clampNumber(value: number, min?: number, max?: number): number | null;
 export declare function parseInteger(value: string | number | undefined, fallback: number): number;
 export declare function parseBoolean(value: string | number | boolean | undefined): boolean;
-export declare function sleep(ms: number): Promise<void>;
+export declare function sleep(adapter: {
+    setTimeout?(callback: () => void, timeout: number): ioBroker.Timeout | undefined;
+}, ms: number): Promise<void>;
 export declare function isRecord(value: unknown): value is Record<string, unknown>;
 export declare function extractRelativeId(namespace: string, fullId: string): string | null;
 export declare function normalizeIpAddress(remoteAddress: string | undefined): string;

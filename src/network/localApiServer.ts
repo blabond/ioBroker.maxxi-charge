@@ -184,14 +184,14 @@ export default class LocalApiServer {
         this.server = null;
 
         await new Promise<void>(resolve => {
-            const forceCloseTimeout = setTimeout(() => {
+            const forceCloseTimeout = this.adapter.setTimeout(() => {
                 for (const socket of this.openSockets) {
                     socket.destroy();
                 }
             }, LOCAL_API_SHUTDOWN_TIMEOUT_MS);
 
             server.close(() => {
-                clearTimeout(forceCloseTimeout);
+                this.adapter.clearTimeout(forceCloseTimeout);
                 resolve();
             });
         });

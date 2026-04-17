@@ -1,13 +1,11 @@
-'use strict';
-var __importDefault =
-    (this && this.__importDefault) ||
-    function (mod) {
-        return mod && mod.__esModule ? mod : { default: mod };
-    };
-Object.defineProperty(exports, '__esModule', { value: true });
-const node_http_1 = __importDefault(require('node:http'));
-const node_https_1 = __importDefault(require('node:https'));
-const constants_1 = require('../constants');
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const node_http_1 = __importDefault(require("node:http"));
+const node_https_1 = __importDefault(require("node:https"));
+const constants_1 = require("../constants");
 class RequestClientError extends Error {
     code;
     status;
@@ -59,7 +57,8 @@ function stringifyResponseData(data) {
     }
     try {
         return JSON.stringify(data).slice(0, 300);
-    } catch {
+    }
+    catch {
         return '';
     }
 }
@@ -95,12 +94,10 @@ function findHeaderKey(headers, name) {
     return null;
 }
 function isBodyInit(value) {
-    if (
-        typeof value === 'string' ||
+    if (typeof value === 'string' ||
         value instanceof URLSearchParams ||
         value instanceof ArrayBuffer ||
-        ArrayBuffer.isView(value)
-    ) {
+        ArrayBuffer.isView(value)) {
         return true;
     }
     if (typeof Blob !== 'undefined' && value instanceof Blob) {
@@ -146,7 +143,8 @@ async function parseResponseData(response, responseType) {
     }
     try {
         return JSON.parse(rawText);
-    } catch (error) {
+    }
+    catch (error) {
         if (responseType === 'json' || isJsonContentType(response.headers.get('Content-Type'))) {
             throw new InvalidJsonResponseError(response.status, rawText, error);
         }
@@ -162,7 +160,8 @@ function parseResponseText(rawText, status, contentType, responseType) {
     }
     try {
         return JSON.parse(rawText);
-    } catch (error) {
+    }
+    catch (error) {
         if (responseType === 'json' || isJsonContentType(contentType)) {
             throw new InvalidJsonResponseError(status, rawText, error);
         }
@@ -179,23 +178,17 @@ class RequestClient {
         this.fetchImpl = fetchImpl;
     }
     async get(url, options = {}) {
-        return this.request(
-            {
-                method: 'GET',
-                url,
-            },
-            options,
-        );
+        return this.request({
+            method: 'GET',
+            url,
+        }, options);
     }
     async post(url, data, options = {}) {
-        return this.request(
-            {
-                method: 'POST',
-                url,
-                data,
-            },
-            options,
-        );
+        return this.request({
+            method: 'POST',
+            url,
+            data,
+        }, options);
     }
     async request(config, options = {}) {
         const timeoutMs = options.timeoutMs ?? constants_1.REQUEST_TIMEOUT_MS;
@@ -209,7 +202,8 @@ class RequestClient {
                 return await this.requestWithNodeTransport(config, headers, requestBody, timeoutMs, responseType);
             }
             return await this.requestWithFetchTransport(config, headers, requestBody, timeoutMs, responseType);
-        } catch (error) {
+        }
+        catch (error) {
             this.logRequestError(options.label ?? config.url, error, options.logLevel);
             throw error;
         }
@@ -217,7 +211,7 @@ class RequestClient {
     async requestWithFetchTransport(config, headers, requestBody, timeoutMs, responseType) {
         const controller = new AbortController();
         let timedOut = false;
-        const timeoutHandle = setTimeout(() => {
+        const timeoutHandle = this.startTimeout(() => {
             timedOut = true;
             controller.abort();
         }, timeoutMs);
@@ -242,21 +236,21 @@ class RequestClient {
                 headers: response.headers,
                 url: response.url,
             };
-        } catch (error) {
+        }
+        catch (error) {
             if (timedOut) {
                 throw new TimeoutRequestError(timeoutMs);
             }
             throw error;
-        } finally {
-            clearTimeout(timeoutHandle);
+        }
+        finally {
+            this.clearTimeout(timeoutHandle);
         }
     }
     async requestWithNodeTransport(config, headers, requestBody, timeoutMs, responseType) {
-        if (
-            typeof requestBody !== 'undefined' &&
+        if (typeof requestBody !== 'undefined' &&
             typeof requestBody !== 'string' &&
-            !(requestBody instanceof URLSearchParams)
-        ) {
+            !(requestBody instanceof URLSearchParams)) {
             throw new RequestClientError('Node transport only supports string request bodies', {
                 code: 'ERR_UNSUPPORTED_BODY',
             });
@@ -264,12 +258,11 @@ class RequestClient {
         const url = new URL(config.url);
         const isHttps = url.protocol === 'https:';
         const requestModule = isHttps ? node_https_1.default : node_http_1.default;
-        const requestBodyText =
-            typeof requestBody === 'undefined'
-                ? undefined
-                : typeof requestBody === 'string'
-                  ? requestBody
-                  : requestBody.toString();
+        const requestBodyText = typeof requestBody === 'undefined'
+            ? undefined
+            : typeof requestBody === 'string'
+                ? requestBody
+                : requestBody.toString();
         const nodeHeaders = { ...headers };
         if (!findHeaderKey(nodeHeaders, 'Accept')) {
             nodeHeaders.Accept = 'application/json, text/plain, */*';
@@ -285,53 +278,41 @@ class RequestClient {
         }
         return await new Promise((resolve, reject) => {
             let timedOut = false;
-            const request = requestModule.request(
-                {
-                    protocol: url.protocol,
-                    hostname: url.hostname,
-                    port: url.port || undefined,
-                    path: `${url.pathname}${url.search}`,
-                    method: config.method.toUpperCase(),
-                    headers: nodeHeaders,
-                    agent: isHttps ? this.keepAliveHttpsAgent : this.keepAliveHttpAgent,
-                },
-                response => {
-                    const chunks = [];
-                    response.on('data', chunk => {
-                        chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+            const request = requestModule.request({
+                protocol: url.protocol,
+                hostname: url.hostname,
+                port: url.port || undefined,
+                path: `${url.pathname}${url.search}`,
+                method: config.method.toUpperCase(),
+                headers: nodeHeaders,
+                agent: isHttps ? this.keepAliveHttpsAgent : this.keepAliveHttpAgent,
+            }, response => {
+                const chunks = [];
+                response.on('data', chunk => {
+                    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+                });
+                response.on('end', () => {
+                    const rawText = Buffer.concat(chunks).toString('utf8');
+                    const data = parseResponseText(rawText, response.statusCode ?? 0, typeof response.headers['content-type'] === 'string'
+                        ? response.headers['content-type']
+                        : null, responseType);
+                    if (typeof response.statusCode !== 'number' ||
+                        response.statusCode < 200 ||
+                        response.statusCode >= 300) {
+                        reject(new HttpStatusError(response.statusCode ?? 0, response.statusMessage ?? '', data));
+                        return;
+                    }
+                    resolve({
+                        data: data,
+                        status: response.statusCode,
+                        statusText: response.statusMessage ?? '',
+                        headers: new Headers(Object.entries(response.headers)
+                            .filter(([, value]) => typeof value === 'string')
+                            .map(([key, value]) => [key, value])),
+                        url: config.url,
                     });
-                    response.on('end', () => {
-                        const rawText = Buffer.concat(chunks).toString('utf8');
-                        const data = parseResponseText(
-                            rawText,
-                            response.statusCode ?? 0,
-                            typeof response.headers['content-type'] === 'string'
-                                ? response.headers['content-type']
-                                : null,
-                            responseType,
-                        );
-                        if (
-                            typeof response.statusCode !== 'number' ||
-                            response.statusCode < 200 ||
-                            response.statusCode >= 300
-                        ) {
-                            reject(new HttpStatusError(response.statusCode ?? 0, response.statusMessage ?? '', data));
-                            return;
-                        }
-                        resolve({
-                            data: data,
-                            status: response.statusCode,
-                            statusText: response.statusMessage ?? '',
-                            headers: new Headers(
-                                Object.entries(response.headers)
-                                    .filter(([, value]) => typeof value === 'string')
-                                    .map(([key, value]) => [key, value]),
-                            ),
-                            url: config.url,
-                        });
-                    });
-                },
-            );
+                });
+            });
             request.setTimeout(timeoutMs, () => {
                 timedOut = true;
                 request.destroy(new TimeoutRequestError(timeoutMs));
@@ -358,9 +339,20 @@ class RequestClient {
         const statusCode = error.status;
         const responseText = stringifyResponseData(error.responseData);
         const errorCode = error.code ? ` (${error.code})` : '';
-        this.adapter.log[logMethod](
-            `${label} failed${errorCode}: ${error.message}${statusCode ? ` | status=${statusCode}` : ''}${responseText ? ` | response=${responseText}` : ''}`,
-        );
+        this.adapter.log[logMethod](`${label} failed${errorCode}: ${error.message}${statusCode ? ` | status=${statusCode}` : ''}${responseText ? ` | response=${responseText}` : ''}`);
+    }
+    startTimeout(callback, timeoutMs) {
+        if (typeof this.adapter.setTimeout === 'function') {
+            return this.adapter.setTimeout(callback, timeoutMs) ?? setTimeout(callback, timeoutMs);
+        }
+        return setTimeout(callback, timeoutMs);
+    }
+    clearTimeout(handle) {
+        if (typeof this.adapter.clearTimeout === 'function') {
+            this.adapter.clearTimeout(handle);
+            return;
+        }
+        clearTimeout(handle);
     }
 }
 exports.default = RequestClient;

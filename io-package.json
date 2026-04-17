@@ -103,7 +103,7 @@
     "native": {
         "maxxiccuname": "",
         "ccuinterval": "5",
-        "port": "5501",
+        "port": 5501,
         "apimode": "local",
         "localCloudMirror": false,
         "enableseasonmode": false,
@@ -113,7 +113,7 @@
         "calibrationProgress": "down",
         "feedInMode": 90,
         "bkw_enable": false,
-        "bkw_powerTarget": 600,
+        "bkw_powerTarget": 800,
         "bkw_adjustment": -35
     },
     "objects": [],

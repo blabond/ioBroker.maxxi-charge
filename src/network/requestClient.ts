@@ -315,7 +315,7 @@ export default class RequestClient {
         const controller = new AbortController();
         let timedOut = false;
 
-        const timeoutHandle = setTimeout(() => {
+        const timeoutHandle = this.startTimeout(() => {
             timedOut = true;
             controller.abort();
         }, timeoutMs);
@@ -353,7 +353,7 @@ export default class RequestClient {
 
             throw error;
         } finally {
-            clearTimeout(timeoutHandle);
+            this.clearTimeout(timeoutHandle);
         }
     }
 
@@ -495,5 +495,22 @@ export default class RequestClient {
                 statusCode ? ` | status=${statusCode}` : ''
             }${responseText ? ` | response=${responseText}` : ''}`,
         );
+    }
+
+    private startTimeout(callback: () => void, timeoutMs: number): Exclude<ioBroker.Timeout, null> | NodeJS.Timeout {
+        if (typeof this.adapter.setTimeout === 'function') {
+            return this.adapter.setTimeout(callback, timeoutMs) ?? setTimeout(callback, timeoutMs);
+        }
+
+        return setTimeout(callback, timeoutMs);
+    }
+
+    private clearTimeout(handle: Exclude<ioBroker.Timeout, null> | NodeJS.Timeout): void {
+        if (typeof this.adapter.clearTimeout === 'function') {
+            this.adapter.clearTimeout(handle as ioBroker.Timeout);
+            return;
+        }
+
+        clearTimeout(handle);
     }
 }

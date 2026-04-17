@@ -14,17 +14,10 @@ export default class LocalApiServer {
     private lastCloudMirrorErrorLogTs;
     private lastAbortedPeerWarningLogTs;
     private suppressedAbortedPeerWarnings;
-    constructor(
-        adapter: AdapterInstance,
-        config: {
-            localPort: number;
-            localCloudMirrorEnabled: boolean;
-        },
-        stateManager: StateManager,
-        deviceRegistry: DeviceRegistry,
-        requestClient: RequestClient,
-        onDeviceSeen: (deviceEvent: DeviceTouchEvent) => Promise<void>,
-    );
+    constructor(adapter: AdapterInstance, config: {
+        localPort: number;
+        localCloudMirrorEnabled: boolean;
+    }, stateManager: StateManager, deviceRegistry: DeviceRegistry, requestClient: RequestClient, onDeviceSeen: (deviceEvent: DeviceTouchEvent) => Promise<void>);
     start(): Promise<void>;
     dispose(): Promise<void>;
     private handleRequest;
