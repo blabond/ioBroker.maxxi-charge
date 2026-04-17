@@ -1,3 +1,3 @@
-import { rmSync } from "node:fs";
+import { rmSync } from 'node:fs';
 
-rmSync("build", { recursive: true, force: true });
+rmSync('build', { recursive: true, force: true });

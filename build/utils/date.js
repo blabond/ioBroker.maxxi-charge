@@ -10,18 +10,13 @@ function getDateValue(date) {
     return date.month * 100 + date.day;
 }
 function parseDayMonth(value) {
-    if (typeof value !== "string") {
+    if (typeof value !== 'string') {
         return null;
     }
-    const [dayText, monthText] = value.split(".");
+    const [dayText, monthText] = value.split('.');
     const day = Number(dayText);
     const month = Number(monthText);
-    if (!Number.isInteger(day) ||
-        !Number.isInteger(month) ||
-        day < 1 ||
-        day > 31 ||
-        month < 1 ||
-        month > 12) {
+    if (!Number.isInteger(day) || !Number.isInteger(month) || day < 1 || day > 31 || month < 1 || month > 12) {
         return null;
     }
     return { day, month };
@@ -33,7 +28,6 @@ function isInWrappedRange(currentValue, fromValue, toValue) {
     if (fromValue < toValue) {
         return currentValue >= fromValue && currentValue < toValue;
     }
-    return ((currentValue >= fromValue || currentValue < toValue) &&
-        currentValue !== toValue);
+    return (currentValue >= fromValue || currentValue < toValue) && currentValue !== toValue;
 }
 //# sourceMappingURL=date.js.map

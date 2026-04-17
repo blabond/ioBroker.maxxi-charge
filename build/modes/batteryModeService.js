@@ -44,27 +44,23 @@ class BatteryModeService {
         this.calibrationAppliedDeviceIds.clear();
     }
     async handleSocChange(id, state) {
-        if (!this.config.batteryCalibrationEnabled ||
-            !state?.ack ||
-            typeof state.val !== "number") {
+        if (!this.config.batteryCalibrationEnabled || !state?.ack || typeof state.val !== 'number') {
             return;
         }
         const deviceId = this.extractDeviceId(id);
         if (!deviceId) {
             return;
         }
-        if (this.config.calibrationProgress === "down" &&
-            state.val <= constants_1.BATTERY_CALIBRATION_EMPTY_SOC) {
-            const changed = await this.updateCalibrationState(true, "up");
+        if (this.config.calibrationProgress === 'down' && state.val <= constants_1.BATTERY_CALIBRATION_EMPTY_SOC) {
+            const changed = await this.updateCalibrationState(true, 'up');
             if (changed) {
                 this.calibrationAppliedDeviceIds.clear();
                 await this.applyCalibrationToDevices(this.deviceRegistry.getActiveDeviceIds());
             }
             return;
         }
-        if (this.config.calibrationProgress === "up" &&
-            state.val >= constants_1.BATTERY_CALIBRATION_FULL_SOC) {
-            const changed = await this.updateCalibrationState(false, "down");
+        if (this.config.calibrationProgress === 'up' && state.val >= constants_1.BATTERY_CALIBRATION_FULL_SOC) {
+            const changed = await this.updateCalibrationState(false, 'down');
             if (changed) {
                 this.calibrationAppliedDeviceIds.clear();
                 this.calibrationAppliedDeviceIds.delete(deviceId);
@@ -83,20 +79,28 @@ class BatteryModeService {
     extractDeviceId(fullId) {
         const relativeId = (0, helpers_1.extractRelativeId)(this.adapter.namespace, fullId);
         if (!relativeId) {
-            return "";
+            return '';
         }
-        return relativeId.split(".")[0] ?? "";
+        return relativeId.split('.')[0] ?? '';
     }
     async applyCalibration(deviceId) {
         try {
-            if (this.config.calibrationProgress === "down") {
-                const minSocUpdated = await this.commandService.applyDeviceSetting(deviceId, "minSOC", 0, { source: "batteryMode:down" });
-                const maxSocUpdated = await this.commandService.applyDeviceSetting(deviceId, "maxSOC", 100, { source: "batteryMode:down" });
+            if (this.config.calibrationProgress === 'down') {
+                const minSocUpdated = await this.commandService.applyDeviceSetting(deviceId, 'minSOC', 0, {
+                    source: 'batteryMode:down',
+                });
+                const maxSocUpdated = await this.commandService.applyDeviceSetting(deviceId, 'maxSOC', 100, {
+                    source: 'batteryMode:down',
+                });
                 return minSocUpdated && maxSocUpdated;
             }
-            if (this.config.calibrationProgress === "up") {
-                const minSocUpdated = await this.commandService.applyDeviceSetting(deviceId, "minSOC", 99, { source: "batteryMode:up" });
-                const maxSocUpdated = await this.commandService.applyDeviceSetting(deviceId, "maxSOC", 100, { source: "batteryMode:up" });
+            if (this.config.calibrationProgress === 'up') {
+                const minSocUpdated = await this.commandService.applyDeviceSetting(deviceId, 'minSOC', 99, {
+                    source: 'batteryMode:up',
+                });
+                const maxSocUpdated = await this.commandService.applyDeviceSetting(deviceId, 'maxSOC', 100, {
+                    source: 'batteryMode:up',
+                });
                 return minSocUpdated && maxSocUpdated;
             }
             return false;
@@ -107,8 +111,7 @@ class BatteryModeService {
         }
     }
     async updateCalibrationState(enabled, progress) {
-        if (this.config.batteryCalibrationEnabled === enabled &&
-            this.config.calibrationProgress === progress) {
+        if (this.config.batteryCalibrationEnabled === enabled && this.config.calibrationProgress === progress) {
             return false;
         }
         try {

@@ -68,11 +68,11 @@ class MaxxiChargeAdapter extends utils.Adapter {
     constructor(options = {}) {
         super({
             ...options,
-            name: "maxxi-charge",
+            name: 'maxxi-charge',
         });
-        this.on("ready", this.onReady.bind(this));
-        this.on("stateChange", this.onStateChange.bind(this));
-        this.on("unload", this.onUnload.bind(this));
+        this.on('ready', this.onReady.bind(this));
+        this.on('stateChange', this.onStateChange.bind(this));
+        this.on('unload', this.onUnload.bind(this));
     }
     async onReady() {
         try {
@@ -87,7 +87,7 @@ class MaxxiChargeAdapter extends utils.Adapter {
             this.bkwMode = new bkwModeService_1.default(this, this.runtimeConfig, this.commandService, this.deviceRegistry, this.stateManager);
             await this.stateManager.ensureInfoStructure();
             await this.stateManager.resetInfoStates();
-            if (this.runtimeConfig.apiMode === "local") {
+            if (this.runtimeConfig.apiMode === 'local') {
                 this.localApi = new localApiServer_1.default(this, this.runtimeConfig, this.stateManager, this.deviceRegistry, this.requestClient, this.handleDeviceSeen.bind(this));
                 await this.localApi.start();
             }
@@ -106,7 +106,7 @@ class MaxxiChargeAdapter extends utils.Adapter {
                 if (cleanupResult?.connectionLost) {
                     this.handleConnectionLost();
                 }
-            }, constants_1.ACTIVE_DEVICE_CLEANUP_INTERVAL_MS, "active-device-cleanup");
+            }, constants_1.ACTIVE_DEVICE_CLEANUP_INTERVAL_MS, 'active-device-cleanup');
         }
         catch (error) {
             await this.failInitialization(error);
@@ -162,9 +162,7 @@ class MaxxiChargeAdapter extends utils.Adapter {
         if (deviceEvent.reconnectedAfterInactive) {
             this.log.info(`Device ${deviceEvent.deviceId} connected again.`);
         }
-        if (!deviceEvent.isNewDevice &&
-            !deviceEvent.connectionBecameActive &&
-            !deviceEvent.reconnectedAfterInactive) {
+        if (!deviceEvent.isNewDevice && !deviceEvent.connectionBecameActive && !deviceEvent.reconnectedAfterInactive) {
             return;
         }
         try {
@@ -179,7 +177,7 @@ class MaxxiChargeAdapter extends utils.Adapter {
     }
     isSocStateId(fullId) {
         const relativeId = (0, helpers_1.extractRelativeId)(this.namespace, fullId);
-        return Boolean(relativeId && relativeId.endsWith(".SOC"));
+        return Boolean(relativeId && relativeId.endsWith('.SOC'));
     }
     async dispose() {
         if (this.disposePromise) {
@@ -257,11 +255,9 @@ class MaxxiChargeAdapter extends utils.Adapter {
             await this.dispose();
         }
         catch (disposeError) {
-            this.log.error(`Error during fatal initialization cleanup: ${disposeError instanceof Error
-                ? disposeError.message
-                : String(disposeError)}`);
+            this.log.error(`Error during fatal initialization cleanup: ${disposeError instanceof Error ? disposeError.message : String(disposeError)}`);
         }
-        this.terminate("Initialization failed", utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
+        this.terminate('Initialization failed', utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
     }
 }
 exports.default = MaxxiChargeAdapter;

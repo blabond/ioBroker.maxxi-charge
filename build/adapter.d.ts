@@ -1,4 +1,4 @@
-import * as utils from "@iobroker/adapter-core";
+import * as utils from '@iobroker/adapter-core';
 export default class MaxxiChargeAdapter extends utils.Adapter {
     private runtimeConfig;
     private scheduler;

@@ -16,7 +16,7 @@ class RequestClientError extends Error {
         this.code = options.code;
         this.status = options.status;
         this.responseData = options.responseData;
-        if (typeof options.cause !== "undefined") {
+        if (typeof options.cause !== 'undefined') {
             this.cause = options.cause;
         }
     }
@@ -33,8 +33,8 @@ class HttpStatusError extends RequestClientError {
 }
 class InvalidJsonResponseError extends RequestClientError {
     constructor(status, responseText, cause) {
-        super("Invalid JSON response received", {
-            code: "ERR_INVALID_JSON",
+        super('Invalid JSON response received', {
+            code: 'ERR_INVALID_JSON',
             status,
             responseData: responseText,
             cause,
@@ -44,22 +44,22 @@ class InvalidJsonResponseError extends RequestClientError {
 class TimeoutRequestError extends RequestClientError {
     constructor(timeoutMs) {
         super(`timeout of ${timeoutMs}ms exceeded`, {
-            code: "ETIMEDOUT",
+            code: 'ETIMEDOUT',
         });
     }
 }
 function stringifyResponseData(data) {
-    if (typeof data === "undefined") {
-        return "";
+    if (typeof data === 'undefined') {
+        return '';
     }
-    if (typeof data === "string") {
+    if (typeof data === 'string') {
         return data.slice(0, 300);
     }
     try {
         return JSON.stringify(data).slice(0, 300);
     }
     catch {
-        return "";
+        return '';
     }
 }
 function mergeHeaders(...sources) {
@@ -94,33 +94,32 @@ function findHeaderKey(headers, name) {
     return null;
 }
 function isBodyInit(value) {
-    if (typeof value === "string" ||
+    if (typeof value === 'string' ||
         value instanceof URLSearchParams ||
         value instanceof ArrayBuffer ||
         ArrayBuffer.isView(value)) {
         return true;
     }
-    if (typeof Blob !== "undefined" && value instanceof Blob) {
+    if (typeof Blob !== 'undefined' && value instanceof Blob) {
         return true;
     }
-    if (typeof FormData !== "undefined" && value instanceof FormData) {
+    if (typeof FormData !== 'undefined' && value instanceof FormData) {
         return true;
     }
-    if (typeof ReadableStream !== "undefined" &&
-        value instanceof ReadableStream) {
+    if (typeof ReadableStream !== 'undefined' && value instanceof ReadableStream) {
         return true;
     }
     return false;
 }
 function buildRequestBody(data, headers) {
-    if (typeof data === "undefined") {
+    if (typeof data === 'undefined') {
         return undefined;
     }
     if (isBodyInit(data)) {
         return data;
     }
-    if (!findHeaderKey(headers, "Content-Type")) {
-        headers["Content-Type"] = "application/json";
+    if (!findHeaderKey(headers, 'Content-Type')) {
+        headers['Content-Type'] = 'application/json';
     }
     return JSON.stringify(data);
 }
@@ -129,28 +128,24 @@ function isJsonContentType(contentType) {
         return false;
     }
     const normalizedContentType = contentType.toLowerCase();
-    return (normalizedContentType.includes("application/json") ||
-        normalizedContentType.includes("+json"));
+    return normalizedContentType.includes('application/json') || normalizedContentType.includes('+json');
 }
 async function parseResponseData(response, responseType) {
-    if (responseType === "none" ||
-        response.status === 204 ||
-        response.status === 205) {
+    if (responseType === 'none' || response.status === 204 || response.status === 205) {
         return undefined;
     }
     const rawText = await response.text();
     if (!rawText) {
         return undefined;
     }
-    if (responseType === "text") {
+    if (responseType === 'text') {
         return rawText;
     }
     try {
         return JSON.parse(rawText);
     }
     catch (error) {
-        if (responseType === "json" ||
-            isJsonContentType(response.headers.get("Content-Type"))) {
+        if (responseType === 'json' || isJsonContentType(response.headers.get('Content-Type'))) {
             throw new InvalidJsonResponseError(response.status, rawText, error);
         }
         return rawText;
@@ -160,14 +155,14 @@ function parseResponseText(rawText, status, contentType, responseType) {
     if (!rawText) {
         return undefined;
     }
-    if (responseType === "text") {
+    if (responseType === 'text') {
         return rawText;
     }
     try {
         return JSON.parse(rawText);
     }
     catch (error) {
-        if (responseType === "json" || isJsonContentType(contentType)) {
+        if (responseType === 'json' || isJsonContentType(contentType)) {
             throw new InvalidJsonResponseError(status, rawText, error);
         }
         return rawText;
@@ -184,13 +179,13 @@ class RequestClient {
     }
     async get(url, options = {}) {
         return this.request({
-            method: "GET",
+            method: 'GET',
             url,
         }, options);
     }
     async post(url, data, options = {}) {
         return this.request({
-            method: "POST",
+            method: 'POST',
             url,
             data,
         }, options);
@@ -198,12 +193,12 @@ class RequestClient {
     async request(config, options = {}) {
         const timeoutMs = options.timeoutMs ?? constants_1.REQUEST_TIMEOUT_MS;
         const headers = mergeHeaders(options.headers, config.headers);
-        const requestData = typeof config.body !== "undefined" ? config.body : config.data;
+        const requestData = typeof config.body !== 'undefined' ? config.body : config.data;
         const requestBody = buildRequestBody(requestData, headers);
         try {
-            const responseType = options.responseType ?? config.responseType ?? "auto";
-            const transport = options.transport ?? "fetch";
-            if (transport === "node") {
+            const responseType = options.responseType ?? config.responseType ?? 'auto';
+            const transport = options.transport ?? 'fetch';
+            if (transport === 'node') {
                 return await this.requestWithNodeTransport(config, headers, requestBody, timeoutMs, responseType);
             }
             return await this.requestWithFetchTransport(config, headers, requestBody, timeoutMs, responseType);
@@ -226,7 +221,7 @@ class RequestClient {
                 headers: new Headers(headers),
                 signal: controller.signal,
             };
-            if (typeof requestBody !== "undefined") {
+            if (typeof requestBody !== 'undefined') {
                 requestInit.body = requestBody;
             }
             const response = await this.fetchImpl(config.url, requestInit);
@@ -253,34 +248,33 @@ class RequestClient {
         }
     }
     async requestWithNodeTransport(config, headers, requestBody, timeoutMs, responseType) {
-        if (typeof requestBody !== "undefined" &&
-            typeof requestBody !== "string" &&
+        if (typeof requestBody !== 'undefined' &&
+            typeof requestBody !== 'string' &&
             !(requestBody instanceof URLSearchParams)) {
-            throw new RequestClientError("Node transport only supports string request bodies", {
-                code: "ERR_UNSUPPORTED_BODY",
+            throw new RequestClientError('Node transport only supports string request bodies', {
+                code: 'ERR_UNSUPPORTED_BODY',
             });
         }
         const url = new URL(config.url);
-        const isHttps = url.protocol === "https:";
+        const isHttps = url.protocol === 'https:';
         const requestModule = isHttps ? node_https_1.default : node_http_1.default;
-        const requestBodyText = typeof requestBody === "undefined"
+        const requestBodyText = typeof requestBody === 'undefined'
             ? undefined
-            : typeof requestBody === "string"
+            : typeof requestBody === 'string'
                 ? requestBody
                 : requestBody.toString();
         const nodeHeaders = { ...headers };
-        if (!findHeaderKey(nodeHeaders, "Accept")) {
-            nodeHeaders.Accept = "application/json, text/plain, */*";
+        if (!findHeaderKey(nodeHeaders, 'Accept')) {
+            nodeHeaders.Accept = 'application/json, text/plain, */*';
         }
-        if (!findHeaderKey(nodeHeaders, "User-Agent")) {
-            nodeHeaders["User-Agent"] = "axios/1.13.6";
+        if (!findHeaderKey(nodeHeaders, 'User-Agent')) {
+            nodeHeaders['User-Agent'] = 'iobroker.maxxi-charge';
         }
-        if (!findHeaderKey(nodeHeaders, "Accept-Encoding")) {
-            nodeHeaders["Accept-Encoding"] = "gzip, compress, deflate, br";
+        if (!findHeaderKey(nodeHeaders, 'Accept-Encoding')) {
+            nodeHeaders['Accept-Encoding'] = 'gzip, compress, deflate, br';
         }
-        if (typeof requestBodyText !== "undefined" &&
-            !findHeaderKey(nodeHeaders, "Content-Length")) {
-            nodeHeaders["Content-Length"] = String(Buffer.byteLength(requestBodyText, "utf8"));
+        if (typeof requestBodyText !== 'undefined' && !findHeaderKey(nodeHeaders, 'Content-Length')) {
+            nodeHeaders['Content-Length'] = String(Buffer.byteLength(requestBodyText, 'utf8'));
         }
         return await new Promise((resolve, reject) => {
             let timedOut = false;
@@ -292,28 +286,28 @@ class RequestClient {
                 method: config.method.toUpperCase(),
                 headers: nodeHeaders,
                 agent: isHttps ? this.keepAliveHttpsAgent : this.keepAliveHttpAgent,
-            }, (response) => {
+            }, response => {
                 const chunks = [];
-                response.on("data", (chunk) => {
+                response.on('data', chunk => {
                     chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
                 });
-                response.on("end", () => {
-                    const rawText = Buffer.concat(chunks).toString("utf8");
-                    const data = parseResponseText(rawText, response.statusCode ?? 0, typeof response.headers["content-type"] === "string"
-                        ? response.headers["content-type"]
+                response.on('end', () => {
+                    const rawText = Buffer.concat(chunks).toString('utf8');
+                    const data = parseResponseText(rawText, response.statusCode ?? 0, typeof response.headers['content-type'] === 'string'
+                        ? response.headers['content-type']
                         : null, responseType);
-                    if (typeof response.statusCode !== "number" ||
+                    if (typeof response.statusCode !== 'number' ||
                         response.statusCode < 200 ||
                         response.statusCode >= 300) {
-                        reject(new HttpStatusError(response.statusCode ?? 0, response.statusMessage ?? "", data));
+                        reject(new HttpStatusError(response.statusCode ?? 0, response.statusMessage ?? '', data));
                         return;
                     }
                     resolve({
                         data: data,
                         status: response.statusCode,
-                        statusText: response.statusMessage ?? "",
+                        statusText: response.statusMessage ?? '',
                         headers: new Headers(Object.entries(response.headers)
-                            .filter(([, value]) => typeof value === "string")
+                            .filter(([, value]) => typeof value === 'string')
                             .map(([key, value]) => [key, value])),
                         url: config.url,
                     });
@@ -323,29 +317,29 @@ class RequestClient {
                 timedOut = true;
                 request.destroy(new TimeoutRequestError(timeoutMs));
             });
-            request.on("error", (error) => {
+            request.on('error', error => {
                 if (timedOut && !(error instanceof RequestClientError)) {
                     reject(new TimeoutRequestError(timeoutMs));
                     return;
                 }
                 reject(error);
             });
-            if (typeof requestBodyText !== "undefined") {
+            if (typeof requestBodyText !== 'undefined') {
                 request.write(requestBodyText);
             }
             request.end();
         });
     }
-    logRequestError(label, error, level = "debug") {
-        const logMethod = typeof this.adapter.log[level] === "function" ? level : "debug";
+    logRequestError(label, error, level = 'debug') {
+        const logMethod = typeof this.adapter.log[level] === 'function' ? level : 'debug';
         if (!(error instanceof RequestClientError)) {
             this.adapter.log[logMethod](`${label} failed: ${String(error)}`);
             return;
         }
         const statusCode = error.status;
         const responseText = stringifyResponseData(error.responseData);
-        const errorCode = error.code ? ` (${error.code})` : "";
-        this.adapter.log[logMethod](`${label} failed${errorCode}: ${error.message}${statusCode ? ` | status=${statusCode}` : ""}${responseText ? ` | response=${responseText}` : ""}`);
+        const errorCode = error.code ? ` (${error.code})` : '';
+        this.adapter.log[logMethod](`${label} failed${errorCode}: ${error.message}${statusCode ? ` | status=${statusCode}` : ''}${responseText ? ` | response=${responseText}` : ''}`);
     }
 }
 exports.default = RequestClient;

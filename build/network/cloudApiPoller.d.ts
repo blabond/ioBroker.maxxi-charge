@@ -1,8 +1,8 @@
-import type { AdapterInstance, DeviceTouchEvent } from "../types/shared";
-import type DeviceRegistry from "../core/deviceRegistry";
-import type Scheduler from "../core/scheduler";
-import type StateManager from "../core/stateManager";
-import type RequestClient from "./requestClient";
+import type { AdapterInstance, DeviceTouchEvent } from '../types/shared';
+import type DeviceRegistry from '../core/deviceRegistry';
+import type Scheduler from '../core/scheduler';
+import type StateManager from '../core/stateManager';
+import type RequestClient from './requestClient';
 export default class CloudApiPoller {
     private readonly adapter;
     private readonly config;

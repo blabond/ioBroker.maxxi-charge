@@ -1,5 +1,5 @@
-import { type Job } from "node-schedule";
-import type { AdapterInstance } from "../types/shared";
+import { type Job } from 'node-schedule';
+import type { AdapterInstance } from '../types/shared';
 export default class Scheduler {
     private readonly adapter;
     private readonly intervalHandles;

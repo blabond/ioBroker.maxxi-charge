@@ -1,4 +1,4 @@
 {
-  "file": ["test/mocha.setup.mjs"],
-  "watch-files": ["test/**/*.test.mjs"]
+    "file": ["test/mocha.setup.mjs"],
+    "watch-files": ["test/**/*.test.mjs"]
 }

@@ -20,18 +20,17 @@ class EcoModeService {
         this.deviceRegistry = deviceRegistry;
     }
     async start() {
-        if (!this.config.seasonModeEnabled ||
-            this.config.batteryCalibrationEnabled) {
+        if (!this.config.seasonModeEnabled || this.config.batteryCalibrationEnabled) {
             return;
         }
         if (!this.config.winterFrom || !this.config.winterTo) {
-            this.adapter.log.warn("EcoMode: Winter dates are invalid. Season mode will stay inactive.");
+            this.adapter.log.warn('EcoMode: Winter dates are invalid. Season mode will stay inactive.');
             return;
         }
         if (this.started) {
             return;
         }
-        this.dailyJob = this.scheduler.scheduleCron(`${this.adapter.namespace}-eco-evaluation`, "0 8 * * *", async () => {
+        this.dailyJob = this.scheduler.scheduleCron(`${this.adapter.namespace}-eco-evaluation`, '0 8 * * *', async () => {
             await this.evaluateActiveDevices();
         });
         this.started = true;
@@ -58,7 +57,7 @@ class EcoModeService {
         this.minSocSetTodayByDevice.clear();
     }
     async handleSocChange(id, state) {
-        if (!this.started || !state?.ack || typeof state.val !== "number") {
+        if (!this.started || !state?.ack || typeof state.val !== 'number') {
             return;
         }
         const deviceId = this.extractDeviceId(id);
@@ -74,7 +73,7 @@ class EcoModeService {
             return;
         }
         if (state.val >= constants_1.ECO_SOC_TRIGGER_THRESHOLD) {
-            const updated = await this.commandService.applyDeviceSetting(deviceId, "minSOC", constants_1.ECO_WINTER_RELAXED_MIN_SOC, { source: "ecoMode:socTrigger" });
+            const updated = await this.commandService.applyDeviceSetting(deviceId, 'minSOC', constants_1.ECO_WINTER_RELAXED_MIN_SOC, { source: 'ecoMode:socTrigger' });
             if (updated) {
                 this.minSocSetTodayByDevice.set(deviceId, true);
             }
@@ -92,7 +91,7 @@ class EcoModeService {
     async evaluateActiveDevices() {
         const activeDeviceIds = this.deviceRegistry.getActiveDeviceIds();
         if (activeDeviceIds.length === 0) {
-            this.adapter.log.debug("EcoMode: No active device available for evaluation.");
+            this.adapter.log.debug('EcoMode: No active device available for evaluation.');
             return;
         }
         for (const deviceId of activeDeviceIds) {
@@ -114,8 +113,10 @@ class EcoModeService {
             return;
         }
         if ((0, date_1.isInWrappedRange)(todayValue, winterFromValue, winterToValue)) {
-            const minSocUpdated = await this.commandService.applyDeviceSetting(deviceId, "minSOC", constants_1.ECO_WINTER_MIN_SOC, { source: "ecoMode:winter" });
-            const maxSocUpdated = await this.commandService.applyDeviceSetting(deviceId, "maxSOC", this.config.feedInMode, { source: "ecoMode:winter" });
+            const minSocUpdated = await this.commandService.applyDeviceSetting(deviceId, 'minSOC', constants_1.ECO_WINTER_MIN_SOC, {
+                source: 'ecoMode:winter',
+            });
+            const maxSocUpdated = await this.commandService.applyDeviceSetting(deviceId, 'maxSOC', this.config.feedInMode, { source: 'ecoMode:winter' });
             if (minSocUpdated && maxSocUpdated) {
                 this.minSocSetTodayByDevice.set(deviceId, false);
             }
@@ -127,8 +128,12 @@ class EcoModeService {
         }
     }
     async applySummerSettings(deviceId) {
-        const minSocUpdated = await this.commandService.applyDeviceSetting(deviceId, "minSOC", constants_1.ECO_SUMMER_MIN_SOC, { source: "ecoMode:summer" });
-        const maxSocUpdated = await this.commandService.applyDeviceSetting(deviceId, "maxSOC", this.config.feedInMode, { source: "ecoMode:summer" });
+        const minSocUpdated = await this.commandService.applyDeviceSetting(deviceId, 'minSOC', constants_1.ECO_SUMMER_MIN_SOC, {
+            source: 'ecoMode:summer',
+        });
+        const maxSocUpdated = await this.commandService.applyDeviceSetting(deviceId, 'maxSOC', this.config.feedInMode, {
+            source: 'ecoMode:summer',
+        });
         return minSocUpdated && maxSocUpdated;
     }
     getTodayValue() {
@@ -141,9 +146,9 @@ class EcoModeService {
     extractDeviceId(fullId) {
         const relativeId = (0, helpers_1.extractRelativeId)(this.adapter.namespace, fullId);
         if (!relativeId) {
-            return "";
+            return '';
         }
-        return relativeId.split(".")[0] ?? "";
+        return relativeId.split('.')[0] ?? '';
     }
 }
 exports.default = EcoModeService;

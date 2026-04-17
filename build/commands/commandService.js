@@ -2,102 +2,102 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const constants_1 = require("../constants");
 const helpers_1 = require("../utils/helpers");
-const SENDCOMMAND_INITIALIZED_STATE_SUFFIX = "_sendcommandInitialized";
-const SENDCOMMAND_INITIALIZED_CODE = "260410";
+const SENDCOMMAND_INITIALIZED_STATE_SUFFIX = '_sendcommandInitialized';
+const SENDCOMMAND_INITIALIZED_CODE = '260410';
 const COMMAND_DEFINITIONS = [
     {
-        id: "maxOutputPower",
+        id: 'maxOutputPower',
         name: {
-            en: "Micro-inverter maximum power (W)",
-            de: "Mikrowechselrichter maximale Leistung (W)",
+            en: 'Micro-inverter maximum power (W)',
+            de: 'Mikrowechselrichter maximale Leistung (W)',
         },
-        type: "number",
-        role: "level",
+        type: 'number',
+        role: 'level',
         min: 300,
         max: 2300,
-        unit: "W",
+        unit: 'W',
     },
     {
-        id: "offlinePower",
+        id: 'offlinePower',
         name: {
-            en: "Offline output power (W)",
-            de: "Offline-Ausgangsleistung (W)",
+            en: 'Offline output power (W)',
+            de: 'Offline-Ausgangsleistung (W)',
         },
-        type: "number",
-        role: "level",
+        type: 'number',
+        role: 'level',
         min: 50,
         max: 600,
-        unit: "W",
+        unit: 'W',
     },
     {
-        id: "baseLoad",
+        id: 'baseLoad',
         name: {
-            en: "Adjust output (W)",
-            de: "Ausgabe anpassen (W)",
+            en: 'Adjust output (W)',
+            de: 'Ausgabe anpassen (W)',
         },
-        type: "number",
-        role: "level",
+        type: 'number',
+        role: 'level',
         min: -1000,
         max: 600,
-        unit: "W",
+        unit: 'W',
     },
     {
-        id: "offlineMode",
+        id: 'offlineMode',
         name: {
-            en: "Cloudservice",
-            de: "Cloudservice",
+            en: 'Cloudservice',
+            de: 'Cloudservice',
         },
-        type: "number",
-        role: "value",
+        type: 'number',
+        role: 'value',
         min: 1,
         max: 2,
         states: {
-            1: "Cloud mode aktiv",
-            2: "Lokal mode aktiv",
+            1: 'Cloud mode aktiv',
+            2: 'Lokal mode aktiv',
         },
     },
     {
-        id: "threshold",
+        id: 'threshold',
         name: {
-            en: "Response tolerance (W)",
-            de: "Reaktionstoleranz (W)",
+            en: 'Response tolerance (W)',
+            de: 'Reaktionstoleranz (W)',
         },
-        type: "number",
-        role: "level",
+        type: 'number',
+        role: 'level',
         min: 3,
         max: 50,
-        unit: "W",
+        unit: 'W',
     },
     {
-        id: "minSOC",
+        id: 'minSOC',
         name: {
-            en: "Minimum battery discharge",
-            de: "Minimale Batterieentladung",
+            en: 'Minimum battery discharge',
+            de: 'Minimale Batterieentladung',
         },
-        type: "number",
-        role: "level.min",
+        type: 'number',
+        role: 'level.min',
         min: 0,
         max: 99,
-        unit: "%",
+        unit: '%',
     },
     {
-        id: "maxSOC",
+        id: 'maxSOC',
         name: {
-            en: "Maximum battery discharge",
-            de: "Maximale Batterieentladung",
+            en: 'Maximum battery discharge',
+            de: 'Maximale Batterieentladung',
         },
-        type: "number",
-        role: "level.max",
+        type: 'number',
+        role: 'level.max',
         min: 20,
         max: 100,
-        unit: "%",
+        unit: '%',
     },
 ];
 class CommandService {
     adapter;
     stateManager;
     requestClient;
-    commandDefinitions = new Map(COMMAND_DEFINITIONS.map((definition) => [definition.id, definition]));
+    commandDefinitions = new Map(COMMAND_DEFINITIONS.map(definition => [definition.id, definition]));
     confirmedCommandValueCache = new Map();
     subscribedStateIds = new Set();
     constructor(adapter, stateManager, requestClient) {
@@ -112,7 +112,7 @@ class CommandService {
         }
         await this.stateManager.ensureDevice(normalizedDeviceId);
         await this.stateManager.ensureChannel(`${normalizedDeviceId}.sendcommand`, {
-            name: "sendcommand",
+            name: 'sendcommand',
         });
         for (const definition of this.commandDefinitions.values()) {
             const relativeId = `${normalizedDeviceId}.sendcommand.${definition.id}`;
@@ -122,11 +122,9 @@ class CommandService {
                 role: definition.role,
                 read: true,
                 write: true,
-                ...(typeof definition.min === "number" ? { min: definition.min } : {}),
-                ...(typeof definition.max === "number" ? { max: definition.max } : {}),
-                ...(typeof definition.unit === "string"
-                    ? { unit: definition.unit }
-                    : {}),
+                ...(typeof definition.min === 'number' ? { min: definition.min } : {}),
+                ...(typeof definition.max === 'number' ? { max: definition.max } : {}),
+                ...(typeof definition.unit === 'string' ? { unit: definition.unit } : {}),
                 ...(definition.states ? { states: definition.states } : {}),
             };
             await this.stateManager.ensureStateObject(relativeId, stateCommon);
@@ -145,9 +143,7 @@ class CommandService {
         await this.ensureSendcommandInitializedState(normalizedDeviceId);
         const stateId = this.getSendcommandInitializedStateId(normalizedDeviceId);
         const currentState = await this.adapter.getStateAsync(stateId);
-        const currentCode = currentState?.val === null || typeof currentState?.val === "undefined"
-            ? ""
-            : String(currentState.val);
+        const currentCode = currentState?.val === null || typeof currentState?.val === 'undefined' ? '' : String(currentState.val);
         if (currentCode !== SENDCOMMAND_INITIALIZED_CODE) {
             await this.resetSendcommandFolder(normalizedDeviceId);
             await this.adapter.setStateAsync(stateId, {
@@ -166,7 +162,7 @@ class CommandService {
             return false;
         }
         await this.applyDeviceSetting(parsedState.deviceId, parsedState.commandId, state.val, {
-            source: "stateChange",
+            source: 'stateChange',
         });
         return true;
     }
@@ -231,16 +227,16 @@ class CommandService {
         const stateId = this.getSendcommandInitializedStateId(deviceId);
         await this.stateManager.ensureStateObject(stateId, {
             name: {
-                en: "Sendcommand configuration initialized",
-                de: "Sendcommand-Konfiguration initialisiert",
+                en: 'Sendcommand configuration initialized',
+                de: 'Sendcommand-Konfiguration initialisiert',
             },
-            type: "string",
-            role: "text",
+            type: 'string',
+            role: 'text',
             read: true,
             write: false,
             expert: true,
             hidden: true,
-            def: "",
+            def: '',
         });
     }
     getSendcommandInitializedStateId(deviceId) {
@@ -274,12 +270,12 @@ class CommandService {
                 this.adapter.log.debug(`CommandService: Sending ${commandId}=${value} to ${deviceId} via ${url} (attempt ${attempt}/${constants_1.COMMAND_RETRY_COUNT + 1}).`);
                 const response = await this.requestClient.post(url, payload, {
                     headers: {
-                        "Content-Type": "application/x-www-form-urlencoded",
+                        'Content-Type': 'application/x-www-form-urlencoded',
                     },
                     timeoutMs: constants_1.COMMAND_REQUEST_TIMEOUT_MS,
                     label: `Command ${commandId} for ${deviceId}`,
-                    responseType: "text",
-                    transport: "node",
+                    responseType: 'text',
+                    transport: 'node',
                 });
                 this.adapter.log.debug(`CommandService: Sent ${commandId}=${value} to ${deviceId} (status=${response.status}).`);
                 return true;
@@ -297,7 +293,7 @@ class CommandService {
         return false;
     }
     normalizeValue(definition, rawValue) {
-        if (definition.type !== "number") {
+        if (definition.type !== 'number') {
             return null;
         }
         const numericValue = Number(rawValue);
@@ -316,8 +312,8 @@ class CommandService {
         if (!relativeId) {
             return null;
         }
-        const parts = relativeId.split(".");
-        if (parts.length !== 3 || parts[1] !== "sendcommand") {
+        const parts = relativeId.split('.');
+        if (parts.length !== 3 || parts[1] !== 'sendcommand') {
             return null;
         }
         const rawCommandId = parts[2];
@@ -332,7 +328,7 @@ class CommandService {
     }
     async resolveDeviceIp(deviceId) {
         const ipState = await this.adapter.getStateAsync(`${deviceId}.ip_addr`);
-        const ipAddress = typeof ipState?.val === "string" ? ipState.val.trim() : "";
+        const ipAddress = typeof ipState?.val === 'string' ? ipState.val.trim() : '';
         return ipAddress || null;
     }
     getCommandStateId(deviceId, commandId) {

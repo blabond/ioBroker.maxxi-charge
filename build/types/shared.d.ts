@@ -1,4 +1,4 @@
-import type { AdapterInstance as IoBrokerAdapterInstance } from "@iobroker/adapter-core";
+import type { AdapterInstance as IoBrokerAdapterInstance } from '@iobroker/adapter-core';
 export type JsonPrimitive = string | number | boolean | null;
 export type JsonValue = JsonPrimitive | JsonObject | JsonValue[];
 export interface JsonObject {
@@ -21,7 +21,7 @@ export interface AdapterConfig {
     bkw_adjustment?: string | number;
 }
 export interface RuntimeConfig {
-    apiMode: "local" | "cloud";
+    apiMode: 'local' | 'cloud';
     ccuName: string;
     ccuIntervalMs: number;
     localPort: number;
@@ -30,7 +30,7 @@ export interface RuntimeConfig {
     winterFrom: DayMonth | null;
     winterTo: DayMonth | null;
     batteryCalibrationEnabled: boolean;
-    calibrationProgress: "down" | "up";
+    calibrationProgress: 'down' | 'up';
     feedInMode: number;
     bkwEnabled: boolean;
     bkwPowerTarget: number;
@@ -53,25 +53,25 @@ export type ManagedStateCommon = ioBroker.StateCommon & {
     hidden?: boolean;
 };
 export interface DeviceObjectDefinition {
-    type: "device";
+    type: 'device';
     common: ioBroker.DeviceCommon;
     native: Record<string, unknown>;
 }
 export interface ChannelObjectDefinition {
-    type: "channel";
+    type: 'channel';
     common: ioBroker.ChannelCommon;
     native: Record<string, unknown>;
 }
 export interface FolderObjectDefinition {
-    type: "folder";
+    type: 'folder';
     common: ioBroker.OtherCommon;
     native: Record<string, unknown>;
 }
 export interface StateObjectDefinition {
-    type: "state";
+    type: 'state';
     common: ManagedStateCommon;
     native: Record<string, unknown>;
 }
 export type ObjectDefinition = DeviceObjectDefinition | ChannelObjectDefinition | FolderObjectDefinition | StateObjectDefinition;
-export type LogLevel = "debug" | "info" | "warn" | "error";
+export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 //# sourceMappingURL=shared.d.ts.map

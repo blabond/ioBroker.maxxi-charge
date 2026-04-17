@@ -2,24 +2,24 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const helpers_1 = require("../utils/helpers");
 const roles_1 = require("../utils/roles");
-const DYNAMIC_FOLDER_KEYS = new Set(["batteriesInfo", "convertersInfo"]);
+const DYNAMIC_FOLDER_KEYS = new Set(['batteriesInfo', 'convertersInfo']);
 function getStateType(value) {
     if (value === null) {
-        return "mixed";
+        return 'mixed';
     }
     if (Array.isArray(value)) {
-        return "array";
+        return 'array';
     }
-    if (typeof value === "boolean") {
-        return "boolean";
+    if (typeof value === 'boolean') {
+        return 'boolean';
     }
-    if (typeof value === "number") {
-        return "number";
+    if (typeof value === 'number') {
+        return 'number';
     }
-    if (typeof value === "string") {
-        return "string";
+    if (typeof value === 'string') {
+        return 'string';
     }
-    return "mixed";
+    return 'mixed';
 }
 function isContainerValue(value) {
     return Array.isArray(value) || (0, helpers_1.isRecord)(value);
@@ -47,57 +47,57 @@ class StateManager {
         this.adapter = adapter;
     }
     async ensureInfoStructure() {
-        await this.ensureChannel("info", {
+        await this.ensureChannel('info', {
             name: {
-                en: "Information",
-                de: "Information",
+                en: 'Information',
+                de: 'Information',
             },
         });
-        await this.ensureStateObject("info.connection", {
+        await this.ensureStateObject('info.connection', {
             name: {
-                en: "Connection active",
-                de: "Verbindung aktiv",
+                en: 'Connection active',
+                de: 'Verbindung aktiv',
             },
-            type: "boolean",
-            role: "indicator.connected",
+            type: 'boolean',
+            role: 'indicator.connected',
             read: true,
             write: false,
         });
-        await this.ensureStateObject("info.aktivCCU", {
+        await this.ensureStateObject('info.aktivCCU', {
             name: {
-                en: "Active CCUs",
-                de: "Aktive CCUs",
+                en: 'Active CCUs',
+                de: 'Aktive CCUs',
             },
-            type: "string",
-            role: "text",
+            type: 'string',
+            role: 'text',
             read: true,
             write: false,
         });
     }
     async ensureDevice(deviceId) {
         await this.ensureObject(deviceId, {
-            type: "device",
+            type: 'device',
             common: { name: deviceId },
             native: {},
         });
     }
     async ensureChannel(id, common) {
         await this.ensureObject(id, {
-            type: "channel",
+            type: 'channel',
             common,
             native: {},
         });
     }
     async ensureFolder(id, common) {
         await this.ensureObject(id, {
-            type: "folder",
+            type: 'folder',
             common,
             native: {},
         });
     }
     async ensureStateObject(id, common) {
         await this.ensureObject(id, {
-            type: "state",
+            type: 'state',
             common,
             native: {},
         });
@@ -108,9 +108,7 @@ class StateManager {
             return false;
         }
         const existingState = await this.adapter.getStateAsync(id);
-        if (existingState &&
-            existingState.ack === ack &&
-            (0, helpers_1.areValuesEqual)(existingState.val, value)) {
+        if (existingState && existingState.ack === ack && (0, helpers_1.areValuesEqual)(existingState.val, value)) {
             this.stateValueCache.set(id, cacheKey);
             return false;
         }
@@ -120,8 +118,8 @@ class StateManager {
     }
     async setInfoStates(deviceIds) {
         const uniqueDeviceIds = [...new Set(deviceIds)];
-        await this.setStateIfChanged("info.aktivCCU", uniqueDeviceIds.join(","), true);
-        await this.setStateIfChanged("info.connection", uniqueDeviceIds.length > 0, true);
+        await this.setStateIfChanged('info.aktivCCU', uniqueDeviceIds.join(','), true);
+        await this.setStateIfChanged('info.connection', uniqueDeviceIds.length > 0, true);
     }
     async resetInfoStates() {
         await this.setInfoStates([]);
@@ -132,7 +130,7 @@ class StateManager {
     }
     async syncSettingsPayload(deviceId, payload) {
         await this.ensureDevice(deviceId);
-        await this.ensureChannel(`${deviceId}.settings`, { name: "settings" });
+        await this.ensureChannel(`${deviceId}.settings`, { name: 'settings' });
         await this.syncPayloadRecursive(`${deviceId}.settings`, payload);
     }
     clearCaches() {
@@ -188,7 +186,7 @@ class StateManager {
                 continue;
             }
             const stateValue = this.normalizeStateValue(value);
-            if (typeof stateValue === "undefined") {
+            if (typeof stateValue === 'undefined') {
                 continue;
             }
             await this.ensureStateObject(id, {
@@ -202,23 +200,20 @@ class StateManager {
         }
     }
     normalizeStateValue(value) {
-        if (value === null ||
-            typeof value === "boolean" ||
-            typeof value === "number" ||
-            typeof value === "string") {
+        if (value === null || typeof value === 'boolean' || typeof value === 'number' || typeof value === 'string') {
             return value;
         }
         return undefined;
     }
     toSettableObject(definition) {
         switch (definition.type) {
-            case "device":
+            case 'device':
                 return definition;
-            case "channel":
+            case 'channel':
                 return definition;
-            case "folder":
+            case 'folder':
                 return definition;
-            case "state":
+            case 'state':
                 return {
                     ...definition,
                     common: definition.common,
@@ -227,13 +222,13 @@ class StateManager {
     }
     toPartialObject(definition) {
         switch (definition.type) {
-            case "device":
+            case 'device':
                 return definition;
-            case "channel":
+            case 'channel':
                 return definition;
-            case "folder":
+            case 'folder':
                 return definition;
-            case "state":
+            case 'state':
                 return {
                     ...definition,
                     common: definition.common,

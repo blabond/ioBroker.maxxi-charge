@@ -1,7 +1,7 @@
-import type { AdapterInstance, StateChange } from "../types/shared";
-import type RequestClient from "../network/requestClient";
-import type StateManager from "../core/stateManager";
-export type CommandId = "maxOutputPower" | "offlinePower" | "baseLoad" | "offlineMode" | "threshold" | "minSOC" | "maxSOC";
+import type { AdapterInstance, StateChange } from '../types/shared';
+import type RequestClient from '../network/requestClient';
+import type StateManager from '../core/stateManager';
+export type CommandId = 'maxOutputPower' | 'offlinePower' | 'baseLoad' | 'offlineMode' | 'threshold' | 'minSOC' | 'maxSOC';
 export default class CommandService {
     private readonly adapter;
     private readonly stateManager;

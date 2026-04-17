@@ -1,7 +1,7 @@
-import type { AdapterInstance, RuntimeConfig, StateChange } from "../types/shared";
-import type CommandService from "../commands/commandService";
-import type DeviceRegistry from "../core/deviceRegistry";
-import type StateManager from "../core/stateManager";
+import type { AdapterInstance, RuntimeConfig, StateChange } from '../types/shared';
+import type CommandService from '../commands/commandService';
+import type DeviceRegistry from '../core/deviceRegistry';
+import type StateManager from '../core/stateManager';
 export default class BkwModeService {
     private readonly adapter;
     private readonly config;

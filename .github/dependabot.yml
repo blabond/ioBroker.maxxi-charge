@@ -4,25 +4,25 @@
 # Reference: https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "cron"
-      timezone: "Europe/Berlin"
-      cronjob: "49 2 22 * *"
-    open-pull-requests-limit: 15
-    assignees:
-      - "blabond"
-    versioning-strategy: "increase"
-    cooldown:
-      default-days: 7
+    - package-ecosystem: 'npm'
+      directory: '/'
+      schedule:
+          interval: 'cron'
+          timezone: 'Europe/Berlin'
+          cronjob: '49 2 22 * *'
+      open-pull-requests-limit: 15
+      assignees:
+          - 'blabond'
+      versioning-strategy: 'increase'
+      cooldown:
+          default-days: 7
 
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "cron"
-      timezone: "Europe/Berlin"
-      cronjob: "49 2 22 * *"
-    open-pull-requests-limit: 15
-    assignees:
-      - "blabond"
+    - package-ecosystem: 'github-actions'
+      directory: '/'
+      schedule:
+          interval: 'cron'
+          timezone: 'Europe/Berlin'
+          cronjob: '49 2 22 * *'
+      open-pull-requests-limit: 15
+      assignees:
+          - 'blabond'

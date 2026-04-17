@@ -1,4 +1,4 @@
-import type { AdapterInstance, ManagedStateCommon } from "../types/shared";
+import type { AdapterInstance, ManagedStateCommon } from '../types/shared';
 export default class StateManager {
     private readonly adapter;
     private readonly objectDefinitionCache;

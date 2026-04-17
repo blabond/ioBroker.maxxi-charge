@@ -1,7 +1,7 @@
-import type { AdapterInstance, RuntimeConfig, StateChange } from "../types/shared";
-import type CommandService from "../commands/commandService";
-import type DeviceRegistry from "../core/deviceRegistry";
-import type Scheduler from "../core/scheduler";
+import type { AdapterInstance, RuntimeConfig, StateChange } from '../types/shared';
+import type CommandService from '../commands/commandService';
+import type DeviceRegistry from '../core/deviceRegistry';
+import type Scheduler from '../core/scheduler';
 export default class EcoModeService {
     private readonly adapter;
     private readonly config;

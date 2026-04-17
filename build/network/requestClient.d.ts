@@ -1,6 +1,6 @@
-import type { AdapterInstance, LogLevel } from "../types/shared";
-type ResponseType = "auto" | "json" | "text" | "none";
-type RequestTransport = "fetch" | "node";
+import type { AdapterInstance, LogLevel } from '../types/shared';
+type ResponseType = 'auto' | 'json' | 'text' | 'none';
+type RequestTransport = 'fetch' | 'node';
 type RequestHeaders = Headers | Record<string, string> | Array<[string, string]>;
 interface RequestConfig {
     method: string;

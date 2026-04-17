@@ -1,6 +1,6 @@
-import type { AdapterInstance, RuntimeConfig, StateChange } from "../types/shared";
-import type CommandService from "../commands/commandService";
-import type DeviceRegistry from "../core/deviceRegistry";
+import type { AdapterInstance, RuntimeConfig, StateChange } from '../types/shared';
+import type CommandService from '../commands/commandService';
+import type DeviceRegistry from '../core/deviceRegistry';
 export default class BatteryModeService {
     private readonly adapter;
     private readonly config;

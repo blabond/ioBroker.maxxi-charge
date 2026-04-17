@@ -1,5 +1,5 @@
-import type { AdapterInstance, DeviceTouchEvent } from "../types/shared";
-import type StateManager from "./stateManager";
+import type { AdapterInstance, DeviceTouchEvent } from '../types/shared';
+import type StateManager from './stateManager';
 export default class DeviceRegistry {
     private readonly adapter;
     private readonly stateManager;

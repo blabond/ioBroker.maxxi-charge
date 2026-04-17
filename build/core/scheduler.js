@@ -10,7 +10,7 @@ class Scheduler {
     constructor(adapter) {
         this.adapter = adapter;
     }
-    setInterval(callback, intervalMs, label = "interval") {
+    setInterval(callback, intervalMs, label = 'interval') {
         if (this.disposed) {
             return null;
         }
@@ -29,7 +29,7 @@ class Scheduler {
         this.adapter.clearInterval(handle);
         this.intervalHandles.delete(handle);
     }
-    setTimeout(callback, timeoutMs, label = "timeout") {
+    setTimeout(callback, timeoutMs, label = 'timeout') {
         if (this.disposed) {
             return null;
         }

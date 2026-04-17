@@ -24,7 +24,7 @@ class DeviceRegistry {
         const normalizedDeviceId = (0, helpers_1.normalizeDeviceId)(deviceId);
         if (!normalizedDeviceId) {
             return {
-                deviceId: "",
+                deviceId: '',
                 isNewDevice: false,
                 connectionBecameActive: false,
                 reconnectedAfterInactive: false,

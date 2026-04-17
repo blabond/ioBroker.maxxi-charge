@@ -1,24 +1,24 @@
 {
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "CommonJS",
-    "moduleResolution": "node",
-    "lib": ["ES2023"],
-    "rootDir": "src",
-    "outDir": "build",
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-    "noImplicitOverride": true,
-    "useUnknownInCatchVariables": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "ignoreDeprecations": "6.0",
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "types": ["node"]
-  }
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "lib": ["ES2023"],
+        "rootDir": "src",
+        "outDir": "build",
+        "declaration": true,
+        "declarationMap": true,
+        "sourceMap": true,
+        "strict": true,
+        "noUncheckedIndexedAccess": true,
+        "exactOptionalPropertyTypes": true,
+        "noImplicitOverride": true,
+        "useUnknownInCatchVariables": true,
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "ignoreDeprecations": "6.0",
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "types": ["node"]
+    }
 }
