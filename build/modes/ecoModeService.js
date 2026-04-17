@@ -1,8 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const constants_1 = require("../constants");
-const date_1 = require("../utils/date");
-const helpers_1 = require("../utils/helpers");
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const constants_1 = require('../constants');
+const date_1 = require('../utils/date');
+const helpers_1 = require('../utils/helpers');
 class EcoModeService {
     adapter;
     config;
@@ -30,9 +30,13 @@ class EcoModeService {
         if (this.started) {
             return;
         }
-        this.dailyJob = this.scheduler.scheduleCron(`${this.adapter.namespace}-eco-evaluation`, '0 8 * * *', async () => {
-            await this.evaluateActiveDevices();
-        });
+        this.dailyJob = this.scheduler.scheduleCron(
+            `${this.adapter.namespace}-eco-evaluation`,
+            '0 8 * * *',
+            async () => {
+                await this.evaluateActiveDevices();
+            },
+        );
         this.started = true;
         await this.evaluateActiveDevices();
     }
@@ -73,7 +77,12 @@ class EcoModeService {
             return;
         }
         if (state.val >= constants_1.ECO_SOC_TRIGGER_THRESHOLD) {
-            const updated = await this.commandService.applyDeviceSetting(deviceId, 'minSOC', constants_1.ECO_WINTER_RELAXED_MIN_SOC, { source: 'ecoMode:socTrigger' });
+            const updated = await this.commandService.applyDeviceSetting(
+                deviceId,
+                'minSOC',
+                constants_1.ECO_WINTER_RELAXED_MIN_SOC,
+                { source: 'ecoMode:socTrigger' },
+            );
             if (updated) {
                 this.minSocSetTodayByDevice.set(deviceId, true);
             }
@@ -113,10 +122,20 @@ class EcoModeService {
             return;
         }
         if ((0, date_1.isInWrappedRange)(todayValue, winterFromValue, winterToValue)) {
-            const minSocUpdated = await this.commandService.applyDeviceSetting(deviceId, 'minSOC', constants_1.ECO_WINTER_MIN_SOC, {
-                source: 'ecoMode:winter',
-            });
-            const maxSocUpdated = await this.commandService.applyDeviceSetting(deviceId, 'maxSOC', this.config.feedInMode, { source: 'ecoMode:winter' });
+            const minSocUpdated = await this.commandService.applyDeviceSetting(
+                deviceId,
+                'minSOC',
+                constants_1.ECO_WINTER_MIN_SOC,
+                {
+                    source: 'ecoMode:winter',
+                },
+            );
+            const maxSocUpdated = await this.commandService.applyDeviceSetting(
+                deviceId,
+                'maxSOC',
+                this.config.feedInMode,
+                { source: 'ecoMode:winter' },
+            );
             if (minSocUpdated && maxSocUpdated) {
                 this.minSocSetTodayByDevice.set(deviceId, false);
             }
@@ -128,9 +147,14 @@ class EcoModeService {
         }
     }
     async applySummerSettings(deviceId) {
-        const minSocUpdated = await this.commandService.applyDeviceSetting(deviceId, 'minSOC', constants_1.ECO_SUMMER_MIN_SOC, {
-            source: 'ecoMode:summer',
-        });
+        const minSocUpdated = await this.commandService.applyDeviceSetting(
+            deviceId,
+            'minSOC',
+            constants_1.ECO_SUMMER_MIN_SOC,
+            {
+                source: 'ecoMode:summer',
+            },
+        );
         const maxSocUpdated = await this.commandService.applyDeviceSetting(deviceId, 'maxSOC', this.config.feedInMode, {
             source: 'ecoMode:summer',
         });

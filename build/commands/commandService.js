@@ -1,7 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const constants_1 = require("../constants");
-const helpers_1 = require("../utils/helpers");
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const constants_1 = require('../constants');
+const helpers_1 = require('../utils/helpers');
 const SENDCOMMAND_INITIALIZED_STATE_SUFFIX = '_sendcommandInitialized';
 const SENDCOMMAND_INITIALIZED_CODE = '260410';
 const COMMAND_DEFINITIONS = [
@@ -143,7 +143,8 @@ class CommandService {
         await this.ensureSendcommandInitializedState(normalizedDeviceId);
         const stateId = this.getSendcommandInitializedStateId(normalizedDeviceId);
         const currentState = await this.adapter.getStateAsync(stateId);
-        const currentCode = currentState?.val === null || typeof currentState?.val === 'undefined' ? '' : String(currentState.val);
+        const currentCode =
+            currentState?.val === null || typeof currentState?.val === 'undefined' ? '' : String(currentState.val);
         if (currentCode !== SENDCOMMAND_INITIALIZED_CODE) {
             await this.resetSendcommandFolder(normalizedDeviceId);
             await this.adapter.setStateAsync(stateId, {
@@ -181,7 +182,9 @@ class CommandService {
         await this.ensureDeviceStates(normalizedDeviceId);
         const stateId = this.getCommandStateId(normalizedDeviceId, commandId);
         if (await this.hasConfirmedCommandValue(stateId, normalizedDeviceId, commandId, normalizedValue)) {
-            this.adapter.log.debug(`CommandService: Skipping ${commandId}=${normalizedValue} for ${normalizedDeviceId} because the value is already confirmed.`);
+            this.adapter.log.debug(
+                `CommandService: Skipping ${commandId}=${normalizedValue} for ${normalizedDeviceId} because the value is already confirmed.`,
+            );
             await this.stateManager.setStateIfChanged(stateId, normalizedValue, true);
             return true;
         }
@@ -190,11 +193,19 @@ class CommandService {
             this.adapter.log.debug(`CommandService: No IP address found for device ${normalizedDeviceId}.`);
             return false;
         }
-        const sendSucceeded = await this.sendCommandWithRetry(ipAddress, commandId, normalizedValue, normalizedDeviceId);
+        const sendSucceeded = await this.sendCommandWithRetry(
+            ipAddress,
+            commandId,
+            normalizedValue,
+            normalizedDeviceId,
+        );
         if (!sendSucceeded) {
             return false;
         }
-        this.confirmedCommandValueCache.set(this.getConfirmedCommandValueCacheKey(normalizedDeviceId, commandId), normalizedValue);
+        this.confirmedCommandValueCache.set(
+            this.getConfirmedCommandValueCacheKey(normalizedDeviceId, commandId),
+            normalizedValue,
+        );
         await this.stateManager.setStateIfChanged(stateId, normalizedValue, true);
         return true;
     }
@@ -220,7 +231,9 @@ class CommandService {
             this.subscribedStateIds.delete(relativeId);
         }
         for (const commandId of this.commandDefinitions.keys()) {
-            this.confirmedCommandValueCache.delete(this.getConfirmedCommandValueCacheKey(normalizedDeviceId, commandId));
+            this.confirmedCommandValueCache.delete(
+                this.getConfirmedCommandValueCacheKey(normalizedDeviceId, commandId),
+            );
         }
     }
     async ensureSendcommandInitializedState(deviceId) {
@@ -267,7 +280,9 @@ class CommandService {
         }).toString();
         for (let attempt = 1; attempt <= constants_1.COMMAND_RETRY_COUNT + 1; attempt++) {
             try {
-                this.adapter.log.debug(`CommandService: Sending ${commandId}=${value} to ${deviceId} via ${url} (attempt ${attempt}/${constants_1.COMMAND_RETRY_COUNT + 1}).`);
+                this.adapter.log.debug(
+                    `CommandService: Sending ${commandId}=${value} to ${deviceId} via ${url} (attempt ${attempt}/${constants_1.COMMAND_RETRY_COUNT + 1}).`,
+                );
                 const response = await this.requestClient.post(url, payload, {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
@@ -277,16 +292,21 @@ class CommandService {
                     responseType: 'text',
                     transport: 'node',
                 });
-                this.adapter.log.debug(`CommandService: Sent ${commandId}=${value} to ${deviceId} (status=${response.status}).`);
+                this.adapter.log.debug(
+                    `CommandService: Sent ${commandId}=${value} to ${deviceId} (status=${response.status}).`,
+                );
                 return true;
-            }
-            catch (error) {
+            } catch (error) {
                 if (attempt <= constants_1.COMMAND_RETRY_COUNT) {
-                    this.adapter.log.warn(`CommandService: Retry ${attempt}/${constants_1.COMMAND_RETRY_COUNT} for ${commandId} on ${deviceId}.`);
+                    this.adapter.log.warn(
+                        `CommandService: Retry ${attempt}/${constants_1.COMMAND_RETRY_COUNT} for ${commandId} on ${deviceId}.`,
+                    );
                     await (0, helpers_1.sleep)(constants_1.COMMAND_RETRY_DELAY_MS);
                     continue;
                 }
-                this.adapter.log.error(`CommandService: Failed to send ${commandId}=${value} to ${deviceId}: ${error instanceof Error ? error.message : String(error)}`);
+                this.adapter.log.error(
+                    `CommandService: Failed to send ${commandId}=${value} to ${deviceId}: ${error instanceof Error ? error.message : String(error)}`,
+                );
                 return false;
             }
         }
