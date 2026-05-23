@@ -11,13 +11,7 @@ export default class BkwModeService {
     private readonly lastStateByDevice;
     private readonly initializedDeviceIds;
     private readonly maxSocForcedDeviceIds;
-    constructor(
-        adapter: AdapterInstance,
-        config: RuntimeConfig,
-        commandService: CommandService,
-        deviceRegistry: DeviceRegistry,
-        stateManager: StateManager,
-    );
+    constructor(adapter: AdapterInstance, config: RuntimeConfig, commandService: CommandService, deviceRegistry: DeviceRegistry, stateManager: StateManager);
     start(): Promise<void>;
     handleDeviceAvailable(deviceId: string): Promise<void>;
     handleDeviceInactive(deviceId: string): void;

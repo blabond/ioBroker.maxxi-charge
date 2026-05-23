@@ -1,9 +1,11 @@
 .*/
 !.github/
+!.vscode/
 
 *.code-workspace
 .idea/
-.vscode/
+.vscode/*
+!.vscode/settings.json
 node_modules
 nbproject
 

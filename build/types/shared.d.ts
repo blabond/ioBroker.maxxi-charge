@@ -72,10 +72,6 @@ export interface StateObjectDefinition {
     common: ManagedStateCommon;
     native: Record<string, unknown>;
 }
-export type ObjectDefinition =
-    | DeviceObjectDefinition
-    | ChannelObjectDefinition
-    | FolderObjectDefinition
-    | StateObjectDefinition;
+export type ObjectDefinition = DeviceObjectDefinition | ChannelObjectDefinition | FolderObjectDefinition | StateObjectDefinition;
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 //# sourceMappingURL=shared.d.ts.map

@@ -11,13 +11,7 @@ export default class EcoModeService {
     private dailyJob;
     private readonly minSocSetTodayByDevice;
     private started;
-    constructor(
-        adapter: AdapterInstance,
-        config: RuntimeConfig,
-        scheduler: Scheduler,
-        commandService: CommandService,
-        deviceRegistry: DeviceRegistry,
-    );
+    constructor(adapter: AdapterInstance, config: RuntimeConfig, scheduler: Scheduler, commandService: CommandService, deviceRegistry: DeviceRegistry);
     start(): Promise<void>;
     handleDeviceAvailable(deviceId: string): Promise<void>;
     handleDeviceInactive(deviceId: string): void;

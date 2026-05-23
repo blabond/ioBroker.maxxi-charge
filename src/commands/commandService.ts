@@ -1,6 +1,6 @@
 import { COMMAND_REQUEST_TIMEOUT_MS, COMMAND_RETRY_COUNT, COMMAND_RETRY_DELAY_MS } from '../constants';
 import type { AdapterInstance, StateChange } from '../types/shared';
-import { clampNumber, extractRelativeId, normalizeDeviceId, sleep } from '../utils/helpers';
+import { clampNumber, extractRelativeId, normalizeDeviceId } from '../utils/helpers';
 import type RequestClient from '../network/requestClient';
 import type StateManager from '../core/stateManager';
 
@@ -378,7 +378,7 @@ export default class CommandService {
                     this.adapter.log.warn(
                         `CommandService: Retry ${attempt}/${COMMAND_RETRY_COUNT} for ${commandId} on ${deviceId}.`,
                     );
-                    await sleep(this.adapter, COMMAND_RETRY_DELAY_MS);
+                    await this.adapter.delay(COMMAND_RETRY_DELAY_MS);
                     continue;
                 }
 

@@ -1,12 +1,11 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.nameToId = nameToId;
 exports.normalizeDeviceId = normalizeDeviceId;
 exports.validateInterval = validateInterval;
 exports.clampNumber = clampNumber;
 exports.parseInteger = parseInteger;
 exports.parseBoolean = parseBoolean;
-exports.sleep = sleep;
 exports.isRecord = isRecord;
 exports.extractRelativeId = extractRelativeId;
 exports.normalizeIpAddress = normalizeIpAddress;
@@ -59,15 +58,6 @@ function parseBoolean(value) {
         return normalized === 'true' || normalized === '1' || normalized === 'yes' || normalized === 'on';
     }
     return false;
-}
-function sleep(adapter, ms) {
-    return new Promise(resolve => {
-        if (typeof adapter.setTimeout === 'function') {
-            adapter.setTimeout(resolve, ms);
-            return;
-        }
-        setTimeout(resolve, ms);
-    });
 }
 function isRecord(value) {
     return typeof value === 'object' && value !== null;

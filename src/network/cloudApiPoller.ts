@@ -9,7 +9,7 @@ import {
     REQUEST_TIMEOUT_MS,
 } from '../constants';
 import type { AdapterInstance, DeviceTouchEvent } from '../types/shared';
-import { isRecord, normalizeDeviceId, sleep } from '../utils/helpers';
+import { isRecord, normalizeDeviceId } from '../utils/helpers';
 import type DeviceRegistry from '../core/deviceRegistry';
 import type Scheduler from '../core/scheduler';
 import type StateManager from '../core/stateManager';
@@ -223,7 +223,7 @@ export default class CloudApiPoller {
                         'warn',
                         `Cloud API ${label} request failed. Retrying ${attempt}/${retryCount}.`,
                     );
-                    await sleep(this.adapter, retryDelayMs);
+                    await this.adapter.delay(retryDelayMs);
                     continue;
                 }
 
