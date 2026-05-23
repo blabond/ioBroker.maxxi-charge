@@ -12,7 +12,7 @@ import EcoModeService from './modes/ecoModeService';
 import CloudApiPoller from './network/cloudApiPoller';
 import LocalApiServer from './network/localApiServer';
 import RequestClient from './network/requestClient';
-import type { AdapterConfig, DeviceTouchEvent, RuntimeConfig, StateChange } from './types/shared';
+import type { DeviceTouchEvent, RuntimeConfig, StateChange } from './types/shared';
 import { extractRelativeId } from './utils/helpers';
 
 export default class MaxxiChargeAdapter extends utils.Adapter {
@@ -58,7 +58,7 @@ export default class MaxxiChargeAdapter extends utils.Adapter {
 
     private async onReady(): Promise<void> {
         try {
-            this.runtimeConfig = normalizeConfig(this.config as AdapterConfig);
+            this.runtimeConfig = normalizeConfig(this.config);
             this.scheduler = new Scheduler(this);
             this.stateManager = new StateManager(this);
             this.requestClient = new RequestClient(this);
