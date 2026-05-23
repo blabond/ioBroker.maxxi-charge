@@ -1,56 +1,77 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
+'use strict';
+var __createBinding =
+    (this && this.__createBinding) ||
+    (Object.create
+        ? function (o, m, k, k2) {
+              if (k2 === undefined) k2 = k;
+              var desc = Object.getOwnPropertyDescriptor(m, k);
+              if (!desc || ('get' in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+                  desc = {
+                      enumerable: true,
+                      get: function () {
+                          return m[k];
+                      },
+                  };
+              }
+              Object.defineProperty(o, k2, desc);
+          }
+        : function (o, m, k, k2) {
+              if (k2 === undefined) k2 = k;
+              o[k2] = m[k];
+          });
+var __setModuleDefault =
+    (this && this.__setModuleDefault) ||
+    (Object.create
+        ? function (o, v) {
+              Object.defineProperty(o, 'default', { enumerable: true, value: v });
+          }
+        : function (o, v) {
+              o['default'] = v;
+          });
+var __importStar =
+    (this && this.__importStar) ||
+    (function () {
+        var ownKeys = function (o) {
+            ownKeys =
+                Object.getOwnPropertyNames ||
+                function (o) {
+                    var ar = [];
+                    for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+                    return ar;
+                };
+            return ownKeys(o);
         };
-        return ownKeys(o);
+        return function (mod) {
+            if (mod && mod.__esModule) return mod;
+            var result = {};
+            if (mod != null)
+                for (var k = ownKeys(mod), i = 0; i < k.length; i++)
+                    if (k[i] !== 'default') __createBinding(result, mod, k[i]);
+            __setModuleDefault(result, mod);
+            return result;
+        };
+    })();
+var __importDefault =
+    (this && this.__importDefault) ||
+    function (mod) {
+        return mod && mod.__esModule ? mod : { default: mod };
     };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const utils = __importStar(require("@iobroker/adapter-core"));
-const node_os_1 = require("node:os");
-const commandService_1 = __importDefault(require("./commands/commandService"));
-const config_1 = require("./config");
-const constants_1 = require("./constants");
-const deviceRegistry_1 = __importDefault(require("./core/deviceRegistry"));
-const scheduler_1 = __importDefault(require("./core/scheduler"));
-const stateManager_1 = __importDefault(require("./core/stateManager"));
-const batteryModeService_1 = __importDefault(require("./modes/batteryModeService"));
-const bkwModeService_1 = __importDefault(require("./modes/bkwModeService"));
-const ecoModeService_1 = __importDefault(require("./modes/ecoModeService"));
-const cloudApiPoller_1 = __importDefault(require("./network/cloudApiPoller"));
-const localApiServer_1 = __importDefault(require("./network/localApiServer"));
-const requestClient_1 = __importDefault(require("./network/requestClient"));
-const helpers_1 = require("./utils/helpers");
+Object.defineProperty(exports, '__esModule', { value: true });
+const utils = __importStar(require('@iobroker/adapter-core'));
+const node_os_1 = require('node:os');
+const commandService_1 = __importDefault(require('./commands/commandService'));
+const config_1 = require('./config');
+const constants_1 = require('./constants');
+const deviceRegistry_1 = __importDefault(require('./core/deviceRegistry'));
+const scheduler_1 = __importDefault(require('./core/scheduler'));
+const stateManager_1 = __importDefault(require('./core/stateManager'));
+const batteryModeService_1 = __importDefault(require('./modes/batteryModeService'));
+const bkwModeService_1 = __importDefault(require('./modes/bkwModeService'));
+const ecoModeService_1 = __importDefault(require('./modes/ecoModeService'));
+const cloudApiPoller_1 = __importDefault(require('./network/cloudApiPoller'));
+const localApiServer_1 = __importDefault(require('./network/localApiServer'));
+const requestClient_1 = __importDefault(require('./network/requestClient'));
+const helpers_1 = require('./utils/helpers');
 class MaxxiChargeAdapter extends utils.Adapter {
     runtimeConfig = null;
     scheduler = null;
@@ -84,33 +105,67 @@ class MaxxiChargeAdapter extends utils.Adapter {
             this.requestClient = new requestClient_1.default(this);
             this.deviceRegistry = new deviceRegistry_1.default(this, this.stateManager);
             this.commandService = new commandService_1.default(this, this.stateManager, this.requestClient);
-            this.ecoMode = new ecoModeService_1.default(this, this.runtimeConfig, this.scheduler, this.commandService, this.deviceRegistry);
-            this.batteryMode = new batteryModeService_1.default(this, this.runtimeConfig, this.commandService, this.deviceRegistry);
-            this.bkwMode = new bkwModeService_1.default(this, this.runtimeConfig, this.commandService, this.deviceRegistry, this.stateManager);
+            this.ecoMode = new ecoModeService_1.default(
+                this,
+                this.runtimeConfig,
+                this.scheduler,
+                this.commandService,
+                this.deviceRegistry,
+            );
+            this.batteryMode = new batteryModeService_1.default(
+                this,
+                this.runtimeConfig,
+                this.commandService,
+                this.deviceRegistry,
+            );
+            this.bkwMode = new bkwModeService_1.default(
+                this,
+                this.runtimeConfig,
+                this.commandService,
+                this.deviceRegistry,
+                this.stateManager,
+            );
             await this.stateManager.ensureInfoStructure();
             await this.stateManager.resetInfoStates();
             if (this.runtimeConfig.apiMode === 'local') {
-                this.localApi = new localApiServer_1.default(this, this.runtimeConfig, this.stateManager, this.deviceRegistry, this.requestClient, this.handleDeviceSeen.bind(this));
+                this.localApi = new localApiServer_1.default(
+                    this,
+                    this.runtimeConfig,
+                    this.stateManager,
+                    this.deviceRegistry,
+                    this.requestClient,
+                    this.handleDeviceSeen.bind(this),
+                );
                 await this.localApi.start();
-            }
-            else {
-                this.cloudApi = new cloudApiPoller_1.default(this, this.runtimeConfig, this.scheduler, this.stateManager, this.deviceRegistry, this.requestClient, this.handleDeviceSeen.bind(this));
+            } else {
+                this.cloudApi = new cloudApiPoller_1.default(
+                    this,
+                    this.runtimeConfig,
+                    this.scheduler,
+                    this.stateManager,
+                    this.deviceRegistry,
+                    this.requestClient,
+                    this.handleDeviceSeen.bind(this),
+                );
                 await this.cloudApi.start();
             }
             await this.ecoMode.start();
             await this.batteryMode.start();
             await this.bkwMode.start();
-            this.cleanupIntervalHandle = this.scheduler.setInterval(async () => {
-                const cleanupResult = await this.deviceRegistry?.cleanupInactiveDevices();
-                for (const deviceId of cleanupResult?.removedDeviceIds ?? []) {
-                    this.handleDeviceInactive(deviceId);
-                }
-                if (cleanupResult?.connectionLost) {
-                    this.handleConnectionLost();
-                }
-            }, constants_1.ACTIVE_DEVICE_CLEANUP_INTERVAL_MS, 'active-device-cleanup');
-        }
-        catch (error) {
+            this.cleanupIntervalHandle = this.scheduler.setInterval(
+                async () => {
+                    const cleanupResult = await this.deviceRegistry?.cleanupInactiveDevices();
+                    for (const deviceId of cleanupResult?.removedDeviceIds ?? []) {
+                        this.handleDeviceInactive(deviceId);
+                    }
+                    if (cleanupResult?.connectionLost) {
+                        this.handleConnectionLost();
+                    }
+                },
+                constants_1.ACTIVE_DEVICE_CLEANUP_INTERVAL_MS,
+                'active-device-cleanup',
+            );
+        } catch (error) {
             await this.failInitialization(error);
         }
     }
@@ -131,9 +186,10 @@ class MaxxiChargeAdapter extends utils.Adapter {
             await this.ecoMode?.handleSocChange(id, state);
             await this.batteryMode?.handleSocChange(id, state);
             await this.bkwMode?.handleSocChange(id, state);
-        }
-        catch (error) {
-            this.log.error(`Error while processing state ${id}: ${error instanceof Error ? error.message : String(error)}`);
+        } catch (error) {
+            this.log.error(
+                `Error while processing state ${id}: ${error instanceof Error ? error.message : String(error)}`,
+            );
         }
     }
     onMessage(obj) {
@@ -150,8 +206,7 @@ class MaxxiChargeAdapter extends utils.Adapter {
         this.shuttingDown = true;
         try {
             await this.dispose();
-        }
-        catch (error) {
+        } catch (error) {
             this.log.error(`Error during shutdown: ${error instanceof Error ? error.message : String(error)}`);
         }
         callback();
@@ -182,9 +237,10 @@ class MaxxiChargeAdapter extends utils.Adapter {
             await this.ecoMode?.handleDeviceAvailable(deviceEvent.deviceId);
             await this.batteryMode?.handleDeviceAvailable(deviceEvent.deviceId);
             await this.bkwMode?.handleDeviceAvailable(deviceEvent.deviceId);
-        }
-        catch (error) {
-            this.log.error(`Error while handling device activation for ${deviceEvent.deviceId}: ${error instanceof Error ? error.message : String(error)}`);
+        } catch (error) {
+            this.log.error(
+                `Error while handling device activation for ${deviceEvent.deviceId}: ${error instanceof Error ? error.message : String(error)}`,
+            );
         }
     }
     isSocStateId(fullId) {
@@ -218,7 +274,8 @@ class MaxxiChargeAdapter extends utils.Adapter {
         return [...ipv4Addresses];
     }
     extractLocalApiPort(value) {
-        const normalizedValue = typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' ? value : 5501;
+        const normalizedValue =
+            typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' ? value : 5501;
         const numericPort = Number.parseInt(String(normalizedValue), 10);
         if (!Number.isFinite(numericPort)) {
             return 5501;
@@ -236,8 +293,7 @@ class MaxxiChargeAdapter extends utils.Adapter {
         this.disposePromise = this.performDispose();
         try {
             await this.disposePromise;
-        }
-        finally {
+        } finally {
             this.disposePromise = null;
         }
     }
@@ -291,8 +347,7 @@ class MaxxiChargeAdapter extends utils.Adapter {
         }
         if (deviceRegistry) {
             await deviceRegistry.reset();
-        }
-        else {
+        } else {
             await stateManager?.resetInfoStates();
         }
         stateManager?.clearCaches();
@@ -302,9 +357,10 @@ class MaxxiChargeAdapter extends utils.Adapter {
         this.log.error(`Fatal error during initialization: ${error instanceof Error ? error.message : String(error)}`);
         try {
             await this.dispose();
-        }
-        catch (disposeError) {
-            this.log.error(`Error during fatal initialization cleanup: ${disposeError instanceof Error ? disposeError.message : String(disposeError)}`);
+        } catch (disposeError) {
+            this.log.error(
+                `Error during fatal initialization cleanup: ${disposeError instanceof Error ? disposeError.message : String(disposeError)}`,
+            );
         }
         this.terminate('Initialization failed', utils.EXIT_CODES.ADAPTER_REQUESTED_TERMINATION);
     }
