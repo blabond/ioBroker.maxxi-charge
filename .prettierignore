@@ -1,4 +1,5 @@
 .git
+.github/workflows
 .idea
 node_modules
 build
