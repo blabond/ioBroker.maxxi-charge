@@ -58,9 +58,10 @@
         "test": "npm run build && npm run test:js && npm run test:package",
         "check": "tsc --noEmit -p tsconfig.check.json",
         "release": "release-script",
+        "release:verify-tag": "node ./scripts/ensure-release-tag.mjs",
         "lint": "eslint -c eslint.config.mjs .",
         "lint:fix": "eslint -c eslint.config.mjs . --fix",
-        "prepublishOnly": "npm run build && npm run check && npm run lint && npm test"
+        "prepublishOnly": "npm run release:verify-tag && npm run build && npm run check && npm run lint && npm test"
     },
     "engines": {
         "node": ">=22"

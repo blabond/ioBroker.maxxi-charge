@@ -46,16 +46,14 @@ http://www.maxxisun.de
 
 ## Changelog
 
-### 2.0.0-alpha.12 (2026-04-08)
+### **WORK IN PROGRESS**
+ 
 
 - Requires Node.js >= 22
+- Adding CCU V2 Support
 - Migrated from JavaScript to TypeScript
 - Replaced Axios with native fetch
 - Fixed BKW mode after deactivation
-
-ToDo:
-
-- Adding CCU V2 Support
 
 ### 1.4.48 (2026-04-02)
 

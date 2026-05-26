@@ -1,10 +1,29 @@
 name: Publish to npm
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump for @alcalzone/release-script
+        required: true
+        default: prerelease
+        type: choice
+        options:
+          - prerelease
+          - patch
+          - minor
+          - major
+          - prepatch
+          - preminor
+          - premajor
+      preid:
+        description: Prerelease identifier for pre* bumps
+        required: false
+        default: alpha
+        type: string
 
 permissions:
-  contents: read
+  contents: write
   id-token: write
 
 concurrency:
@@ -18,6 +37,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
 
       - uses: actions/setup-node@v6
         with:
@@ -28,8 +50,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build admin UI
-        run: npm run build:admin
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Build
+        run: npm run build
 
       - name: Check syntax
         run: npm run check
@@ -39,6 +66,43 @@ jobs:
 
       - name: Test
         run: npm test
+
+      - name: Run release script
+        run: |
+          BUMP="${{ github.event.inputs.bump }}"
+          PREID="${{ github.event.inputs.preid }}"
+
+          case "${BUMP}" in
+            pre*)
+              printf '%s\n' "${PREID:-alpha}" | npm run release -- "${BUMP}" --yes --all
+              ;;
+            *)
+              npm run release -- "${BUMP}" --yes --all
+              ;;
+          esac
+
+      - name: Create release tag if missing
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          TAG="v${VERSION}"
+          COMMIT="$(git rev-parse HEAD)"
+
+          if git rev-parse "${TAG}" >/dev/null 2>&1; then
+            TAG_COMMIT="$(git rev-list -n 1 "${TAG}")"
+            if [ "${TAG_COMMIT}" != "${COMMIT}" ]; then
+              echo "Tag ${TAG} already exists, but it does not point to the current commit."
+              exit 1
+            fi
+            echo "Tag ${TAG} already exists on the current commit."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -a "${TAG}" -m "${TAG}"
+            git push origin "refs/tags/${TAG}"
+          fi
+
+      - name: Verify release tag
+        run: npm run release:verify-tag
 
       - name: Publish package
         run: npm publish --access public
