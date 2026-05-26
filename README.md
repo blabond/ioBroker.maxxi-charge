@@ -47,7 +47,6 @@ http://www.maxxisun.de
 ## Changelog
 
 ### **WORK IN PROGRESS**
- 
 
 - Requires Node.js >= 22
 - Adding CCU V2 Support
