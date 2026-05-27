@@ -65,7 +65,7 @@
         "keywords": ["maxxisun", "maxxicharge"],
         "licenseInformation": {
             "type": "free",
-            "link": "https://github.com/blabond/ioBroker.maxxi-charge/blob/master/LICENSE",
+            "link": "https://opensource.org/license/mit",
             "license": "MIT"
         },
         "platform": "Javascript/Node.js",
