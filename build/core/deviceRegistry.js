@@ -1,7 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const constants_1 = require("../constants");
-const helpers_1 = require("../utils/helpers");
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const constants_1 = require('../constants');
+const helpers_1 = require('../utils/helpers');
 class DeviceRegistry {
     adapter;
     stateManager;

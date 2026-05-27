@@ -1,7 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const constants_1 = require("../constants");
-const helpers_1 = require("../utils/helpers");
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
+const constants_1 = require('../constants');
+const helpers_1 = require('../utils/helpers');
 const BKW_MODE_RESTORE_PENDING_STATE_SUFFIX = '_bkwModeRestorePending';
 class BkwModeService {
     adapter;
@@ -35,8 +35,7 @@ class BkwModeService {
         let handled = false;
         if (this.config.bkwEnabled) {
             handled = await this.evaluateCurrentSoc(normalizedDeviceId);
-        }
-        else {
+        } else {
             handled = await this.restoreConfiguredBaseLoad(normalizedDeviceId, 'deviceAvailable');
         }
         if (handled) {
@@ -56,10 +55,12 @@ class BkwModeService {
         this.maxSocForcedDeviceIds.clear();
     }
     async handleSocChange(id, state) {
-        if (!state?.ack ||
+        if (
+            !state?.ack ||
             typeof state.val !== 'number' ||
             !this.config.bkwEnabled ||
-            this.config.batteryCalibrationEnabled) {
+            this.config.batteryCalibrationEnabled
+        ) {
             return;
         }
         const deviceId = this.extractDeviceId(id) ?? this.deviceRegistry.getPrimaryDeviceId();
@@ -76,8 +77,7 @@ class BkwModeService {
         if (state.val >= constants_1.BKW_SOC_THRESHOLD && lastState !== 'high') {
             targetValue = -this.config.bkwPowerTarget;
             nextState = 'high';
-        }
-        else if (state.val < constants_1.BKW_SOC_THRESHOLD && lastState !== 'low') {
+        } else if (state.val < constants_1.BKW_SOC_THRESHOLD && lastState !== 'low') {
             targetValue = this.config.bkwAdjustment;
             nextState = 'low';
         }
@@ -125,16 +125,30 @@ class BkwModeService {
         if (!restorePending || this.config.bkwEnabled) {
             return true;
         }
-        const maxSocRestored = await this.commandService.applyDeviceSetting(deviceId, 'maxSOC', this.config.feedInMode, { source: `bkwMode:restore:${reason}` });
-        const baseLoadRestored = await this.commandService.applyDeviceSetting(deviceId, 'baseLoad', this.config.bkwAdjustment, { source: `bkwMode:restore:${reason}` });
+        const maxSocRestored = await this.commandService.applyDeviceSetting(
+            deviceId,
+            'maxSOC',
+            this.config.feedInMode,
+            { source: `bkwMode:restore:${reason}` },
+        );
+        const baseLoadRestored = await this.commandService.applyDeviceSetting(
+            deviceId,
+            'baseLoad',
+            this.config.bkwAdjustment,
+            { source: `bkwMode:restore:${reason}` },
+        );
         if (!maxSocRestored || !baseLoadRestored) {
-            this.adapter.log.warn(`BkwMode: Failed to restore configured settings for ${deviceId} (baseLoad=${this.config.bkwAdjustment} W, maxSOC=${this.config.feedInMode}%).`);
+            this.adapter.log.warn(
+                `BkwMode: Failed to restore configured settings for ${deviceId} (baseLoad=${this.config.bkwAdjustment} W, maxSOC=${this.config.feedInMode}%).`,
+            );
             return false;
         }
         await this.stateManager.setStateIfChanged(this.getRestorePendingStateId(deviceId), false, true);
         this.lastStateByDevice.delete(deviceId);
         this.maxSocForcedDeviceIds.delete(deviceId);
-        this.adapter.log.debug(`BkwMode: Restored configured settings for ${deviceId} (baseLoad=${this.config.bkwAdjustment} W, maxSOC=${this.config.feedInMode}%).`);
+        this.adapter.log.debug(
+            `BkwMode: Restored configured settings for ${deviceId} (baseLoad=${this.config.bkwAdjustment} W, maxSOC=${this.config.feedInMode}%).`,
+        );
         return true;
     }
     async readRestorePendingState(deviceId) {
@@ -171,7 +185,9 @@ class BkwModeService {
     async evaluateCurrentSoc(deviceId) {
         const state = await this.adapter.getStateAsync(`${deviceId}.SOC`);
         if (!state?.ack || typeof state.val !== 'number') {
-            this.adapter.log.debug(`BkwMode: No valid current SOC state available for ${deviceId} during initialization.`);
+            this.adapter.log.debug(
+                `BkwMode: No valid current SOC state available for ${deviceId} during initialization.`,
+            );
             return false;
         }
         await this.handleSocChange(`${this.adapter.namespace}.${deviceId}.SOC`, state);
