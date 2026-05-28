@@ -19,10 +19,18 @@ export default class CloudApiPoller {
     private ccuRequestInFlight;
     private started;
     private readonly failureLogStateByKey;
-    constructor(adapter: AdapterInstance, config: {
-        ccuName: string;
-        ccuIntervalMs: number;
-    }, scheduler: Scheduler, stateManager: StateManager, deviceRegistry: DeviceRegistry, requestClient: RequestClient, onDeviceSeen: (deviceEvent: DeviceTouchEvent) => Promise<void>);
+    constructor(
+        adapter: AdapterInstance,
+        config: {
+            ccuName: string;
+            ccuIntervalMs: number;
+        },
+        scheduler: Scheduler,
+        stateManager: StateManager,
+        deviceRegistry: DeviceRegistry,
+        requestClient: RequestClient,
+        onDeviceSeen: (deviceEvent: DeviceTouchEvent) => Promise<void>,
+    );
     start(): Promise<void>;
     dispose(): Promise<void>;
     private pollInfo;

@@ -1,5 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+'use strict';
+Object.defineProperty(exports, '__esModule', { value: true });
 exports.updateAdapterNativeConfig = updateAdapterNativeConfig;
 async function updateAdapterNativeConfig(adapter, changes) {
     const adapterConfigId = `system.adapter.${adapter.namespace}`;
