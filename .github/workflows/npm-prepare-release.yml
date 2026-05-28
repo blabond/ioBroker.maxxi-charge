@@ -1,0 +1,139 @@
+name: Prepare npm release
+
+on:
+    workflow_dispatch:
+        inputs:
+            bump:
+                description: Version bump for @alcalzone/release-script
+                required: true
+                default: prerelease
+                type: choice
+                options:
+                    - prerelease
+                    - patch
+                    - minor
+                    - major
+                    - prepatch
+                    - preminor
+                    - premajor
+            preid:
+                description: Prerelease identifier for pre* bumps
+                required: false
+                default: alpha
+                type: string
+
+permissions:
+    contents: write
+
+concurrency:
+    group: npm-prepare-release
+    cancel-in-progress: false
+
+jobs:
+    prepare:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
+                  ref: ${{ github.ref_name }}
+
+            - uses: actions/setup-node@v6
+              with:
+                  node-version: '24.x'
+                  package-manager-cache: false
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Configure git
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+            - name: Build
+              run: npm run build
+
+            - name: Check syntax
+              run: npm run check
+
+            - name: Lint
+              run: npm run lint
+
+            - name: Test
+              run: npm test
+
+            - name: Remember old version
+              run: |
+                  OLD_VERSION="$(node -p 'require("./package.json").version')"
+                  echo "OLD_VERSION=${OLD_VERSION}" >> "${GITHUB_ENV}"
+
+            - name: Run release script without publishing
+              run: |
+                  BUMP="${{ inputs.bump }}"
+                  PREID="${{ inputs.preid }}"
+
+                  case "${BUMP}" in
+                    pre*)
+                      printf '%s\n' "${PREID:-alpha}" | npm run release -- "${BUMP}" --yes --all --noPush
+                      ;;
+                    *)
+                      npm run release -- "${BUMP}" --yes --all --noPush
+                      ;;
+                  esac
+
+            - name: Validate prepared release
+              run: |
+                  VERSION="$(node -p "require('./package.json').version")"
+                  TAG="v${VERSION}"
+
+                  if [ "${VERSION}" = "${OLD_VERSION}" ]; then
+                    echo "release-script did not change the package version (${VERSION})."
+                    exit 1
+                  fi
+
+                  if grep -Fq "### **WORK IN PROGRESS**" README.md; then
+                    echo "README.md still contains the WORK IN PROGRESS changelog marker."
+                    exit 1
+                  fi
+
+                  if [ -n "$(git status --porcelain)" ]; then
+                    git add -A
+                    git commit -m "chore: release ${TAG}"
+                  fi
+
+                  COMMITTED_VERSION="$(git show HEAD:package.json | node -p "JSON.parse(require('fs').readFileSync(0, 'utf8')).version")"
+                  if [ "${COMMITTED_VERSION}" != "${VERSION}" ]; then
+                    echo "HEAD package.json version ${COMMITTED_VERSION} does not match worktree version ${VERSION}."
+                    exit 1
+                  fi
+
+            - name: Push release branch without tag
+              run: |
+                  VERSION="$(node -p "require('./package.json').version")"
+                  TAG="v${VERSION}"
+                  BRANCH="release/${TAG}"
+
+                  if git rev-parse --verify --quiet "refs/tags/${TAG}"; then
+                    git tag -d "${TAG}"
+                  fi
+
+                  git push origin "HEAD:refs/heads/${BRANCH}"
+
+                  {
+                    echo "VERSION=${VERSION}"
+                    echo "TAG=${TAG}"
+                    echo "BRANCH=${BRANCH}"
+                  } >> "${GITHUB_ENV}"
+
+            - name: Write summary
+              run: |
+                  {
+                    echo "## npm release prepared"
+                    echo
+                    echo "Prepared version: \`${VERSION}\`"
+                    echo "Release branch: \`${BRANCH}\`"
+                    echo
+                    echo "Review and adjust the generated release changes on \`${BRANCH}\`, especially ioBroker news/translations, before running the publish workflow."
+                  } >> "${GITHUB_STEP_SUMMARY}"
