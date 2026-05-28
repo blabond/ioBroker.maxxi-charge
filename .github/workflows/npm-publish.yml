@@ -4,12 +4,12 @@ on:
     workflow_dispatch:
         inputs:
             ref:
-                description: Release branch or ref to publish, e.g. release/v0.2.2
-                required: true
-                default: main
+                description: Optional release branch, commit, or tag to publish. Defaults to release/v<version>
+                required: false
+                default: ''
                 type: string
             version:
-                description: Version to publish, without leading v
+                description: Version to publish, for example 0.2.2
                 required: true
                 type: string
 
@@ -25,12 +25,14 @@ jobs:
     publish:
         runs-on: ubuntu-latest
         environment: npm-publish
+        env:
+            FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
         steps:
             - uses: actions/checkout@v6
               with:
+                  ref: ${{ inputs.ref || format('release/v{0}', inputs.version) }}
                   fetch-depth: 0
-                  ref: ${{ inputs.ref }}
 
             - uses: actions/setup-node@v6
               with:
@@ -41,39 +43,31 @@ jobs:
             - name: Install dependencies
               run: npm ci
 
-            - name: Configure git
+            - name: Configure Git identity
               run: |
                   git config user.name "github-actions[bot]"
                   git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-            - name: Validate package version
+            - name: Create release tag
+              env:
+                  EXPECTED_VERSION: ${{ inputs.version }}
               run: |
-                  EXPECTED_VERSION="${{ inputs.version }}"
                   PACKAGE_VERSION="$(node -p "require('./package.json').version")"
-
-                  if [ "${PACKAGE_VERSION}" != "${EXPECTED_VERSION}" ]; then
-                    echo "package.json version ${PACKAGE_VERSION} does not match requested version ${EXPECTED_VERSION}."
+                  if [[ "$PACKAGE_VERSION" != "$EXPECTED_VERSION" ]]; then
+                    echo "Expected package version ${EXPECTED_VERSION}, got ${PACKAGE_VERSION}" >&2
                     exit 1
                   fi
 
-                  echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> "${GITHUB_ENV}"
-
-            - name: Create release tag if missing
-              run: |
                   TAG="v${PACKAGE_VERSION}"
-                  COMMIT="$(git rev-parse HEAD)"
-
-                  git fetch --force --tags origin
-
-                  if git rev-parse "${TAG}" >/dev/null 2>&1; then
+                  if git rev-parse --verify --quiet "refs/tags/${TAG}"; then
                     TAG_COMMIT="$(git rev-list -n 1 "${TAG}")"
-                    if [ "${TAG_COMMIT}" != "${COMMIT}" ]; then
-                      echo "Tag ${TAG} already exists, but it does not point to the current commit."
+                    HEAD_COMMIT="$(git rev-parse HEAD)"
+                    if [[ "$TAG_COMMIT" != "$HEAD_COMMIT" ]]; then
+                      echo "Tag ${TAG} exists but does not point at HEAD" >&2
                       exit 1
                     fi
-                    echo "Tag ${TAG} already exists on the current commit."
                   else
-                    git tag -a "${TAG}" -m "${TAG}"
+                    git tag -a "$TAG" -m "$TAG"
                     git push origin "refs/tags/${TAG}"
                   fi
 
@@ -93,41 +87,51 @@ jobs:
               run: npm test
 
             - name: Publish package
-              run: npm publish --access public
+              run: |
+                  PACKAGE_NAME="$(node -p 'require("./package.json").name')"
+                  PACKAGE_VERSION="$(node -p 'require("./package.json").version')"
+                  PUBLISHED_VERSION="$(npm view "${PACKAGE_NAME}@${PACKAGE_VERSION}" version 2>/dev/null || true)"
 
-            - name: Merge release commit back to main
+                  if [[ "$PUBLISHED_VERSION" == "$PACKAGE_VERSION" ]]; then
+                    echo "${PACKAGE_NAME}@${PACKAGE_VERSION} is already published. Skipping npm publish."
+                  else
+                    npm publish --access public
+                  fi
+
+            - name: Merge published release back to main
               run: |
                   RELEASE_SHA="$(git rev-parse HEAD)"
 
-                  git reset --hard "${RELEASE_SHA}"
+                  git reset --hard "$RELEASE_SHA"
                   git clean -fd -- admin/custom
 
                   git fetch origin main
                   git checkout -B main origin/main
-                  git merge --no-edit "${RELEASE_SHA}"
+                  git merge --no-edit "$RELEASE_SHA"
 
-                  node --input-type=module <<'EOF'
-                  import { readFileSync, writeFileSync } from 'node:fs';
+                  node <<'NODE'
+                  const fs = require("node:fs");
 
-                  const readmePath = 'README.md';
-                  const marker = '### **WORK IN PROGRESS**';
-                  const readme = readFileSync(readmePath, 'utf8');
+                  const readmePath = "README.md";
+                  const readme = fs.readFileSync(readmePath, "utf8");
 
-                  if (!readme.includes(marker)) {
-                      const changelog = '## Changelog';
-                      const index = readme.indexOf(changelog);
+                  if (!readme.includes("### **WORK IN PROGRESS**")) {
+                    const changelogHeading = /^## Changelog\n+/m;
+                    if (!changelogHeading.test(readme)) {
+                      throw new Error("Could not find README changelog section");
+                    }
 
-                      if (index === -1) {
-                          throw new Error('README.md does not contain a ## Changelog heading.');
-                      }
-
-                      const insertAt = index + changelog.length;
-                      const next = `${readme.slice(0, insertAt)}\n\n${marker}${readme.slice(insertAt)}`;
-                      writeFileSync(readmePath, next);
+                    fs.writeFileSync(
+                      readmePath,
+                      readme.replace(
+                        changelogHeading,
+                        "## Changelog\n\n### **WORK IN PROGRESS**\n\n",
+                      ),
+                    );
                   }
-                  EOF
+                  NODE
 
-                  if [ -n "$(git status --porcelain README.md)" ]; then
+                  if [[ -n "$(git status --porcelain)" ]]; then
                     git add README.md
                     git commit -m "chore: start next changelog"
                   fi
