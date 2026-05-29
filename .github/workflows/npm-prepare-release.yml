@@ -9,6 +9,7 @@ on:
                 type: string
 
 permissions:
+    actions: write
     contents: write
 
 concurrency:
@@ -135,6 +136,7 @@ jobs:
                   fi
 
                   npm install --package-lock-only --ignore-scripts
+                  npm run format
 
                   if [[ -n "$(git status --porcelain)" ]]; then
                     git add -A
@@ -157,6 +159,7 @@ jobs:
               run: |
                   TAG="v$(node -p 'require("./package.json").version')"
                   BRANCH="release/${TAG}"
+                  RELEASE_SHA="$(git rev-parse HEAD)"
                   if git rev-parse --verify --quiet "refs/tags/${TAG}"; then
                     git tag -d "$TAG"
                   fi
@@ -165,12 +168,23 @@ jobs:
                   {
                     echo "TAG=${TAG}"
                     echo "BRANCH=${BRANCH}"
+                    echo "RELEASE_SHA=${RELEASE_SHA}"
                   } >> "$GITHUB_ENV"
+
+            - name: Wait for release branch checks
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  node scripts/wait-for-workflow-run.mjs \
+                    --workflow test-and-release.yml \
+                    --ref "${BRANCH}" \
+                    --sha "${RELEASE_SHA}"
 
             - name: Write summary
               run: |
                   {
                     echo "Prepared ${TAG} on branch ${BRANCH}."
+                    echo "The test-and-release workflow completed successfully for ${BRANCH}."
                     echo ""
                     echo "Review and adjust the release branch before running the npm publish workflow."
                     echo "Use version ${TAG#v} and ref ${BRANCH} when publishing."
