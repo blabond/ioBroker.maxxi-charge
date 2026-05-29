@@ -34,7 +34,7 @@ jobs:
               with:
                   ref: ${{ inputs.ref || format('release/v{0}', inputs.version) }}
                   fetch-depth: 0
-                  token: ${{ secrets.AUTOFIX_TOKEN }}
+                  token: ${{ secrets.AUTOFIX_TOKEN || github.token }}
 
             - uses: actions/setup-node@v6
               with:
@@ -44,6 +44,15 @@ jobs:
 
             - name: Install dependencies
               run: npm ci
+
+            - name: Verify AUTOFIX_TOKEN
+              env:
+                  AUTOFIX_TOKEN: ${{ secrets.AUTOFIX_TOKEN }}
+              run: |
+                  if [[ -z "${AUTOFIX_TOKEN}" ]]; then
+                    echo "AUTOFIX_TOKEN is required so release tag and main pushes trigger workflows." >&2
+                    exit 1
+                  fi
 
             - name: Configure Git identity
               run: |
