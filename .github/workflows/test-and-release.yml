@@ -37,7 +37,7 @@ jobs:
             - uses: actions/checkout@v6
               with:
                   ref: ${{ github.ref_name }}
-                  token: ${{ secrets.AUTOFIX_TOKEN || github.token }}
+                  token: ${{ secrets.AUTOFIX_TOKEN }}
 
             - uses: actions/setup-node@v6
               with:
@@ -76,24 +76,12 @@ jobs:
             (needs.autofix.result == 'skipped' || needs.autofix.outputs.changed == 'false')
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v6
-
-            - uses: actions/setup-node@v6
+            - uses: ioBroker/testing-action-check@v1
               with:
                   node-version: '24.x'
-                  cache: npm
-
-            - name: Install dependencies
-              run: npm ci
-
-            - name: Check types
-              run: npm run check
-
-            - name: Lint source code
-              run: npm run lint
-
-            - name: Run tests
-              run: npm test
+                  type-checking: 'true'
+                  lint: 'true'
+                  test-command: npm test
 
             - name: Check formatting
               run: npm run format:check

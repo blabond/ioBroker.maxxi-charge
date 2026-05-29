@@ -1,8 +1,8 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const constants_1 = require('../constants');
-const adapterConfigStore_1 = require('../utils/adapterConfigStore');
-const helpers_1 = require('../utils/helpers');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const constants_1 = require("../constants");
+const adapterConfigStore_1 = require("../utils/adapterConfigStore");
+const helpers_1 = require("../utils/helpers");
 class BatteryModeService {
     adapter;
     config;
@@ -23,11 +23,9 @@ class BatteryModeService {
     }
     async handleDeviceAvailable(deviceId) {
         const normalizedDeviceId = deviceId.trim();
-        if (
-            !normalizedDeviceId ||
+        if (!normalizedDeviceId ||
             !this.config.batteryCalibrationEnabled ||
-            this.calibrationAppliedDeviceIds.has(normalizedDeviceId)
-        ) {
+            this.calibrationAppliedDeviceIds.has(normalizedDeviceId)) {
             return;
         }
         const applied = await this.applyCalibration(normalizedDeviceId);
@@ -106,10 +104,9 @@ class BatteryModeService {
                 return minSocUpdated && maxSocUpdated;
             }
             return false;
-        } catch (error) {
-            this.adapter.log.error(
-                `BatteryMode: Calibration failed: ${error instanceof Error ? error.message : String(error)}`,
-            );
+        }
+        catch (error) {
+            this.adapter.log.error(`BatteryMode: Calibration failed: ${error instanceof Error ? error.message : String(error)}`);
             return false;
         }
     }
@@ -127,14 +124,11 @@ class BatteryModeService {
             if (!enabled) {
                 this.calibrationAppliedDeviceIds.clear();
             }
-            this.adapter.log.debug(
-                `BatteryMode: Updated calibration state to enabled=${enabled}, progress=${progress}.`,
-            );
+            this.adapter.log.debug(`BatteryMode: Updated calibration state to enabled=${enabled}, progress=${progress}.`);
             return true;
-        } catch (error) {
-            this.adapter.log.error(
-                `BatteryMode: Failed to update adapter config: ${error instanceof Error ? error.message : String(error)}`,
-            );
+        }
+        catch (error) {
+            this.adapter.log.error(`BatteryMode: Failed to update adapter config: ${error instanceof Error ? error.message : String(error)}`);
             return false;
         }
     }

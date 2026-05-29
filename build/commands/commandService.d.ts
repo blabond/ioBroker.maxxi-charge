@@ -1,14 +1,7 @@
 import type { AdapterInstance, StateChange } from '../types/shared';
 import type RequestClient from '../network/requestClient';
 import type StateManager from '../core/stateManager';
-export type CommandId =
-    | 'maxOutputPower'
-    | 'offlinePower'
-    | 'baseLoad'
-    | 'offlineMode'
-    | 'threshold'
-    | 'minSOC'
-    | 'maxSOC';
+export type CommandId = 'maxOutputPower' | 'offlinePower' | 'baseLoad' | 'offlineMode' | 'threshold' | 'minSOC' | 'maxSOC';
 export default class CommandService {
     private readonly adapter;
     private readonly stateManager;
@@ -20,14 +13,9 @@ export default class CommandService {
     ensureDeviceStates(deviceId: string): Promise<void>;
     syncDeviceCommandConfiguration(deviceId: string): Promise<void>;
     handleStateChange(id: string, state: StateChange): Promise<boolean>;
-    applyDeviceSetting(
-        deviceId: string,
-        commandId: CommandId,
-        rawValue: unknown,
-        _options?: {
-            source?: string;
-        },
-    ): Promise<boolean>;
+    applyDeviceSetting(deviceId: string, commandId: CommandId, rawValue: unknown, _options?: {
+        source?: string;
+    }): Promise<boolean>;
     dispose(): Promise<void>;
     handleDeviceInactive(deviceId: string): void;
     private ensureSendcommandInitializedState;

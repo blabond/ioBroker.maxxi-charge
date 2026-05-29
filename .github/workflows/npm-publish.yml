@@ -34,6 +34,7 @@ jobs:
               with:
                   ref: ${{ inputs.ref || format('release/v{0}', inputs.version) }}
                   fetch-depth: 0
+                  token: ${{ secrets.AUTOFIX_TOKEN }}
 
             - uses: actions/setup-node@v6
               with:
@@ -80,12 +81,38 @@ jobs:
 
             - name: Wait for release tag checks
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
-                  node scripts/wait-for-workflow-run.mjs \
-                    --workflow test-and-release.yml \
-                    --ref "${TAG}" \
-                    --sha "${RELEASE_SHA}"
+                  while true; do
+                    run="$(gh run list \
+                      --workflow test-and-release.yml \
+                      --branch "${TAG}" \
+                      --event push \
+                      --json conclusion,databaseId,headSha,status,url \
+                      --limit 20 \
+                      --jq ".[] | select(.headSha == \"${RELEASE_SHA}\") | @base64" \
+                      | head -n 1)"
+
+                    if [[ -n "${run}" ]]; then
+                      status="$(echo "${run}" | base64 --decode | jq -r ".status")"
+                      conclusion="$(echo "${run}" | base64 --decode | jq -r ".conclusion")"
+                      url="$(echo "${run}" | base64 --decode | jq -r ".url")"
+
+                      echo "test-and-release.yml for ${TAG} is ${status}: ${url}"
+
+                      if [[ "${status}" == "completed" ]]; then
+                        if [[ "${conclusion}" == "success" ]]; then
+                          exit 0
+                        fi
+                        echo "test-and-release.yml for ${TAG} completed with ${conclusion}: ${url}" >&2
+                        exit 1
+                      fi
+                    else
+                      echo "Waiting for test-and-release.yml push run for ${TAG} at ${RELEASE_SHA}..."
+                    fi
+
+                    sleep 10
+                  done
 
             - name: Build
               run: npm run build
