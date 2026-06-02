@@ -137,20 +137,14 @@ class LocalApiServer {
         }
         const server = this.server;
         this.server = null;
-        await new Promise(resolve => {
-            const forceCloseTimeout = this.adapter.setTimeout(() => {
-                for (const socket of this.openSockets) {
-                    socket.destroy();
-                }
-            }, constants_1.LOCAL_API_SHUTDOWN_TIMEOUT_MS);
-            server.close(() => {
-                this.adapter.clearTimeout(forceCloseTimeout);
-                resolve();
-            });
-        });
         for (const socket of this.openSockets) {
             socket.destroy();
         }
+        await new Promise(resolve => {
+            server.close(() => {
+                resolve();
+            });
+        });
         this.openSockets.clear();
     }
     async handleRequest(request, response) {

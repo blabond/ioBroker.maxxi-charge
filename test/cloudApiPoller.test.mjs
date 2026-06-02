@@ -16,10 +16,10 @@ describe('CloudApiPoller', () => {
         };
 
         const scheduler = {
-            setTimeout: () => null,
-            setInterval: () => null,
-            clearTimeout: () => {},
-            clearInterval: () => {},
+            createTimeout: () => null,
+            createInterval: () => null,
+            deleteTimeout: () => {},
+            deleteInterval: () => {},
         };
 
         const stateManager = {

@@ -1,11 +1,6 @@
 import http, { type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import type { Socket } from 'node:net';
-import {
-    LOCAL_API_BODY_LIMIT_BYTES,
-    LOCAL_API_CLOUD_MIRROR_URL,
-    LOCAL_API_SHUTDOWN_TIMEOUT_MS,
-    REQUEST_TIMEOUT_MS,
-} from '../constants';
+import { LOCAL_API_BODY_LIMIT_BYTES, LOCAL_API_CLOUD_MIRROR_URL, REQUEST_TIMEOUT_MS } from '../constants';
 import type { AdapterInstance, DeviceTouchEvent } from '../types/shared';
 import { isRecord, normalizeDeviceId, normalizeIpAddress } from '../utils/helpers';
 import type DeviceRegistry from '../core/deviceRegistry';
@@ -183,22 +178,15 @@ export default class LocalApiServer {
         const server = this.server;
         this.server = null;
 
-        await new Promise<void>(resolve => {
-            const forceCloseTimeout = this.adapter.setTimeout(() => {
-                for (const socket of this.openSockets) {
-                    socket.destroy();
-                }
-            }, LOCAL_API_SHUTDOWN_TIMEOUT_MS);
-
-            server.close(() => {
-                this.adapter.clearTimeout(forceCloseTimeout);
-                resolve();
-            });
-        });
-
         for (const socket of this.openSockets) {
             socket.destroy();
         }
+
+        await new Promise<void>(resolve => {
+            server.close(() => {
+                resolve();
+            });
+        });
 
         this.openSockets.clear();
     }

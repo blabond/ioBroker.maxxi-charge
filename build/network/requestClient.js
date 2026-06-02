@@ -244,7 +244,7 @@ class RequestClient {
             throw error;
         }
         finally {
-            this.clearTimeout(timeoutHandle);
+            this.stopAdapterTimeout(timeoutHandle);
         }
     }
     async requestWithNodeTransport(config, headers, requestBody, timeoutMs, responseType) {
@@ -342,17 +342,12 @@ class RequestClient {
         this.adapter.log[logMethod](`${label} failed${errorCode}: ${error.message}${statusCode ? ` | status=${statusCode}` : ''}${responseText ? ` | response=${responseText}` : ''}`);
     }
     startTimeout(callback, timeoutMs) {
-        if (typeof this.adapter.setTimeout === 'function') {
-            return this.adapter.setTimeout(callback, timeoutMs) ?? setTimeout(callback, timeoutMs);
-        }
-        return setTimeout(callback, timeoutMs);
+        return this.adapter.setTimeout(callback, timeoutMs) ?? null;
     }
-    clearTimeout(handle) {
-        if (typeof this.adapter.clearTimeout === 'function') {
+    stopAdapterTimeout(handle) {
+        if (handle) {
             this.adapter.clearTimeout(handle);
-            return;
         }
-        clearTimeout(handle);
     }
 }
 exports.default = RequestClient;

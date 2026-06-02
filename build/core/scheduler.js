@@ -10,7 +10,7 @@ class Scheduler {
     constructor(adapter) {
         this.adapter = adapter;
     }
-    setInterval(callback, intervalMs, label = 'interval') {
+    createInterval(callback, intervalMs, label = 'interval') {
         if (this.disposed) {
             return null;
         }
@@ -22,14 +22,14 @@ class Scheduler {
         }
         return handle;
     }
-    clearInterval(handle) {
+    deleteInterval(handle) {
         if (!handle) {
             return;
         }
         this.adapter.clearInterval(handle);
         this.intervalHandles.delete(handle);
     }
-    setTimeout(callback, timeoutMs, label = 'timeout') {
+    createTimeout(callback, timeoutMs, label = 'timeout') {
         if (this.disposed) {
             return null;
         }
@@ -44,7 +44,7 @@ class Scheduler {
         }
         return handle;
     }
-    clearTimeout(handle) {
+    deleteTimeout(handle) {
         if (!handle) {
             return;
         }
@@ -71,10 +71,10 @@ class Scheduler {
     dispose() {
         this.disposed = true;
         for (const handle of [...this.intervalHandles]) {
-            this.clearInterval(handle);
+            this.deleteInterval(handle);
         }
         for (const handle of [...this.timeoutHandles]) {
-            this.clearTimeout(handle);
+            this.deleteTimeout(handle);
         }
         for (const job of [...this.jobs]) {
             this.cancelJob(job);

@@ -38,7 +38,7 @@ export default class RequestClient {
     private requestWithNodeTransport;
     private logRequestError;
     private startTimeout;
-    private clearTimeout;
+    private stopAdapterTimeout;
 }
 export {};
 //# sourceMappingURL=requestClient.d.ts.map

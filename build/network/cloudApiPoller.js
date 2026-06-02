@@ -37,15 +37,15 @@ class CloudApiPoller {
         }
         this.started = true;
         const infoStartDelay = Math.floor(Math.random() * constants_1.CLOUD_INFO_INTERVAL_MS);
-        this.infoStartHandle = this.scheduler.setTimeout(async () => {
+        this.infoStartHandle = this.scheduler.createTimeout(async () => {
             await this.pollInfo();
-            this.infoIntervalHandle = this.scheduler.setInterval(async () => {
+            this.infoIntervalHandle = this.scheduler.createInterval(async () => {
                 await this.pollInfo();
             }, constants_1.CLOUD_INFO_INTERVAL_MS, 'cloud-info-poll');
         }, infoStartDelay, 'cloud-info-start');
-        this.ccuStartHandle = this.scheduler.setTimeout(async () => {
+        this.ccuStartHandle = this.scheduler.createTimeout(async () => {
             await this.pollCcu();
-            this.ccuIntervalHandle = this.scheduler.setInterval(async () => {
+            this.ccuIntervalHandle = this.scheduler.createInterval(async () => {
                 await this.pollCcu();
             }, this.config.ccuIntervalMs, 'cloud-ccu-poll');
         }, constants_1.CLOUD_CCU_INITIAL_DELAY_MS, 'cloud-ccu-start');
@@ -53,10 +53,10 @@ class CloudApiPoller {
     }
     dispose() {
         this.started = false;
-        this.scheduler.clearTimeout(this.infoStartHandle);
-        this.scheduler.clearTimeout(this.ccuStartHandle);
-        this.scheduler.clearInterval(this.infoIntervalHandle);
-        this.scheduler.clearInterval(this.ccuIntervalHandle);
+        this.scheduler.deleteTimeout(this.infoStartHandle);
+        this.scheduler.deleteTimeout(this.ccuStartHandle);
+        this.scheduler.deleteInterval(this.infoIntervalHandle);
+        this.scheduler.deleteInterval(this.ccuIntervalHandle);
         this.infoStartHandle = null;
         this.ccuStartHandle = null;
         this.infoIntervalHandle = null;

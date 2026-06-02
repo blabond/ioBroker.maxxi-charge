@@ -115,7 +115,7 @@ export default class MaxxiChargeAdapter extends utils.Adapter {
             await this.batteryMode.start();
             await this.bkwMode.start();
 
-            this.cleanupIntervalHandle = this.scheduler.setInterval(
+            this.cleanupIntervalHandle = this.scheduler.createInterval(
                 async () => {
                     const cleanupResult = await this.deviceRegistry?.cleanupInactiveDevices();
                     for (const deviceId of cleanupResult?.removedDeviceIds ?? []) {
@@ -307,7 +307,7 @@ export default class MaxxiChargeAdapter extends utils.Adapter {
         const commandService = this.commandService;
 
         if (this.cleanupIntervalHandle && scheduler) {
-            scheduler.clearInterval(this.cleanupIntervalHandle);
+            scheduler.deleteInterval(this.cleanupIntervalHandle);
             this.cleanupIntervalHandle = null;
         }
 

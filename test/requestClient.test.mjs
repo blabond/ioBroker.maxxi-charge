@@ -20,6 +20,8 @@ describe('RequestClient', () => {
                     logCalls.error.push(message);
                 },
             },
+            setTimeout: (callback, timeoutMs) => setTimeout(callback, timeoutMs),
+            clearTimeout: handle => clearTimeout(handle),
         };
     }
 
