@@ -46,10 +46,10 @@ export default class CloudApiPoller {
 
         this.started = true;
         const infoStartDelay = Math.floor(Math.random() * CLOUD_INFO_INTERVAL_MS);
-        this.infoStartHandle = this.scheduler.setTimeout(
+        this.infoStartHandle = this.scheduler.createTimeout(
             async () => {
                 await this.pollInfo();
-                this.infoIntervalHandle = this.scheduler.setInterval(
+                this.infoIntervalHandle = this.scheduler.createInterval(
                     async () => {
                         await this.pollInfo();
                     },
@@ -61,10 +61,10 @@ export default class CloudApiPoller {
             'cloud-info-start',
         );
 
-        this.ccuStartHandle = this.scheduler.setTimeout(
+        this.ccuStartHandle = this.scheduler.createTimeout(
             async () => {
                 await this.pollCcu();
-                this.ccuIntervalHandle = this.scheduler.setInterval(
+                this.ccuIntervalHandle = this.scheduler.createInterval(
                     async () => {
                         await this.pollCcu();
                     },
@@ -81,10 +81,10 @@ export default class CloudApiPoller {
 
     public dispose(): Promise<void> {
         this.started = false;
-        this.scheduler.clearTimeout(this.infoStartHandle);
-        this.scheduler.clearTimeout(this.ccuStartHandle);
-        this.scheduler.clearInterval(this.infoIntervalHandle);
-        this.scheduler.clearInterval(this.ccuIntervalHandle);
+        this.scheduler.deleteTimeout(this.infoStartHandle);
+        this.scheduler.deleteTimeout(this.ccuStartHandle);
+        this.scheduler.deleteInterval(this.infoIntervalHandle);
+        this.scheduler.deleteInterval(this.ccuIntervalHandle);
         this.infoStartHandle = null;
         this.ccuStartHandle = null;
         this.infoIntervalHandle = null;

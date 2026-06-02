@@ -12,7 +12,7 @@ export default class Scheduler {
 
     public constructor(private readonly adapter: AdapterInstance) {}
 
-    public setInterval(
+    public createInterval(
         callback: () => Promise<void> | void,
         intervalMs: number,
         label = 'interval',
@@ -32,7 +32,7 @@ export default class Scheduler {
         return handle;
     }
 
-    public clearInterval(handle: ioBroker.Interval): void {
+    public deleteInterval(handle: ioBroker.Interval): void {
         if (!handle) {
             return;
         }
@@ -41,7 +41,7 @@ export default class Scheduler {
         this.intervalHandles.delete(handle);
     }
 
-    public setTimeout(callback: () => Promise<void> | void, timeoutMs: number, label = 'timeout'): ioBroker.Timeout {
+    public createTimeout(callback: () => Promise<void> | void, timeoutMs: number, label = 'timeout'): ioBroker.Timeout {
         if (this.disposed) {
             return null;
         }
@@ -60,7 +60,7 @@ export default class Scheduler {
         return handle;
     }
 
-    public clearTimeout(handle: ioBroker.Timeout): void {
+    public deleteTimeout(handle: ioBroker.Timeout): void {
         if (!handle) {
             return;
         }
@@ -95,11 +95,11 @@ export default class Scheduler {
         this.disposed = true;
 
         for (const handle of [...this.intervalHandles]) {
-            this.clearInterval(handle);
+            this.deleteInterval(handle);
         }
 
         for (const handle of [...this.timeoutHandles]) {
-            this.clearTimeout(handle);
+            this.deleteTimeout(handle);
         }
 
         for (const job of [...this.jobs]) {

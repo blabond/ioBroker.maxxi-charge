@@ -1,6 +1,6 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-const node_schedule_1 = require('node-schedule');
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const node_schedule_1 = require("node-schedule");
 class Scheduler {
     adapter;
     intervalHandles = new Set();
@@ -10,43 +10,41 @@ class Scheduler {
     constructor(adapter) {
         this.adapter = adapter;
     }
-    setInterval(callback, intervalMs, label = 'interval') {
+    createInterval(callback, intervalMs, label = 'interval') {
         if (this.disposed) {
             return null;
         }
-        const handle =
-            this.adapter.setInterval(() => {
-                void this.executeSafely(callback, label);
-            }, intervalMs) ?? null;
+        const handle = this.adapter.setInterval(() => {
+            void this.executeSafely(callback, label);
+        }, intervalMs) ?? null;
         if (handle !== null) {
             this.intervalHandles.add(handle);
         }
         return handle;
     }
-    clearInterval(handle) {
+    deleteInterval(handle) {
         if (!handle) {
             return;
         }
         this.adapter.clearInterval(handle);
         this.intervalHandles.delete(handle);
     }
-    setTimeout(callback, timeoutMs, label = 'timeout') {
+    createTimeout(callback, timeoutMs, label = 'timeout') {
         if (this.disposed) {
             return null;
         }
-        const handle =
-            this.adapter.setTimeout(() => {
-                if (handle !== null) {
-                    this.timeoutHandles.delete(handle);
-                }
-                void this.executeSafely(callback, label);
-            }, timeoutMs) ?? null;
+        const handle = this.adapter.setTimeout(() => {
+            if (handle !== null) {
+                this.timeoutHandles.delete(handle);
+            }
+            void this.executeSafely(callback, label);
+        }, timeoutMs) ?? null;
         if (handle !== null) {
             this.timeoutHandles.add(handle);
         }
         return handle;
     }
-    clearTimeout(handle) {
+    deleteTimeout(handle) {
         if (!handle) {
             return;
         }
@@ -73,10 +71,10 @@ class Scheduler {
     dispose() {
         this.disposed = true;
         for (const handle of [...this.intervalHandles]) {
-            this.clearInterval(handle);
+            this.deleteInterval(handle);
         }
         for (const handle of [...this.timeoutHandles]) {
-            this.clearTimeout(handle);
+            this.deleteTimeout(handle);
         }
         for (const job of [...this.jobs]) {
             this.cancelJob(job);
@@ -86,10 +84,9 @@ class Scheduler {
     async executeSafely(callback, label) {
         try {
             await callback();
-        } catch (error) {
-            this.adapter.log.error(
-                `Scheduler task ${label} failed: ${error instanceof Error ? error.message : String(error)}`,
-            );
+        }
+        catch (error) {
+            this.adapter.log.error(`Scheduler task ${label} failed: ${error instanceof Error ? error.message : String(error)}`);
         }
     }
 }

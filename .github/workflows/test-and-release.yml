@@ -1,22 +1,19 @@
 name: Test and Release
-# Run this job on all pushes and pull requests
-# as well as tags with a semantic version
+
 on:
+    workflow_dispatch:
     push:
         branches:
-            - 'main'
+            - main
+            - 'release/v*'
         tags:
-            # normal versions
             - 'v[0-9]+.[0-9]+.[0-9]+'
-            # pre-releases
             - 'v[0-9]+.[0-9]+.[0-9]+-**'
     pull_request: {}
 
-# Force all JavaScript-based GitHub Actions to run on Node.js 24
 env:
     FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
-# Cancel previous PR/branch runs when a new commit is pushed
 concurrency:
     group: ${{ github.ref }}
     cancel-in-progress: true
@@ -24,17 +21,23 @@ concurrency:
 jobs:
     autofix:
         name: Auto-fix ESLint/Prettier
-        if: >-
-            (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) ||
-            (github.event_name == 'push' && github.ref == 'refs/heads/main' && github.actor != 'github-actions[bot]')
+        if: |
+            github.event_name == 'push' &&
+            github.ref == 'refs/heads/main' &&
+            contains(github.event.head_commit.message, '[skip ci]') == false
         runs-on: ubuntu-latest
+        concurrency:
+            group: autofix-${{ github.ref }}
+            cancel-in-progress: false
         permissions:
             contents: write
-
+        outputs:
+            changed: ${{ steps.commit.outputs.changed }}
         steps:
             - uses: actions/checkout@v6
               with:
-                  fetch-depth: 0
+                  ref: ${{ github.ref_name }}
+                  token: ${{ secrets.AUTOFIX_TOKEN || github.token }}
 
             - uses: actions/setup-node@v6
               with:
@@ -42,59 +45,58 @@ jobs:
                   cache: npm
 
             - name: Install dependencies
-              run: npm install
+              run: npm ci
 
             - name: Apply ESLint auto-fixes
-              run: npx eslint -c eslint.config.mjs . --fix
+              run: npm run lint:fix
 
             - name: Apply Prettier formatting
-              run: |
-                  npx prettier . --write
-                  git checkout -- .github/workflows
+              run: npm run format
 
             - name: Commit and push fixes if needed
+              id: commit
               run: |
                   if [ -n "$(git status --porcelain)" ]; then
                     git config user.name "github-actions[bot]"
                     git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
                     git add -A
                     git commit -m "chore(ci): apply eslint/prettier auto-fixes"
-
-                    if [ "${{ github.event_name }}" = "pull_request" ]; then
-                      git push origin "HEAD:${{ github.head_ref }}"
-                    else
-                      git push origin "HEAD:${{ github.ref_name }}"
-                    fi
+                    git push origin "HEAD:${GITHUB_REF_NAME}"
+                    echo "changed=true" >> "$GITHUB_OUTPUT"
                   else
                     echo "No formatting/lint fixes needed."
+                    echo "changed=false" >> "$GITHUB_OUTPUT"
                   fi
 
-    # Performs quick checks before the expensive matrix test runs
     check-and-lint:
-        if: contains(github.event.head_commit.message, '[skip ci]') == false
-
+        needs: [autofix]
+        if: |
+            always() &&
+            contains(github.event.head_commit.message, '[skip ci]') == false &&
+            (needs.autofix.result == 'skipped' || needs.autofix.outputs.changed == 'false')
         runs-on: ubuntu-latest
-
         steps:
             - uses: ioBroker/testing-action-check@v1
               with:
                   node-version: '24.x'
-                  lint: true
+                  type-checking: 'true'
+                  lint: 'true'
+                  test-command: npm test
 
-            - name: Security audit (prod deps)
+            - name: Check formatting
+              run: npm run format:check
+
+            - name: Security audit
               run: npm audit --omit=dev
 
-    # Runs tests on all supported node versions and OSes
     adapter-tests:
         needs: [check-and-lint]
         if: contains(github.event.head_commit.message, '[skip ci]') == false
-
         runs-on: ${{ matrix.os }}
         strategy:
             matrix:
                 node-version: [22.x, 24.x]
                 os: [ubuntu-latest, windows-latest, macos-latest]
-
         steps:
             - uses: ioBroker/testing-action-adapter@v1
               with:
@@ -107,16 +109,12 @@ jobs:
             contains(github.event.head_commit.message, '[skip ci]') == false &&
             github.event_name == 'push' &&
             startsWith(github.ref, 'refs/tags/v')
-
         runs-on: ubuntu-latest
-
         permissions:
             contents: write
             id-token: write
-
         steps:
             - uses: ioBroker/testing-action-deploy@v1
               with:
                   node-version: '24.x'
-                  build: true
                   github-token: ${{ secrets.GITHUB_TOKEN }}

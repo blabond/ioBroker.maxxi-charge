@@ -353,7 +353,7 @@ export default class RequestClient {
 
             throw error;
         } finally {
-            this.clearTimeout(timeoutHandle);
+            this.stopAdapterTimeout(timeoutHandle);
         }
     }
 
@@ -497,20 +497,13 @@ export default class RequestClient {
         );
     }
 
-    private startTimeout(callback: () => void, timeoutMs: number): Exclude<ioBroker.Timeout, null> | NodeJS.Timeout {
-        if (typeof this.adapter.setTimeout === 'function') {
-            return this.adapter.setTimeout(callback, timeoutMs) ?? setTimeout(callback, timeoutMs);
-        }
-
-        return setTimeout(callback, timeoutMs);
+    private startTimeout(callback: () => void, timeoutMs: number): ioBroker.Timeout {
+        return this.adapter.setTimeout(callback, timeoutMs) ?? null;
     }
 
-    private clearTimeout(handle: Exclude<ioBroker.Timeout, null> | NodeJS.Timeout): void {
-        if (typeof this.adapter.clearTimeout === 'function') {
-            this.adapter.clearTimeout(handle as ioBroker.Timeout);
-            return;
+    private stopAdapterTimeout(handle: ioBroker.Timeout): void {
+        if (handle) {
+            this.adapter.clearTimeout(handle);
         }
-
-        clearTimeout(handle);
     }
 }

@@ -14,6 +14,7 @@ on:
                 type: string
 
 permissions:
+    actions: write
     contents: write
     id-token: write
 
@@ -33,6 +34,7 @@ jobs:
               with:
                   ref: ${{ inputs.ref || format('release/v{0}', inputs.version) }}
                   fetch-depth: 0
+                  token: ${{ secrets.AUTOFIX_TOKEN || github.token }}
 
             - uses: actions/setup-node@v6
               with:
@@ -42,6 +44,15 @@ jobs:
 
             - name: Install dependencies
               run: npm ci
+
+            - name: Verify AUTOFIX_TOKEN
+              env:
+                  AUTOFIX_TOKEN: ${{ secrets.AUTOFIX_TOKEN }}
+              run: |
+                  if [[ -z "${AUTOFIX_TOKEN}" ]]; then
+                    echo "AUTOFIX_TOKEN is required so release tag and main pushes trigger workflows." >&2
+                    exit 1
+                  fi
 
             - name: Configure Git identity
               run: |
@@ -70,9 +81,47 @@ jobs:
                     git tag -a "$TAG" -m "$TAG"
                     git push origin "refs/tags/${TAG}"
                   fi
+                  echo "TAG=${TAG}" >> "$GITHUB_ENV"
+                  echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> "$GITHUB_ENV"
+                  echo "RELEASE_SHA=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
 
             - name: Verify release tag
               run: npm run release:verify-tag
+
+            - name: Wait for release tag checks
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  while true; do
+                    run="$(gh run list \
+                      --workflow test-and-release.yml \
+                      --branch "${TAG}" \
+                      --event push \
+                      --json conclusion,databaseId,headSha,status,url \
+                      --limit 20 \
+                      --jq ".[] | select(.headSha == \"${RELEASE_SHA}\") | @base64" \
+                      | head -n 1)"
+
+                    if [[ -n "${run}" ]]; then
+                      status="$(echo "${run}" | base64 --decode | jq -r ".status")"
+                      conclusion="$(echo "${run}" | base64 --decode | jq -r ".conclusion")"
+                      url="$(echo "${run}" | base64 --decode | jq -r ".url")"
+
+                      echo "test-and-release.yml for ${TAG} is ${status}: ${url}"
+
+                      if [[ "${status}" == "completed" ]]; then
+                        if [[ "${conclusion}" == "success" ]]; then
+                          exit 0
+                        fi
+                        echo "test-and-release.yml for ${TAG} completed with ${conclusion}: ${url}" >&2
+                        exit 1
+                      fi
+                    else
+                      echo "Waiting for test-and-release.yml push run for ${TAG} at ${RELEASE_SHA}..."
+                    fi
+
+                    sleep 10
+                  done
 
             - name: Build
               run: npm run build
@@ -96,6 +145,39 @@ jobs:
                     echo "${PACKAGE_NAME}@${PACKAGE_VERSION} is already published. Skipping npm publish."
                   else
                     npm publish --access public
+                  fi
+
+            - name: Create GitHub release
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  node <<'NODE'
+                  const fs = require("node:fs");
+                  const path = require("node:path");
+
+                  const version = process.env.PACKAGE_VERSION;
+                  const readme = fs.readFileSync("README.md", "utf8");
+                  const escapedVersion = version.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+                  const pattern = new RegExp(
+                    `^### ${escapedVersion} \\([^\\n]+\\)\\n\\n([\\s\\S]*?)(?=\\n### |\\n\\[Older changelogs|\\n## |$)`,
+                    "m",
+                  );
+                  const match = readme.match(pattern);
+                  const notes = match ? match[1].trim() : `Release v${version}`;
+                  fs.writeFileSync(path.join(process.env.RUNNER_TEMP, "release-notes.md"), `${notes}\n`);
+                  NODE
+
+                  release_flags=(--title "Release ${TAG}" --notes-file "${RUNNER_TEMP}/release-notes.md")
+                  if [[ "${PACKAGE_VERSION}" == *-* ]]; then
+                    release_flags+=(--prerelease)
+                  else
+                    release_flags+=(--latest)
+                  fi
+
+                  if gh release view "${TAG}" >/dev/null 2>&1; then
+                    gh release edit "${TAG}" "${release_flags[@]}"
+                  else
+                    gh release create "${TAG}" "${release_flags[@]}"
                   fi
 
             - name: Merge published release back to main

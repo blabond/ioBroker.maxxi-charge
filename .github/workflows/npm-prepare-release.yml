@@ -9,6 +9,7 @@ on:
                 type: string
 
 permissions:
+    actions: write
     contents: write
 
 concurrency:
@@ -26,6 +27,7 @@ jobs:
               with:
                   ref: ${{ github.ref_name }}
                   fetch-depth: 0
+                  token: ${{ secrets.AUTOFIX_TOKEN || github.token }}
 
             - uses: actions/setup-node@v6
               with:
@@ -34,6 +36,15 @@ jobs:
 
             - name: Install dependencies
               run: npm ci
+
+            - name: Verify AUTOFIX_TOKEN
+              env:
+                  AUTOFIX_TOKEN: ${{ secrets.AUTOFIX_TOKEN }}
+              run: |
+                  if [[ -z "${AUTOFIX_TOKEN}" ]]; then
+                    echo "AUTOFIX_TOKEN is required so release branch pushes trigger test-and-release.yml." >&2
+                    exit 1
+                  fi
 
             - name: Configure Git identity
               run: |
@@ -79,29 +90,26 @@ jobs:
 
                   let bump;
                   if (
-                    targetVersion.major === currentVersion.major + 1 &&
-                    targetVersion.minor === 0 &&
-                    targetVersion.patch === 0 &&
+                    targetVersion.major > currentVersion.major &&
                     targetVersion.prerelease.length === 0
                   ) {
                     bump = "major";
                   } else if (
                     targetVersion.major === currentVersion.major &&
-                    targetVersion.minor === currentVersion.minor + 1 &&
-                    targetVersion.patch === 0 &&
+                    targetVersion.minor > currentVersion.minor &&
                     targetVersion.prerelease.length === 0
                   ) {
                     bump = "minor";
                   } else if (
                     targetVersion.major === currentVersion.major &&
                     targetVersion.minor === currentVersion.minor &&
-                    targetVersion.patch === currentVersion.patch + 1 &&
+                    targetVersion.patch > currentVersion.patch &&
                     targetVersion.prerelease.length === 0
                   ) {
                     bump = "patch";
                   } else {
                     throw new Error(
-                      `Target version ${target} must be the next patch, minor, or major version after ${current}`,
+                      `Target version ${target} must be a later patch, minor, or major version after ${current}`,
                     );
                   }
 
@@ -116,6 +124,49 @@ jobs:
 
             - name: Ensure release commit is complete
               run: |
+                  PREPARED_VERSION="$(node -p 'require("./package.json").version')"
+
+                  node <<'NODE'
+                  const fs = require("node:fs");
+
+                  const target = process.env.TARGET_VERSION;
+                  const prepared = require("./package.json").version;
+
+                  function writeJson(path, data) {
+                    fs.writeFileSync(path, `${JSON.stringify(data, null, 4)}\n`);
+                  }
+
+                  const packageJson = require("./package.json");
+                  packageJson.version = target;
+                  writeJson("package.json", packageJson);
+
+                  const packageLock = require("./package-lock.json");
+                  packageLock.version = target;
+                  packageLock.packages[""].version = target;
+                  writeJson("package-lock.json", packageLock);
+
+                  const ioPackage = require("./io-package.json");
+                  ioPackage.common.version = target;
+                  const news = ioPackage.common.news;
+                  if (news[prepared] && prepared !== target) {
+                    news[target] = news[prepared];
+                    delete news[prepared];
+                    ioPackage.common.news = Object.fromEntries(
+                      Object.entries(news).sort((left, right) =>
+                        right[0].localeCompare(left[0], undefined, { numeric: true }),
+                      ),
+                    );
+                  }
+                  writeJson("io-package.json", ioPackage);
+
+                  const readmePath = "README.md";
+                  const readme = fs.readFileSync(readmePath, "utf8");
+                  fs.writeFileSync(
+                    readmePath,
+                    readme.replace(new RegExp(`^### ${prepared} \\(([^\\n]+)\\)`, "m"), `### ${target} ($1)`),
+                  );
+                  NODE
+
                   VERSION="$(node -p 'require("./package.json").version')"
                   TAG="v${VERSION}"
 
@@ -135,6 +186,7 @@ jobs:
                   fi
 
                   npm install --package-lock-only --ignore-scripts
+                  npm run format
 
                   if [[ -n "$(git status --porcelain)" ]]; then
                     git add -A
@@ -157,6 +209,7 @@ jobs:
               run: |
                   TAG="v$(node -p 'require("./package.json").version')"
                   BRANCH="release/${TAG}"
+                  RELEASE_SHA="$(git rev-parse HEAD)"
                   if git rev-parse --verify --quiet "refs/tags/${TAG}"; then
                     git tag -d "$TAG"
                   fi
@@ -165,12 +218,56 @@ jobs:
                   {
                     echo "TAG=${TAG}"
                     echo "BRANCH=${BRANCH}"
+                    echo "RELEASE_SHA=${RELEASE_SHA}"
                   } >> "$GITHUB_ENV"
+
+            - name: Wait for release branch checks
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  started_at="$(date +%s)"
+
+                  while true; do
+                    run="$(gh run list \
+                      --workflow test-and-release.yml \
+                      --branch "${BRANCH}" \
+                      --event push \
+                      --json conclusion,createdAt,databaseId,headSha,status,url \
+                      --limit 20 \
+                      --jq ".[] | select(.headSha == \"${RELEASE_SHA}\" and (.createdAt | fromdateiso8601) >= ${started_at}) | @base64" \
+                      | head -n 1)"
+
+                    if [[ -n "${run}" ]]; then
+                      status="$(echo "${run}" | base64 --decode | jq -r ".status")"
+                      conclusion="$(echo "${run}" | base64 --decode | jq -r ".conclusion")"
+                      url="$(echo "${run}" | base64 --decode | jq -r ".url")"
+
+                      echo "test-and-release.yml for ${BRANCH} is ${status}: ${url}"
+
+                      if [[ "${status}" == "completed" ]]; then
+                        if [[ "${conclusion}" == "success" ]]; then
+                          exit 0
+                        fi
+                        echo "test-and-release.yml for ${BRANCH} completed with ${conclusion}: ${url}" >&2
+                        exit 1
+                      fi
+                    else
+                      echo "Waiting for test-and-release.yml for ${BRANCH} at ${RELEASE_SHA}..."
+                    fi
+
+                    if (( $(date +%s) - started_at > 900 )); then
+                      echo "Timed out waiting for test-and-release.yml for ${BRANCH}." >&2
+                      exit 1
+                    fi
+
+                    sleep 10
+                  done
 
             - name: Write summary
               run: |
                   {
                     echo "Prepared ${TAG} on branch ${BRANCH}."
+                    echo "The test-and-release workflow completed successfully for ${BRANCH}."
                     echo ""
                     echo "Review and adjust the release branch before running the npm publish workflow."
                     echo "Use version ${TAG#v} and ref ${BRANCH} when publishing."
