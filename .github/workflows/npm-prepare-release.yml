@@ -90,6 +90,14 @@ jobs:
 
                   let bump;
                   if (
+                    currentVersion.prerelease.length > 0 &&
+                    targetVersion.major === currentVersion.major &&
+                    targetVersion.minor === currentVersion.minor &&
+                    targetVersion.patch === currentVersion.patch &&
+                    targetVersion.prerelease.length === 0
+                  ) {
+                    bump = "patch";
+                  } else if (
                     targetVersion.major > currentVersion.major &&
                     targetVersion.prerelease.length === 0
                   ) {
