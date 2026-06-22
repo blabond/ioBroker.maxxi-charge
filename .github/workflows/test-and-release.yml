@@ -76,7 +76,7 @@ jobs:
             (needs.autofix.result == 'skipped' || needs.autofix.outputs.changed == 'false')
         runs-on: ubuntu-latest
         steps:
-            - uses: ioBroker/testing-action-check@v1
+            - uses: ioBroker/testing-action-check@v2
               with:
                   node-version: '24.x'
                   type-checking: 'true'
