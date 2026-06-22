@@ -30,7 +30,7 @@ jobs:
             FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v7
               with:
                   ref: ${{ inputs.ref || format('release/v{0}', inputs.version) }}
                   fetch-depth: 0
