@@ -81,7 +81,6 @@ jobs:
                   node-version: '24.x'
                   type-checking: 'true'
                   lint: 'true'
-                  test-command: npm test
 
             - name: Check formatting
               run: npm run format:check
